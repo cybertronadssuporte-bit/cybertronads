@@ -171,9 +171,18 @@
                             Cada link ou código cadastrado é consumido apenas uma vez por cliente e nunca se repete.
                         </p>
                     </div>
-                    <button onclick="openCreateGameModal()" class="bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-lg shadow-primary/20">
-                        <i class="ph-bold ph-plus-circle text-base"></i> Adicionar Novo Produto
-                    </button>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <button onclick="exportDatabaseJSON()" class="bg-white/10 hover:bg-white/15 border border-white/10 text-white px-3.5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5" title="Baixar arquivo JSON com todos os produtos e configurações para levar para a Vercel">
+                            <i class="ph-bold ph-download-simple text-base text-cyan-400"></i> Exportar Dados (Backup)
+                        </button>
+                        <button onclick="importDatabaseJSON()" class="bg-white/10 hover:bg-white/15 border border-white/10 text-white px-3.5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5" title="Carregar arquivo JSON exportado do Localhost">
+                            <i class="ph-bold ph-upload-simple text-base text-emerald-400"></i> Importar Dados
+                        </button>
+                        <input type="file" id="import-json-input" accept=".json" class="hidden" onchange="handleImportFile(event)">
+                        <button onclick="openCreateGameModal()" class="bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-lg shadow-primary/20">
+                            <i class="ph-bold ph-plus-circle text-base"></i> Adicionar Novo Produto
+                        </button>
+                    </div>
                 </div>
 
                 <!-- CARDS DE PRODUTOS CADASTRADOS -->
@@ -1004,7 +1013,7 @@
                     oldPrice: 96.90,
                     price: 18.00,
                     category: "Inteligencia artificial",
-                    img: "https://images.unsplash.com/photo-1677442136019-21780efad99a?q=80&w=600",
+                    img: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=600",
                     specs: "• Acesso oficial com Gemini 1.5 Pro e janela de 1 milhão de tokens\n• 2TB de armazenamento em nuvem no Google One (Drive, Gmail, Fotos)\n• Integração direta com Docs, Sheets e Gmail para criação de conteúdo\n• Entrega imediata no seu e-mail pessoal",
                     isFeatured: true,
                     orderBump: {
@@ -1051,7 +1060,7 @@
                     name: "Muse AI (1 Bilhão de Tokens - Criação & Armazenamento de Vídeo)",
                     oldPrice: 149.90,
                     price: 59.90,
-                    category: "Inteligencia artificial",
+                    category: "Edição video",
                     img: "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?q=80&w=600",
                     specs: "• 1 Bilhão de tokens de IA para processamento e transcrição de vídeo\n• Busca inteligente por fala e texto dentro dos vídeos\n• Armazenamento na nuvem e streaming em até 4K\n• Player ultrarrápido sem anúncios incorporável",
                     isFeatured: false,
@@ -1076,7 +1085,7 @@
                     oldPrice: 65.70,
                     price: 24.90,
                     category: "streaming",
-                    img: "https://images.unsplash.com/photo-1614680376593-902f749f7ffc?q=80&w=600",
+                    img: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=600",
                     specs: "• 3 Meses de assinatura Spotify Premium oficial\n• Músicas sem anúncios com máxima qualidade de áudio (320kbps)\n• Modo offline para ouvir suas músicas e podcasts favoritos\n• Pule faixas sem limites",
                     isFeatured: false,
                     orderBump: {
@@ -1140,13 +1149,13 @@
             feedbacks: [
                 "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?q=80&w=500&auto=format&fit=crop",
                 "https://images.unsplash.com/photo-1563986768609-322da13575f3?q=80&w=500&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1556742049-0a67c5574f73?q=80&w=500&auto=format&fit=crop"
+                "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=500&auto=format&fit=crop"
             ],
             ordersHistory: [
                 {
                     id: "ORD-9412",
                     clientName: "Carlos Eduardo Silva",
-                    pixReceipt: "https://images.unsplash.com/photo-1556742049-0a67c5574f73?q=80&w=500",
+                    pixReceipt: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=500",
                     item: "ChatGPT Plus GPT-4o (Acesso Mensal)",
                     key: "CYBER-GPT-KEY-99210-PRO",
                     status: "ENTREGUE",
@@ -3036,6 +3045,47 @@
             db.gateway.fallbackUrl = fallbackUrl;
             saveDB(db);
             showAlert("✅ Configurações da InfinitePay salvas e ativas na loja!");
+        }
+
+        // ================= EXPORTAÇÃO E IMPORTAÇÃO DE BACKUP JSON =================
+        function exportDatabaseJSON() {
+            const db = getDB();
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", "cybertron_produtos_backup.json");
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            showAlert("📥 Backup dos dados exportado com sucesso! Salve o arquivo para importar na Vercel.");
+        }
+
+        function importDatabaseJSON() {
+            const input = document.getElementById('import-json-input');
+            if (input) input.click();
+        }
+
+        function handleImportFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (imported && (imported.items || imported.gateway)) {
+                        saveDB(imported);
+                        renderAll(imported);
+                        showAlert("✅ Dados importados com sucesso! Todos os produtos e configurações foram sincronizados.");
+                    } else {
+                        throw new Error("Formato inválido de arquivo.");
+                    }
+                } catch(err) {
+                    showAlert("❌ Erro ao importar arquivo: " + err.message, false);
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
         }
 
         // Inicializar

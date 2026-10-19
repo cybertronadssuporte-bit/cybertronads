@@ -574,89 +574,93 @@
                     </div>
 
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="games-grid">
-                        <!-- Card 1: Destaque Principal (Sincronizado com Admin) -->
-                        <div class="glass-card rounded-2xl p-3.5 card-interactive flex flex-col justify-between" onclick="openModal()" data-category="lancamentos" data-name="Grand Theft Auto VI">
+                        <!-- Card 1: Google AI Pro (Destaque Principal) -->
+                        <div class="glass-card rounded-2xl p-3.5 card-interactive flex flex-col justify-between" onclick="openGameModalById('prod-google-ai')" data-category="Inteligencia artificial" data-name="Google AI Pro (Gemini Advanced 1.5 Pro + 2TB Nuvem)">
                             <div>
-                                <div class="relative rounded-xl overflow-hidden mb-3 aspect-[4/3]">
+                                <div class="relative rounded-xl overflow-hidden mb-3 aspect-[4/3] bg-black/60">
                                     <div class="absolute top-2 left-2 bg-primary/90 text-white text-[10px] font-black px-2 py-0.5 rounded shadow">DESTAQUE</div>
-                                    <img id="card-hero-img" src="https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=600" class="w-full h-full object-cover">
+                                    <span class="absolute top-2 right-2 bg-emerald-500 text-black text-[10px] font-black px-1.5 py-0.5 rounded shadow">-81%</span>
+                                    <img id="card-hero-img" src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=600" class="w-full h-full object-cover">
                                 </div>
-                                <h3 id="card-hero-title" class="font-extrabold text-sm text-white mb-1 truncate">Grand Theft Auto VI</h3>
-                                <div class="flex items-center gap-2 text-xs text-gray-400 mb-2">
-                                    <span class="line-through text-gray-500">R$ 299,90</span>
-                                    <span class="text-emerald-400 font-bold bg-emerald-500/10 px-1.5 py-0.5 rounded">-55%</span>
+                                <h3 id="card-hero-title" class="font-extrabold text-sm text-white mb-1 truncate">Google AI Pro (Gemini + 2TB)</h3>
+                                <div class="flex items-center justify-between gap-1 mb-2 min-h-[18px]">
+                                    <span class="line-through text-gray-500 text-[10px] whitespace-nowrap">De R$ 96,90</span>
+                                    <span class="text-[9px] font-semibold text-emerald-400/90 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded whitespace-nowrap shrink-0 flex items-center gap-1"><i class="ph-bold ph-lightning"></i> Entrega Imediata</span>
                                 </div>
                             </div>
                             <div class="flex items-center justify-between pt-2 border-t border-white/5">
                                 <div>
                                     <p class="text-[10px] text-gray-400 uppercase">Apenas</p>
-                                    <p id="card-hero-price" class="text-base font-black text-primary">R$ 129,90</p>
+                                    <p id="card-hero-price" class="text-base font-black text-primary">R$ 18,00</p>
                                 </div>
                                 <span class="bg-primary/20 text-primary p-2 rounded-xl text-sm"><i class="ph-bold ph-shopping-cart-simple"></i></span>
                             </div>
                         </div>
 
-                        <!-- Card 2: Cyberpunk 2077 -->
-                        <div class="glass-card rounded-2xl p-3.5 card-interactive flex flex-col justify-between" onclick="openGameModal('Cyberpunk 2077: Phantom Liberty', 89.90, 'https://images.unsplash.com/photo-1605901309584-818e25960b8f?q=80&w=600')" data-category="rpg" data-name="Cyberpunk 2077">
+                        <!-- Card 2: Duolingo Super Anual -->
+                        <div class="glass-card rounded-2xl p-3.5 card-interactive flex flex-col justify-between" onclick="openGameModalById('prod-duolingo')" data-category="Inteligencia artificial" data-name="Duolingo Super (12 Meses / Aprender Inglês)">
                             <div>
-                                <div class="relative rounded-xl overflow-hidden mb-3 aspect-[4/3]">
-                                    <div id="sold-out-badge" class="hidden absolute top-2 right-2 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded z-10 shadow-lg">ESGOTADO</div>
-                                    <img src="https://images.unsplash.com/photo-1605901309584-818e25960b8f?q=80&w=600" class="w-full h-full object-cover">
+                                <div class="relative rounded-xl overflow-hidden mb-3 aspect-[4/3] bg-black/60">
+                                    <span class="absolute top-2 left-2 bg-secondary/90 text-white text-[10px] font-black px-2 py-0.5 rounded shadow">12 MESES</span>
+                                    <span class="absolute top-2 right-2 bg-emerald-500 text-black text-[10px] font-black px-1.5 py-0.5 rounded shadow">-82%</span>
+                                    <img src="https://images.unsplash.com/photo-1546410531-bb4caa6b424d?q=80&w=600" class="w-full h-full object-cover">
                                 </div>
-                                <h3 class="font-extrabold text-sm text-white mb-1 truncate">Cyberpunk 2077</h3>
-                                <div class="flex items-center gap-2 text-xs text-gray-400 mb-2">
-                                    <span class="line-through text-gray-500">R$ 199,90</span>
-                                    <span class="text-emerald-400 font-bold bg-emerald-500/10 px-1.5 py-0.5 rounded">-55%</span>
+                                <h3 class="font-extrabold text-sm text-white mb-1 truncate">Duolingo Super Anual</h3>
+                                <div class="flex items-center justify-between gap-1 mb-2 min-h-[18px]">
+                                    <span class="line-through text-gray-500 text-[10px] whitespace-nowrap">De R$ 279,90</span>
+                                    <span class="text-[9px] font-semibold text-emerald-400/90 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded whitespace-nowrap shrink-0 flex items-center gap-1"><i class="ph-bold ph-lightning"></i> Entrega Imediata</span>
                                 </div>
                             </div>
                             <div class="flex items-center justify-between pt-2 border-t border-white/5">
                                 <div>
                                     <p class="text-[10px] text-gray-400 uppercase">Apenas</p>
-                                    <p class="text-base font-black text-primary">R$ 89,90</p>
+                                    <p class="text-base font-black text-primary">R$ 49,90</p>
                                 </div>
                                 <span class="bg-primary/20 text-primary p-2 rounded-xl text-sm"><i class="ph-bold ph-shopping-cart-simple"></i></span>
                             </div>
                         </div>
 
-                        <!-- Card 3: Resident Evil 9 -->
-                        <div class="glass-card rounded-2xl p-3.5 card-interactive flex flex-col justify-between" onclick="openGameModal('Resident Evil 9 Apocalypse', 119.90, 'https://images.unsplash.com/photo-1538481199005-ce711f50125a?q=80&w=600')" data-category="terror" data-name="Resident Evil 9">
+                        <!-- Card 3: Muse AI -->
+                        <div class="glass-card rounded-2xl p-3.5 card-interactive flex flex-col justify-between" onclick="openGameModalById('prod-muse-ai')" data-category="Edição video" data-name="Muse AI (1 Bilhão de Tokens - Criação & Armazenamento de Vídeo)">
                             <div>
-                                <div class="relative rounded-xl overflow-hidden mb-3 aspect-[4/3]">
-                                    <span class="absolute top-2 left-2 bg-secondary/80 text-white text-[10px] font-black px-2 py-0.5 rounded shadow">NOVO</span>
-                                    <img src="https://images.unsplash.com/photo-1538481199005-ce711f50125a?q=80&w=600" class="w-full h-full object-cover">
+                                <div class="relative rounded-xl overflow-hidden mb-3 aspect-[4/3] bg-black/60">
+                                    <span class="absolute top-2 left-2 bg-cyan-600/80 text-white text-[10px] font-black px-2 py-0.5 rounded shadow">NOVO</span>
+                                    <span class="absolute top-2 right-2 bg-emerald-500 text-black text-[10px] font-black px-1.5 py-0.5 rounded shadow">-60%</span>
+                                    <img src="https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?q=80&w=600" class="w-full h-full object-cover">
                                 </div>
-                                <h3 class="font-extrabold text-sm text-white mb-1 truncate">Resident Evil 9</h3>
-                                <div class="flex items-center gap-2 text-xs text-gray-400 mb-2">
-                                    <span class="line-through text-gray-500">R$ 249,90</span>
-                                    <span class="text-emerald-400 font-bold bg-emerald-500/10 px-1.5 py-0.5 rounded">-52%</span>
+                                <h3 class="font-extrabold text-sm text-white mb-1 truncate">Muse AI (1 Bilhão Tokens)</h3>
+                                <div class="flex items-center justify-between gap-1 mb-2 min-h-[18px]">
+                                    <span class="line-through text-gray-500 text-[10px] whitespace-nowrap">De R$ 149,90</span>
+                                    <span class="text-[9px] font-semibold text-emerald-400/90 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded whitespace-nowrap shrink-0 flex items-center gap-1"><i class="ph-bold ph-lightning"></i> Entrega Imediata</span>
                                 </div>
                             </div>
                             <div class="flex items-center justify-between pt-2 border-t border-white/5">
                                 <div>
                                     <p class="text-[10px] text-gray-400 uppercase">Apenas</p>
-                                    <p class="text-base font-black text-primary">R$ 119,90</p>
+                                    <p class="text-base font-black text-primary">R$ 59,90</p>
                                 </div>
                                 <span class="bg-primary/20 text-primary p-2 rounded-xl text-sm"><i class="ph-bold ph-shopping-cart-simple"></i></span>
                             </div>
                         </div>
 
-                        <!-- Card 4: Need for Speed Underground Remake -->
-                        <div class="glass-card rounded-2xl p-3.5 card-interactive flex flex-col justify-between" onclick="openGameModal('Forza Horizon 5 Premium Edition', 94.90, 'https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=600')" data-category="corrida" data-name="Forza Horizon 5">
+                        <!-- Card 4: Spotify Premium -->
+                        <div class="glass-card rounded-2xl p-3.5 card-interactive flex flex-col justify-between" onclick="openGameModalById('prod-spotify')" data-category="streaming" data-name="Spotify Premium (3 Meses Sem Anúncios)">
                             <div>
-                                <div class="relative rounded-xl overflow-hidden mb-3 aspect-[4/3]">
-                                    <span class="absolute top-2 left-2 bg-cyan-600/80 text-white text-[10px] font-black px-2 py-0.5 rounded shadow">TOP RATED</span>
-                                    <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=600" class="w-full h-full object-cover">
+                                <div class="relative rounded-xl overflow-hidden mb-3 aspect-[4/3] bg-black/60">
+                                    <span class="absolute top-2 left-2 bg-emerald-600/90 text-white text-[10px] font-black px-2 py-0.5 rounded shadow">TOP RATED</span>
+                                    <span class="absolute top-2 right-2 bg-emerald-500 text-black text-[10px] font-black px-1.5 py-0.5 rounded shadow">-62%</span>
+                                    <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=600" class="w-full h-full object-cover">
                                 </div>
-                                <h3 class="font-extrabold text-sm text-white mb-1 truncate">Forza Horizon 5</h3>
-                                <div class="flex items-center gap-2 text-xs text-gray-400 mb-2">
-                                    <span class="line-through text-gray-500">R$ 229,00</span>
-                                    <span class="text-emerald-400 font-bold bg-emerald-500/10 px-1.5 py-0.5 rounded">-58%</span>
+                                <h3 class="font-extrabold text-sm text-white mb-1 truncate">Spotify Premium 3 Meses</h3>
+                                <div class="flex items-center justify-between gap-1 mb-2 min-h-[18px]">
+                                    <span class="line-through text-gray-500 text-[10px] whitespace-nowrap">De R$ 65,70</span>
+                                    <span class="text-[9px] font-semibold text-emerald-400/90 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded whitespace-nowrap shrink-0 flex items-center gap-1"><i class="ph-bold ph-lightning"></i> Entrega Imediata</span>
                                 </div>
                             </div>
                             <div class="flex items-center justify-between pt-2 border-t border-white/5">
                                 <div>
                                     <p class="text-[10px] text-gray-400 uppercase">Apenas</p>
-                                    <p class="text-base font-black text-primary">R$ 94,90</p>
+                                    <p class="text-base font-black text-primary">R$ 24,90</p>
                                 </div>
                                 <span class="bg-primary/20 text-primary p-2 rounded-xl text-sm"><i class="ph-bold ph-shopping-cart-simple"></i></span>
                             </div>
@@ -1168,7 +1172,7 @@
             infiniteUrl: "https://checkout.infinitepay.io/inchk_wbuyHsivNKGwk1pQGRI1QSkfmkiH-5s_eeotrmmFfQE",
             gameName: "Google AI Pro (Gemini Advanced 1.5 Pro + 2TB Nuvem)",
             gamePrice: 18.00,
-            gameImg: "https://images.unsplash.com/photo-1677442136019-21780efad99a?q=80&w=600",
+            gameImg: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=600",
             bumpName: "Acesso VIP + Duolingo Super Anual",
             bumpPrice: 29.90,
             promoWord: "CYBER10",
@@ -1618,12 +1622,167 @@
             });
         }
 
+        // ================= BASE DE DADOS PADRÃO (PRODUTOS OFICIAIS CYBERTRON) =================
+        const defaultDatabase = {
+            gateway: {
+                handle: "ruben_alisson",
+                fallbackUrl: "https://checkout.infinitepay.io/inchk_wbuyHsivNKGwk1pQGRI1QSkfmkiH-5s_eeotrmmFfQE"
+            },
+            officialLinks: {
+                whatsapp: "https://wa.me/558598243142",
+                vipGroup: "https://chat.whatsapp.com/GQxe7oL12ud2TABWfWgPJz?s=cl&p=a&mlu=4&ilr=4",
+                instagram: "https://www.instagram.com/cybertron_ads/"
+            },
+            orderBump: {
+                enabled: true,
+                productId: "prod-duolingo",
+                title: "Acesso VIP + Duolingo Super Anual",
+                description: "Garanta suporte prioritário, ferramentas adicionais e atualizações contínuas",
+                originalPrice: 35.00,
+                promoPrice: 29.75,
+                discountPercent: 15
+            },
+            coupons: [
+                { code: "CYBER10", discountPercent: 10 },
+                { code: "CYBER15", discountPercent: 15 }
+            ],
+            items: [
+                {
+                    id: "prod-google-ai",
+                    name: "Google AI Pro (Gemini Advanced 1.5 Pro + 2TB Nuvem)",
+                    oldPrice: 96.90,
+                    price: 18.00,
+                    category: "Inteligencia artificial",
+                    img: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=600",
+                    specs: "• Acesso oficial com Gemini 1.5 Pro e janela de 1 milhão de tokens\n• 2TB de armazenamento em nuvem no Google One (Drive, Gmail, Fotos)\n• Integração direta com Docs, Sheets e Gmail para criação de conteúdo\n• Entrega imediata vinculada ao seu e-mail pessoal",
+                    isFeatured: true,
+                    orderBump: {
+                        enabled: true,
+                        productId: "prod-muse-ai",
+                        title: "Muse AI (1 Bilhão de Tokens)",
+                        description: "Adicione IA para criação e transcrição rápida de vídeos em 4K",
+                        originalPrice: 149.90,
+                        promoPrice: 29.90,
+                        discountTag: "80% OFF"
+                    },
+                    keys: [
+                        "https://one.google.com/redeem/ai-pro-99210",
+                        "GOOGLE-AI-PRO-KEY-88219-FAST",
+                        "https://google.com/ai/activation/44012"
+                    ]
+                },
+                {
+                    id: "prod-duolingo",
+                    name: "Duolingo Super (12 Meses / Aprender Inglês)",
+                    oldPrice: 279.90,
+                    price: 49.90,
+                    category: "Inteligencia artificial",
+                    img: "https://images.unsplash.com/photo-1546410531-bb4caa6b424d?q=80&w=600",
+                    specs: "• Licença oficial anual (12 meses) de Duolingo Super\n• Vidas ilimitadas para aprender sem interrupções\n• Sem nenhum anúncio ou propaganda\n• Prática personalizada de erros e testes ilimitados",
+                    isFeatured: false,
+                    orderBump: {
+                        enabled: true,
+                        productId: "prod-google-ai",
+                        title: "Google AI Pro (Gemini + 2TB)",
+                        description: "Potencialize seus estudos com 2TB no Drive e inteligência avançada",
+                        originalPrice: 96.90,
+                        promoPrice: 15.00,
+                        discountTag: "84% OFF"
+                    },
+                    keys: [
+                        "https://duolingo.com/redeem/SUPER-12M-88391",
+                        "DUO-SUPER-ANNUAL-VIP-99201",
+                        "https://duolingo.com/gift/annual-33910"
+                    ]
+                },
+                {
+                    id: "prod-muse-ai",
+                    name: "Muse AI (1 Bilhão de Tokens - Criação & Armazenamento de Vídeo)",
+                    oldPrice: 149.90,
+                    price: 59.90,
+                    category: "Edição video",
+                    img: "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?q=80&w=600",
+                    specs: "• 1 Bilhão de tokens de IA para processamento e transcrição de vídeo\n• Busca inteligente por fala e texto dentro dos vídeos\n• Armazenamento na nuvem e streaming em até 4K\n• Player ultrarrápido sem anúncios incorporável",
+                    isFeatured: false,
+                    orderBump: {
+                        enabled: true,
+                        productId: "prod-google-ai",
+                        title: "Google AI Pro (Gemini + 2TB)",
+                        description: "2TB de espaço em nuvem ideal para salvar seus vídeos em 4K",
+                        originalPrice: 96.90,
+                        promoPrice: 15.00,
+                        discountTag: "84% OFF"
+                    },
+                    keys: [
+                        "MUSE-AI-1B-TOKENS-KEY-77192",
+                        "https://muse.ai/workspace/redeem/99104",
+                        "MUSE-AI-VIP-STORAGE-88390"
+                    ]
+                },
+                {
+                    id: "prod-spotify",
+                    name: "Spotify Premium (3 Meses Sem Anúncios)",
+                    oldPrice: 65.70,
+                    price: 24.90,
+                    category: "streaming",
+                    img: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=600",
+                    specs: "• 3 Meses de assinatura Spotify Premium oficial\n• Músicas sem anúncios com máxima qualidade de áudio (320kbps)\n• Modo offline para ouvir suas músicas e podcasts favoritos\n• Pule faixas sem limites",
+                    isFeatured: false,
+                    orderBump: {
+                        enabled: true,
+                        productId: "prod-youtube",
+                        title: "YouTube Premium (3 Meses)",
+                        description: "Vídeos sem anúncios e reprodução em segundo plano com super desconto",
+                        originalPrice: 74.70,
+                        promoPrice: 19.90,
+                        discountTag: "73% OFF"
+                    },
+                    keys: [
+                        "https://spotify.com/redeem/3m-vip-9912",
+                        "SPOTIFY-PREMIUM-3M-PIN-88301"
+                    ]
+                },
+                {
+                    id: "prod-youtube",
+                    name: "YouTube Premium (3 Meses Vídeo & Música Sem Anúncios)",
+                    oldPrice: 74.70,
+                    price: 27.90,
+                    category: "streaming",
+                    img: "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?q=80&w=600",
+                    specs: "• 3 Meses de YouTube Premium + YouTube Music inclusos\n• Reprodução de vídeos sem nenhum anúncio\n• Reprodução em segundo plano no celular com tela bloqueada\n• Downloads para assistir vídeos e ouvir músicas offline",
+                    isFeatured: false,
+                    orderBump: {
+                        enabled: true,
+                        productId: "prod-spotify",
+                        title: "Spotify Premium (3 Meses)",
+                        description: "Músicas e podcasts ilimitados com máxima qualidade sonora",
+                        originalPrice: 65.70,
+                        promoPrice: 19.90,
+                        discountTag: "70% OFF"
+                    },
+                    keys: [
+                        "https://youtube.com/redeem/yt-premium-3m-9921",
+                        "YT-PREMIUM-3M-ACTIVATION-44120"
+                    ]
+                }
+            ]
+        };
+
         // ================= SINCRONIZAÇÃO DA LOJA E CANAIS OFICIAIS =================
         function syncStoreWithDatabase() {
             try {
+                let db = null;
                 const dbRaw = localStorage.getItem('gplay_store_database');
                 if (dbRaw) {
-                    const db = JSON.parse(dbRaw);
+                    try { db = JSON.parse(dbRaw); } catch(e) {}
+                }
+
+                if (!db || !db.items || db.items.length === 0) {
+                    db = defaultDatabase;
+                    try { localStorage.setItem('gplay_store_database', JSON.stringify(defaultDatabase)); } catch(e) {}
+                }
+
+                if (db) {
                     // Sincroniza canais oficiais caso configurados no painel admin
                     if (db.officialLinks) {
                         const waLink = document.getElementById('link-whatsapp-support');
@@ -1708,7 +1867,9 @@
                 }
             } catch(e) {}
 
-            if (items.length === 0) return; // Mantém estáticos se não houver banco
+            if (items.length === 0) {
+                items = defaultDatabase.items;
+            }
             container.innerHTML = '';
 
             items.forEach((item, index) => {
