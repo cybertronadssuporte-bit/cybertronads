@@ -14,4 +14,7 @@ yarn-debug.log*
 .vscode/
 .idea/
 *.sublime-project
-*.sublime-workspace
+# Dependências
+node_modules/
+package-lock.json
+google_crop_test.png
