@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutoriais & Central de Ativação em Vídeo | CYBERTRON PERFORMANCE MARKETING</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: '#040914',
+                        surface: 'rgba(255,255,255,0.03)',
+                        primary: '#00c3ff',
+                        secondary: '#0066ff',
+                        accentCyan: '#00f0ff',
+                        darkCard: '#081226',
+                        metallic: '#c7d9ec'
+                    },
+                    fontFamily: { 
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        rajdhani: ['Rajdhani', 'sans-serif'],
+                        sans: ['Rajdhani', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@500;600;700;800;900&family=Rajdhani:wght@500;600;700&family=Outfit:wght@400;600;700&display=swap');
+        * { box-sizing: border-box; }
+        body { 
+            background-color: #040914; 
+            color: #f3f4f6; 
+            font-family: 'Rajdhani', sans-serif;
+            min-height: 100vh;
+        }
+        .glass { 
+            background: rgba(8, 18, 38, 0.75); 
+            backdrop-filter: blur(20px); 
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 195, 255, 0.12); 
+        }
+        .glass-card {
+            background: linear-gradient(135deg, rgba(8, 18, 38, 0.85) 0%, rgba(4, 9, 20, 0.95) 100%);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 195, 255, 0.15);
+        }
+        .glow-ambient {
+            position: fixed; pointer-events: none; z-index: 0; border-radius: 50%; filter: blur(140px);
+        }
+        .glow-cyan {
+            top: -10%; left: 20%; width: 50vw; height: 50vh;
+            background: radial-gradient(circle, rgba(0, 240, 255, 0.15) 0%, transparent 70%);
+        }
+        .glow-blue {
+            bottom: -10%; right: 15%; width: 50vw; height: 50vh;
+            background: radial-gradient(circle, rgba(0, 102, 255, 0.18) 0%, transparent 70%);
+        }
+    </style>
+</head>
+<body class="relative flex flex-col min-h-screen">
+    <div class="glow-ambient glow-cyan"></div>
+    <div class="glow-ambient glow-blue"></div>
+
+    <!-- HEADER / NAVEGAÇÃO SUPERIOR -->
+    <header class="glass sticky top-0 z-40 px-6 py-4 border-b border-white/10 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <a href="index.html" class="flex items-center gap-3 group">
+                <div class="relative w-11 h-11 rounded-xl overflow-hidden shrink-0 shadow-lg shadow-cyan-500/30 group-hover:scale-105 transition border border-cyan-400/40 bg-black/40">
+                    <img src="logo.png" alt="Cybertron Logo" class="w-full h-full object-cover">
+                </div>
+                <div>
+                    <span class="font-orbitron font-black text-sm tracking-wide text-white block leading-tight">CYBERTRON</span>
+                    <span class="block text-[8px] tracking-[0.1em] text-cyan-400 font-bold uppercase whitespace-nowrap">PERFORMANCE MARKETING • TUTORIAIS</span>
+                </div>
+            </a>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <a href="index.html" class="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white text-xs font-bold transition flex items-center gap-1.5">
+                <i class="ph-bold ph-arrow-left"></i> Voltar à Loja
+            </a>
+            <a href="https://www.instagram.com/cybertron_ads/" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-xl bg-pink-500/10 hover:bg-pink-500/20 text-pink-400 border border-pink-500/30 text-xs font-bold transition flex items-center gap-1.5">
+                <i class="ph-fill ph-instagram-logo text-base"></i> Instagram
+            </a>
+            <a href="https://wa.me/558598243142" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold transition flex items-center gap-1.5">
+                <i class="ph-bold ph-whatsapp-logo text-base"></i> Suporte WhatsApp
+            </a>
+        </div>
+    </header>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="flex-1 p-6 md:p-10 max-w-7xl w-full mx-auto space-y-10 relative z-10">
+        
+        <!-- HERO BANNER -->
+        <div class="text-center max-w-3xl mx-auto space-y-3">
+            <span class="inline-flex items-center gap-1.5 text-xs font-black bg-cyan-500/10 text-accentCyan border border-cyan-500/30 px-3.5 py-1 rounded-full uppercase tracking-widest">
+                <i class="ph-fill ph-play-circle text-sm"></i> Passo a Passo Oficial
+            </span>
+            <h1 class="text-3xl md:text-5xl font-black text-white tracking-tight">
+                Como Resgatar & Ativar Sua Chave
+            </h1>
+            <p class="text-sm md:text-base text-gray-400 leading-relaxed">
+                Assista aos tutoriais completos abaixo preparados pela nossa equipe para ativar seu jogo na Steam, Epic Games, Rockstar ou Xbox sem complicação.
+            </p>
+        </div>
+
+        <!-- GRADE DE VÍDEOS DE TUTORIAIS CADASTRADOS -->
+        <div id="tutorials-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Injetado dinamicamente via JavaScript -->
+        </div>
+
+        <!-- SEÇÃO DE SUPORTE DIRETO -->
+        <div class="glass-card p-8 rounded-3xl border border-white/10 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="flex items-center gap-4">
+                <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-3xl shrink-0 border border-emerald-500/20">
+                    <i class="ph-fill ph-headset"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-black text-white">Teve qualquer dificuldade na ativação?</h3>
+                    <p class="text-xs text-gray-400">Nossa equipe está disponível no WhatsApp para te ajudar passo a passo na chamada ou chat.</p>
+                </div>
+            </div>
+            <a href="https://wa.me/558598243142" target="_blank" rel="noopener noreferrer" class="bg-gradient-to-r from-emerald-500 to-green-600 hover:opacity-90 text-white px-6 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-wider transition flex items-center gap-2 shadow-lg shadow-emerald-500/20 shrink-0">
+                <i class="ph-bold ph-whatsapp-logo text-lg"></i> Chamar no WhatsApp (55 85 9824-3142)
+            </a>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="p-6 border-t border-white/5 text-center text-xs text-cyan-400/60 font-orbitron tracking-widest relative z-10">
+        <p>CYBERTRON PERFORMANCE MARKETING • Central de Tutoriais e Ativação Instantânea</p>
+    </footer>
+
+    <script>
+        const STORE_KEY = 'gplay_store_database';
+
+        const defaultVideos = [
+            {
+                id: "v1",
+                title: "Como Ativar Chaves e Licenças na Steam (Passo a Passo)",
+                platform: "Steam",
+                duration: "2:45",
+                videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+                description: "Aprenda a resgatar seu código na Steam, verificar na biblioteca e iniciar o download instantaneamente."
+            },
+            {
+                id: "v2",
+                title: "Tutorial de Resgate na Epic Games Store",
+                platform: "Epic Games",
+                duration: "3:10",
+                videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+                description: "Veja como acessar o launcher da Epic Games, clicar em Resgatar Código e vincular à sua conta vitalícia."
+            },
+            {
+                id: "v3",
+                title: "Ativação no Rockstar Games Launcher (GTA VI / GTA V)",
+                platform: "Rockstar Games",
+                duration: "4:05",
+                videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+                description: "Tutorial completo de resgate de chave de ativação Rockstar com download em alta velocidade."
+            }
+        ];
+
+        const IDB_NAME = 'CybertronMediaDB';
+        const IDB_VERSION = 1;
+        const IDB_STORE = 'tutorials_videos';
+
+        function openMediaDB() {
+            return new Promise((resolve) => {
+                if (!window.indexedDB) {
+                    resolve(null);
+                    return;
+                }
+                const req = indexedDB.open(IDB_NAME, IDB_VERSION);
+                req.onupgradeneeded = (e) => {
+                    const db = e.target.result;
+                    if (!db.objectStoreNames.contains(IDB_STORE)) {
+                        db.createObjectStore(IDB_STORE, { keyPath: 'id' });
+                    }
+                };
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => resolve(null);
+            });
+        }
+
+        async function getVideoFromIndexedDB(id) {
+            try {
+                const db = await openMediaDB();
+                if (!db) return null;
+                return new Promise((resolve) => {
+                    const tx = db.transaction(IDB_STORE, 'readonly');
+                    const store = tx.objectStore(IDB_STORE);
+                    const req = store.get(id);
+                    req.onsuccess = () => resolve(req.result ? req.result.data : null);
+                    req.onerror = () => resolve(null);
+                });
+            } catch(e) {
+                return null;
+            }
+        }
+
+        function getVideos() {
+            try {
+                const raw = localStorage.getItem(STORE_KEY);
+                if (raw) {
+                    const db = JSON.parse(raw);
+                    if (db.tutorials && db.tutorials.length > 0) return db.tutorials;
+                }
+            } catch (e) {
+                console.warn(e);
+            }
+            return defaultVideos;
+        }
+
+        function formatEmbedUrl(url) {
+            if (!url) return "";
+            if (url.includes('youtube.com/watch?v=') || url.includes('m.youtube.com/watch?v=')) {
+                const vidId = url.split('v=')[1]?.split('&')[0];
+                return `https://www.youtube.com/embed/${vidId}`;
+            }
+            if (url.includes('youtu.be/')) {
+                const vidId = url.split('youtu.be/')[1]?.split('?')[0];
+                return `https://www.youtube.com/embed/${vidId}`;
+            }
+            if (url.includes('youtube.com/shorts/')) {
+                const vidId = url.split('shorts/')[1]?.split('?')[0]?.split('/')[0];
+                return `https://www.youtube.com/embed/${vidId}`;
+            }
+            return url;
+        }
+
+        async function renderVideos() {
+            const container = document.getElementById('tutorials-grid');
+            if (!container) return;
+            const videos = getVideos();
+            container.innerHTML = '';
+
+            for (const v of videos) {
+                const isLocalVideo = v.videoType === 'file' || (v.videoUrl && (v.videoUrl.startsWith('indexeddb://') || v.videoUrl.startsWith('data:video') || v.videoUrl.endsWith('.mp4') || v.videoUrl.endsWith('.webm')));
+                const embedUrl = formatEmbedUrl(v.videoUrl);
+
+                let videoSource = v.videoUrl;
+                if (v.videoUrl && v.videoUrl.startsWith('indexeddb://')) {
+                    const id = v.videoUrl.replace('indexeddb://', '');
+                    const storedData = await getVideoFromIndexedDB(id);
+                    if (storedData) {
+                        if (storedData instanceof Blob || storedData instanceof File) {
+                            videoSource = URL.createObjectURL(storedData);
+                        } else {
+                            videoSource = storedData;
+                        }
+                    }
+                }
+
+                let videoMarkup = '';
+                if (isLocalVideo) {
+                    videoMarkup = `<video controls playsinline class="w-full h-full object-cover bg-black" src="${videoSource}"></video>`;
+                } else if (embedUrl.includes('youtube.com/embed/')) {
+                    videoMarkup = `<iframe src="${embedUrl}" class="w-full h-full border-0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+                } else {
+                    // Link de TikTok, Instagram ou plataforma externa
+                    videoMarkup = `
+                        <div class="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-black via-[#081226] to-[#0d1f3d] p-4 text-center">
+                            <i class="ph-fill ph-video text-4xl text-cyan-400 mb-2"></i>
+                            <p class="text-xs text-white font-bold mb-3">Vídeo disponível na plataforma externa (${v.platform || 'Online'})</p>
+                            <a href="${v.videoUrl}" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 text-xs font-bold transition flex items-center gap-1.5 shadow-lg shadow-cyan-500/10">
+                                <i class="ph-bold ph-arrow-square-out"></i> Abrir Vídeo no ${v.platform || 'Link Oficial'}
+                            </a>
+                        </div>
+                    `;
+                }
+
+                container.innerHTML += `
+                    <div class="glass-card rounded-3xl overflow-hidden border border-white/5 flex flex-col justify-between group hover:border-cyan-500/40 transition duration-300">
+                        <div>
+                            <div class="relative w-full aspect-video bg-black/80">
+                                ${videoMarkup}
+                            </div>
+                            <div class="p-5">
+                                <div class="flex items-center justify-between gap-2 mb-2">
+                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 uppercase">
+                                        ${v.platform || "Geral"}
+                                    </span>
+                                    <span class="text-xs text-gray-500 font-mono">${v.duration || "Vídeo Guia"}</span>
+                                </div>
+                                <h3 class="font-bold text-white text-base leading-snug mb-2 group-hover:text-cyan-400 transition">${v.title}</h3>
+                                <p class="text-xs text-gray-400 leading-relaxed">${v.description || "Assista ao passo a passo para resgatar sua licença sem erro."}</p>
+                            </div>
+                        </div>
+
+                        <div class="p-5 pt-0">
+                            <a href="https://wa.me/558598243142" target="_blank" class="w-full py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white text-xs font-bold transition flex items-center justify-center gap-2 border border-white/10">
+                                <i class="ph-bold ph-question"></i> Dúvida neste vídeo? Chamar Suporte
+                            </a>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        renderVideos();
+    </script>
+</body>
+</html>

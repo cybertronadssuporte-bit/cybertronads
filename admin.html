@@ -1,0 +1,3045 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Controle Administrativo | CYBERTRON PERFORMANCE MARKETING</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: '#040914',
+                        surface: 'rgba(255,255,255,0.03)',
+                        primary: '#00c3ff',
+                        secondary: '#0066ff',
+                        accentCyan: '#00f0ff',
+                        darkCard: '#081226',
+                        metallic: '#c7d9ec'
+                    },
+                    fontFamily: { 
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        rajdhani: ['Rajdhani', 'sans-serif'],
+                        sans: ['Rajdhani', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@500;600;700;800;900&family=Rajdhani:wght@500;600;700&family=Outfit:wght@400;600;700&display=swap');
+        * { box-sizing: border-box; }
+        body { 
+            background-color: #040914; 
+            color: #f3f4f6; 
+            font-family: 'Rajdhani', sans-serif;
+            min-height: 100vh;
+        }
+        .glass { 
+            background: rgba(8, 18, 38, 0.75); 
+            backdrop-filter: blur(20px); 
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 195, 255, 0.12); 
+        }
+        .glass-card {
+            background: linear-gradient(135deg, rgba(8, 18, 38, 0.85) 0%, rgba(4, 9, 20, 0.95) 100%);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 195, 255, 0.15);
+        }
+        .glow-ambient {
+            position: fixed; pointer-events: none; z-index: 0; border-radius: 50%; filter: blur(140px);
+        }
+        .glow-cyan {
+            top: -10%; left: 15%; width: 50vw; height: 50vh;
+            background: radial-gradient(circle, rgba(0, 240, 255, 0.15) 0%, transparent 70%);
+        }
+        .glow-blue {
+            bottom: -10%; right: 10%; width: 45vw; height: 45vh;
+            background: radial-gradient(circle, rgba(0, 102, 255, 0.18) 0%, transparent 70%);
+        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(4, 9, 20, 0.5); }
+        ::-webkit-scrollbar-thumb { background: rgba(0, 195, 255, 0.3); border-radius: 999px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(0, 240, 255, 0.6); }
+    </style>
+</head>
+<body class="relative flex flex-col min-h-screen">
+    <div class="glow-ambient glow-cyan"></div>
+    <div class="glow-ambient glow-blue"></div>
+
+    <!-- TELA DE BLOQUEIO DE LOGIN / CHAVE MESTRE -->
+    <div id="auth-screen" class="fixed inset-0 z-50 bg-[#040914] flex items-center justify-center p-4">
+        <div class="glass-card max-w-md w-full rounded-3xl p-8 border border-cyan-500/30 text-center shadow-[0_0_60px_rgba(0,195,255,0.2)]">
+            <div class="w-20 h-20 mx-auto mb-4 p-1 rounded-2xl bg-black/40 border border-cyan-500/30 shadow-[0_0_20px_rgba(0,195,255,0.3)]">
+                <img src="logo.png" alt="Cybertron" class="w-full h-full object-contain">
+            </div>
+            <h1 class="text-xl font-black font-orbitron tracking-wider text-white mb-1 uppercase">Cybertron Admin</h1>
+            <p class="text-xs text-cyan-400/80 font-rajdhani tracking-widest uppercase mb-6">Acesso restrito à equipe CYBERTRON PERFORMANCE MARKETING</p>
+            
+            <form onsubmit="handleLogin(event)" class="space-y-4">
+                <div class="relative">
+                    <input type="password" id="auth-input" placeholder="Digite sua senha de acesso" required class="w-full bg-black/60 border border-white/10 rounded-2xl py-3.5 pl-4 pr-11 text-center text-white text-sm focus:outline-none focus:border-cyan-400 transition">
+                    <button type="button" onclick="togglePasswordVisibility()" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-cyan-400 transition" title="Ver / Ocultar Senha">
+                        <i id="auth-eye-icon" class="ph-bold ph-eye text-lg"></i>
+                    </button>
+                </div>
+                <div id="auth-error-msg" class="hidden text-xs text-red-400 font-bold bg-red-500/10 border border-red-500/20 rounded-xl p-2.5 text-center">
+                    ⚠️ Senha incorreta. Verifique se digitou corretamente.
+                </div>
+                <button type="submit" id="btn-login-submit" class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-orbitron font-bold py-3.5 rounded-2xl text-xs uppercase tracking-widest transition shadow-lg shadow-cyan-500/30">
+                    Desbloquear Painel
+                </button>
+            </form>
+            <div class="mt-6 pt-4 border-t border-white/5 flex justify-between items-center text-[11px] text-gray-500">
+                <a href="index.html" class="hover:text-cyan-400 transition flex items-center gap-1">
+                    <i class="ph-bold ph-arrow-left"></i> Voltar à Loja
+                </a>
+                <span class="font-mono text-cyan-400/50">Segurança SHA-256</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- CORPO PRINCIPAL DO PAINEL -->
+    <div id="admin-dashboard" class="relative z-10 flex-1 flex flex-col hidden">
+        <!-- BARRA SUPERIOR -->
+        <header class="glass sticky top-0 z-40 px-6 py-4 border-b border-white/10 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <img src="logo.png" alt="Cybertron Logo" class="w-10 h-10 object-contain drop-shadow-[0_0_10px_rgba(0,195,255,0.5)]">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h2 class="text-base font-black font-orbitron tracking-wider text-white leading-tight uppercase">CYBERTRON</h2>
+                        <span class="text-[10px] font-rajdhani font-bold px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 uppercase tracking-wider">Management Studio</span>
+                    </div>
+                    <p class="text-[11px] text-gray-400">Gestão de Catálogo, Estoque de Chaves/Links Únicos e Gateway InfinitePay</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <a href="index.html" target="_blank" class="px-4 py-2 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 text-xs font-bold transition flex items-center gap-1.5 font-orbitron">
+                    <i class="ph-bold ph-arrow-square-out text-sm text-cyan-400"></i> Ver Loja ao Vivo
+                </a>
+                <button onclick="logout()" class="px-4 py-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 text-xs font-bold transition flex items-center gap-1.5">
+                    <i class="ph-bold ph-sign-out"></i> Sair
+                </button>
+            </div>
+        </header>
+
+        <!-- NAVEGAÇÃO DE ABAS DO ADMIN -->
+        <div class="px-6 py-3 border-b border-white/5 bg-black/30 flex gap-2 overflow-x-auto">
+            <button onclick="switchTab('catalog')" id="tab-btn-catalog" class="admin-tab active px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2">
+                <i class="ph-fill ph-package"></i> Catálogo & Estoque de Links/Chaves
+            </button>
+            <button onclick="switchTab('coupons')" id="tab-btn-coupons" class="admin-tab px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 text-gray-400 hover:text-white">
+                <i class="ph-fill ph-tag"></i> Cupons Promocionais
+            </button>
+            <button onclick="switchTab('tutorials')" id="tab-btn-tutorials" class="admin-tab px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 text-gray-400 hover:text-white">
+                <i class="ph-fill ph-video"></i> Tutoriais em Vídeo
+            </button>
+            <button onclick="switchTab('gateway')" id="tab-btn-gateway" class="admin-tab px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 text-gray-400 hover:text-white">
+                <i class="ph-fill ph-credit-card"></i> Configurações InfinitePay
+            </button>
+            <button onclick="switchTab('links')" id="tab-btn-links" class="admin-tab px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 text-gray-400 hover:text-white">
+                <i class="ph-fill ph-link-simple"></i> Abastecer Links & Canais
+            </button>
+            <button onclick="switchTab('feedbacks')" id="tab-btn-feedbacks" class="admin-tab px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 text-gray-400 hover:text-white">
+                <i class="ph-fill ph-images"></i> Comprovantes / Provas Sociais
+            </button>
+            <button onclick="switchTab('orders')" id="tab-btn-orders" class="admin-tab px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 text-gray-400 hover:text-white">
+                <i class="ph-fill ph-receipt"></i> Histórico de Vendas & Entregas
+            </button>
+            <button onclick="switchTab('upsell')" id="tab-btn-upsell" class="admin-tab px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 text-orange-400/90 hover:text-orange-300">
+                <i class="ph-fill ph-fire text-orange-400"></i> Levar Também (Upsell)
+            </button>
+        </div>
+
+        <!-- CONTEÚDO DAS ABAS -->
+        <main class="flex-1 p-6 max-w-7xl w-full mx-auto space-y-6">
+            
+            <!-- ================= ABA 1: CATÁLOGO & ESTOQUE DE LINKS DE USO ÚNICO ================= -->
+            <section id="section-catalog" class="space-y-6">
+                <div class="flex justify-between items-center flex-wrap gap-4">
+                    <div>
+                        <h3 class="text-xl font-black text-white flex items-center gap-2">
+                            <i class="ph-fill ph-package text-primary"></i> Itens da Loja & Licenças / Chaves
+                        </h3>
+                        <p class="text-xs text-gray-400 mt-0.5">
+                            Cada link ou código cadastrado é consumido apenas uma vez por cliente e nunca se repete.
+                        </p>
+                    </div>
+                    <button onclick="openCreateGameModal()" class="bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-lg shadow-primary/20">
+                        <i class="ph-bold ph-plus-circle text-base"></i> Adicionar Novo Produto
+                    </button>
+                </div>
+
+                <!-- CARDS DE PRODUTOS CADASTRADOS -->
+                <div id="catalog-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                    <!-- Gerado via JavaScript -->
+                </div>
+            </section>
+
+            <!-- ================= ABA 2: GESTÃO DE CUPONS ================= -->
+            <section id="section-coupons" class="space-y-6 hidden">
+                <div class="flex justify-between items-center flex-wrap gap-4">
+                    <div>
+                        <h3 class="text-xl font-black text-white flex items-center gap-2">
+                            <i class="ph-fill ph-tag text-emerald-400"></i> Cupons de Desconto Ativos
+                        </h3>
+                        <p class="text-xs text-gray-400 mt-0.5">Crie códigos promocionais para impulsionar suas campanhas e valide o funcionamento.</p>
+                    </div>
+                    <button onclick="openCreateCouponModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-lg shadow-emerald-600/20">
+                        <i class="ph-bold ph-plus-circle text-base"></i> Criar Novo Cupom
+                    </button>
+                </div>
+
+                <!-- ÁREA DE VALIDAÇÃO / TESTE DE CUPOM EM TEMPO REAL -->
+                <div class="glass-card p-5 rounded-2xl border border-emerald-500/20 bg-gradient-to-r from-emerald-950/20 to-black/40">
+                    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                        <div class="space-y-1">
+                            <h4 class="text-sm font-black text-white flex items-center gap-2">
+                                <i class="ph-bold ph-shield-check text-emerald-400"></i> Validador & Testador de Cupons
+                            </h4>
+                            <p class="text-xs text-gray-400">Digite qualquer código para testar e validar instantaneamente se ele está ativo na loja e qual desconto será concedido.</p>
+                        </div>
+                        <div class="flex items-center gap-2 w-full md:w-auto">
+                            <input type="text" id="admin-test-coupon-input" placeholder="Ex: CYBER10" class="bg-black/70 border border-white/10 rounded-xl px-3 py-2 text-xs font-mono uppercase text-white focus:outline-none focus:border-emerald-400 w-full md:w-48">
+                            <button onclick="adminTestCoupon()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shrink-0">
+                                <i class="ph-bold ph-check-circle"></i> Testar & Validar
+                            </button>
+                        </div>
+                    </div>
+                    <div id="admin-test-coupon-result" class="mt-3 hidden"></div>
+                </div>
+
+                <div id="coupons-list" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Gerado via JavaScript -->
+                </div>
+            </section>
+
+            <!-- ================= ABA 3: CONFIGURAÇÕES DA INFINITEPAY ================= -->
+            <section id="section-gateway" class="space-y-6 hidden">
+                <div class="glass-card p-6 md:p-8 rounded-3xl border border-cyan-500/30">
+                    <h3 class="text-xl font-black text-white flex items-center gap-2.5 mb-2">
+                        <i class="ph-fill ph-credit-card text-cyan-400"></i> Gateway & Checkout InfinitePay
+                    </h3>
+                    <p class="text-xs text-gray-400 mb-6">
+                        Configurações da sua conta para recebimento direto de Pix instantâneo e Cartão de Crédito.
+                    </p>
+
+                    <form onsubmit="saveGatewaySettings(event)" class="space-y-5 max-w-2xl">
+                        <div>
+                            <label class="text-xs font-bold text-gray-300 block mb-1">Sua InfiniteTag (Identificador da Conta)</label>
+                            <input type="text" id="gw-handle" class="w-full bg-black/60 border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-cyan-400 transition" placeholder="Ex: ruben_alisson" required>
+                            <p class="text-[11px] text-gray-500 mt-1">Este identificador é utilizado na chamada da API da InfinitePay para vincular os pagamentos à sua carteira.</p>
+                        </div>
+
+                        <div>
+                            <label class="text-xs font-bold text-gray-300 block mb-1">Link de Pagamento Direto / Fallback (Opcional)</label>
+                            <input type="text" id="gw-fallback" class="w-full bg-black/60 border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-cyan-400 transition" placeholder="https://checkout.infinitepay.io/inchk_...">
+                            <p class="text-[11px] text-gray-500 mt-1">Utilizado caso ocorra algum bloqueio temporário de rede na chamada direta da API.</p>
+                        </div>
+
+                        <div class="pt-2">
+                            <button type="submit" class="bg-cyan-500 hover:bg-cyan-400 text-black font-extrabold px-6 py-3 rounded-xl text-xs uppercase tracking-wider transition">
+                                Salvar Configurações da InfinitePay
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- ================= ABA: ABASTECER LINKS & CANAIS OFICIAIS ================= -->
+            <section id="section-links" class="space-y-6 hidden">
+                <div class="glass-card p-6 md:p-8 rounded-3xl border border-cyan-500/30">
+                    <h3 class="text-xl font-black text-white flex items-center gap-2.5 mb-2">
+                        <i class="ph-fill ph-link-simple text-cyan-400"></i> Abastecer Links Oficiais & Redes da Loja
+                    </h3>
+                    <p class="text-xs text-gray-400 mb-6">
+                        Atualize os links oficiais de atendimento, redes sociais e grupo VIP. Qualquer alteração aqui é refletida em tempo real na página da loja.
+                    </p>
+
+                    <form onsubmit="saveOfficialLinksSettings(event)" class="space-y-5 max-w-2xl">
+                        <div>
+                            <label class="text-xs font-bold text-gray-300 block mb-1">
+                                <i class="ph-fill ph-whatsapp-logo text-emerald-400 text-sm"></i> Link do Suporte WhatsApp
+                            </label>
+                            <input type="url" id="link-cfg-whatsapp" class="w-full bg-black/60 border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-cyan-400 transition" placeholder="https://wa.me/558598243142" required>
+                            <p class="text-[11px] text-gray-500 mt-1">Link direto para o seu WhatsApp de atendimento e pós-venda.</p>
+                        </div>
+
+                        <div>
+                            <label class="text-xs font-bold text-gray-300 block mb-1">
+                                <i class="ph-fill ph-users-three text-emerald-400 text-sm"></i> Link do Grupo VIP WhatsApp
+                            </label>
+                            <input type="url" id="link-cfg-vip" class="w-full bg-black/60 border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-cyan-400 transition" placeholder="https://chat.whatsapp.com/GQxe7oL12ud2TABWfWgPJz?s=cl&p=a&mlu=4&ilr=4" required>
+                            <p class="text-[11px] text-gray-500 mt-1">Link do convite do grupo VIP onde os clientes entram para receber promoções e códigos exclusivos.</p>
+                        </div>
+
+                        <div>
+                            <label class="text-xs font-bold text-gray-300 block mb-1">
+                                <i class="ph-fill ph-instagram-logo text-pink-400 text-sm"></i> Link do Instagram Oficial
+                            </label>
+                            <input type="url" id="link-cfg-instagram" class="w-full bg-black/60 border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-cyan-400 transition" placeholder="https://www.instagram.com/cybertron_ads/" required>
+                            <p class="text-[11px] text-gray-500 mt-1">Perfil oficial do Instagram da CYBERTRON.</p>
+                        </div>
+
+                        <div class="pt-2">
+                            <button type="submit" class="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-black font-extrabold px-6 py-3 rounded-xl text-xs uppercase tracking-wider transition shadow-lg shadow-emerald-500/20">
+                                Salvar & Publicar Links na Loja
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- ================= ABA: GESTÃO DE TUTORIAIS EM VÍDEO ================= -->
+            <section id="section-tutorials" class="space-y-6 hidden">
+                <div class="flex justify-between items-center flex-wrap gap-4">
+                    <div>
+                        <h3 class="text-xl font-black text-white flex items-center gap-2">
+                            <i class="ph-fill ph-video text-cyan-400"></i> Tutoriais em Vídeo de Ativação
+                        </h3>
+                        <p class="text-xs text-gray-400 mt-0.5">Estes vídeos aparecerão automaticamente para os clientes na central de tutoriais (tutoriais.html).</p>
+                    </div>
+                    <button onclick="openCreateTutorialModal()" class="bg-cyan-600 hover:bg-cyan-500 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-lg shadow-cyan-600/20">
+                        <i class="ph-bold ph-plus-circle text-base"></i> Adicionar Novo Vídeo Tutorial
+                    </button>
+                </div>
+
+                <div id="tutorials-list" class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <!-- Renderizado via JavaScript -->
+                </div>
+            </section>
+
+            <!-- ================= ABA: GESTÃO DE COMPROVANTES / PRINTS DE CLIENTES ================= -->
+            <section id="section-feedbacks" class="space-y-6 hidden">
+                <div class="flex justify-between items-center flex-wrap gap-4">
+                    <div>
+                        <div class="flex items-center gap-2.5">
+                            <h3 class="text-xl font-black text-white flex items-center gap-2">
+                                <i class="ph-fill ph-images text-purple-400"></i> Comprovantes de Clientes (Coluna ao lado do Chat)
+                            </h3>
+                            <span id="feedback-counter-badge" class="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">0 / 10 Cadastrados</span>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-0.5">
+                            Faça upload de até 10 prints reais (Pix, conversas de WhatsApp, entregas). Os clientes verão essas imagens passando de lado em formato carrossel.
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="clearDemoFeedbacks()" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5" title="Remover imagens de teste do Unsplash">
+                            <i class="ph-bold ph-trash"></i> Limpar Mocks
+                        </button>
+                        <button onclick="openFeedbackModal()" class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:opacity-90 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-lg shadow-purple-600/20">
+                            <i class="ph-bold ph-upload-simple text-base"></i> + Anexar Comprovantes (Até 10)
+                        </button>
+                    </div>
+                </div>
+
+                <div id="feedbacks-admin-list" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                    <!-- Renderizado via JavaScript -->
+                </div>
+            </section>
+
+            <!-- ================= ABA: HISTÓRICO DE VENDAS & ENTREGAS ================= -->
+            <section id="section-orders" class="space-y-6 hidden">
+                <div class="flex justify-between items-center flex-wrap gap-4">
+                    <div>
+                        <h3 class="text-xl font-black text-white flex items-center gap-2">
+                            <i class="ph-fill ph-receipt text-amber-400"></i> Histórico de Vendas & Entregas
+                        </h3>
+                        <p class="text-xs text-gray-400 mt-0.5">Registro detalhado de pedidos, chaves fornecidas e comprovantes anexados com opção de apagar vendas manuais.</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="clearAllOrders()" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5" title="Limpar todo o histórico de vendas">
+                            <i class="ph-bold ph-trash"></i> Limpar Tudo
+                        </button>
+                        <button onclick="openRegisterOrderModal()" class="bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-lg shadow-amber-600/20">
+                            <i class="ph-bold ph-plus-circle"></i> Registrar Venda Manual
+                        </button>
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-2xl overflow-hidden border border-white/5">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-black/60 border-b border-white/10 text-gray-400 uppercase text-[10px] tracking-wider">
+                                <tr>
+                                    <th class="p-4">Pedido ID</th>
+                                    <th class="p-4">Cliente / Comprovante Pix</th>
+                                    <th class="p-4">Produto</th>
+                                    <th class="p-4">Chave Entregue (Uso Único)</th>
+                                    <th class="p-4">Status</th>
+                                    <th class="p-4">Data/Hora</th>
+                                    <th class="p-4 text-center">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="orders-table-body" class="divide-y divide-white/5 text-gray-300">
+                                <!-- Gerado via JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= ABA 8: LEVAR TAMBÉM (UPSELL / ORDER BUMP) ================= -->
+            <section id="section-upsell" class="space-y-6 hidden">
+                <div class="glass-card p-6 md:p-8 rounded-3xl border border-orange-500/30">
+                    <div class="flex items-center justify-between flex-wrap gap-4 mb-6 pb-4 border-b border-white/10">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="bg-orange-500/20 text-orange-400 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full border border-orange-500/30 tracking-wider">
+                                    Configuração Individual por Produto
+                                </span>
+                            </div>
+                            <h3 class="text-xl font-black text-white flex items-center gap-2.5 mt-1">
+                                <i class="ph-fill ph-fire text-orange-400"></i> Promoção "Levar Também" (Order Bump / Upsell)
+                            </h3>
+                            <p class="text-xs text-gray-400 mt-1">
+                                Escolha o produto da sua loja e defina qual produto ou oferta exclusiva será oferecido com desconto no checkout quando o cliente for comprá-lo.
+                            </p>
+                        </div>
+                    </div>
+
+                    <form onsubmit="handleSaveUpsell(event)" class="space-y-6 max-w-4xl">
+                        <!-- PASSO 1: SELECIONAR QUAL PRODUTO DA VITRINE RECEBERÁ O BUMP -->
+                        <div class="bg-gradient-to-r from-orange-500/10 via-amber-500/10 to-transparent border border-orange-500/40 rounded-2xl p-4 md:p-5">
+                            <label class="text-xs font-black text-orange-400 flex items-center gap-2 mb-2 uppercase tracking-wide">
+                                <i class="ph-bold ph-hand-pointing text-base"></i> 1. Escolha o Produto da Vitrine que receberá o Order Bump:
+                            </label>
+                            <select id="target-product-select" onchange="handleSelectTargetProduct(this.value)" class="w-full bg-black/80 border border-orange-500/50 rounded-xl p-3 text-xs md:text-sm text-white font-bold focus:outline-none focus:border-orange-400 shadow-inner">
+                                <!-- Opções dos produtos da loja geradas via JS -->
+                            </select>
+
+                            <!-- Miniatura e resumo do produto selecionado -->
+                            <div class="mt-3.5 pt-3.5 border-t border-white/10 flex items-center justify-between flex-wrap gap-3">
+                                <div class="flex items-center gap-3">
+                                    <img id="target-product-info-img" src="" class="w-11 h-11 rounded-xl object-cover border border-white/10 shrink-0 bg-black/40">
+                                    <div>
+                                        <p class="text-xs font-bold text-white flex items-center gap-1.5">
+                                            Produto selecionado: <span id="target-product-info-name" class="text-orange-300 font-extrabold">-</span>
+                                        </p>
+                                        <p class="text-[11px] text-gray-400">
+                                            Preço na Vitrine: <span id="target-product-info-price" class="text-emerald-400 font-bold">-</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3 bg-black/60 border border-white/10 px-4 py-2 rounded-xl">
+                                    <label class="text-xs font-bold text-gray-300 flex items-center gap-2.5 cursor-pointer">
+                                        <span>Ativar Bump para este produto:</span>
+                                        <input type="checkbox" id="upsell-enabled" onchange="updateUpsellPreview()" class="w-5 h-5 accent-orange-500 cursor-pointer rounded">
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PASSO 2: QUAL PRODUTO OFERECER NO ORDER BUMP -->
+                        <div class="bg-black/40 border border-cyan-500/30 rounded-2xl p-4 md:p-5">
+                            <label class="text-xs font-bold text-cyan-300 flex items-center gap-2 mb-1.5">
+                                <i class="ph-bold ph-gift text-base"></i> 2. Qual produto você quer oferecer no checkout deste item?
+                            </label>
+                            <select id="upsell-offered-product-select" onchange="handleSelectOfferedProduct(this.value)" class="w-full bg-black/70 border border-white/10 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-cyan-400">
+                                <option value="">-- Oferta Personalizada (Preenchimento manual) --</option>
+                                <!-- Opções dos outros produtos da loja geradas via JS -->
+                            </select>
+                            <p class="text-[11px] text-gray-400 mt-2 flex items-center gap-1">
+                                <i class="ph-bold ph-lightbulb text-amber-400"></i> Dica: Ao escolher um produto acima, o título, benefício e valores promocionais são calculados e preenchidos automaticamente. Você ainda pode editar qualquer campo abaixo.
+                            </p>
+                        </div>
+
+                        <!-- CAMPOS DO ORDER BUMP -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="md:col-span-2">
+                                <label class="text-xs font-bold text-gray-300 block mb-1">Título da Oferta "Levar Também"</label>
+                                <input type="text" id="upsell-title" oninput="updateUpsellPreview()" required class="w-full bg-black/60 border border-white/10 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-orange-400" placeholder="Ex: Duolingo Super Anual, Muse AI 1B Tokens...">
+                            </div>
+
+                            <div class="md:col-span-2">
+                                <label class="text-xs font-bold text-gray-300 block mb-1">Descrição / Benefício Curto</label>
+                                <input type="text" id="upsell-description" oninput="updateUpsellPreview()" required class="w-full bg-black/60 border border-white/10 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-orange-400" placeholder="Ex: Garanta transcrição e criação de vídeos com inteligência artificial">
+                            </div>
+
+                            <div>
+                                <label class="text-xs font-bold text-gray-300 block mb-1">Preço Normal Riscado (De R$)</label>
+                                <input type="number" step="0.01" id="upsell-orig-price" oninput="calcUpsellDiscount()" required class="w-full bg-black/60 border border-white/10 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-orange-400" placeholder="Ex: 149.90">
+                                <span class="text-[10px] text-gray-500">Valor de referência riscado</span>
+                            </div>
+
+                            <div>
+                                <label class="text-xs font-bold text-emerald-400 block mb-1">Preço Promocional do Upsell (Por R$)</label>
+                                <input type="number" step="0.01" id="upsell-promo-price" oninput="calcUpsellDiscount()" required class="w-full bg-black/60 border border-emerald-500/40 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-emerald-400" placeholder="Ex: 29.90">
+                                <span class="text-[10px] text-emerald-400/80">Valor cobrado a mais no checkout</span>
+                            </div>
+
+                            <div class="md:col-span-2">
+                                <label class="text-xs font-bold text-red-400 block mb-1">Etiqueta de Destaque / Desconto</label>
+                                <input type="text" id="upsell-discount-tag" oninput="updateUpsellPreview()" class="w-full bg-black/60 border border-white/10 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-orange-400" placeholder="Ex: 80% OFF">
+                                <span class="text-[10px] text-red-400/80">Badge de desconto chamativo</span>
+                            </div>
+                        </div>
+
+                        <!-- PRÉ-VISUALIZAÇÃO AO VIVO DO CARD NO CHECKOUT -->
+                        <div class="pt-4 border-t border-white/10">
+                            <label class="text-xs font-bold text-cyan-300 block mb-2 flex items-center gap-1.5">
+                                <i class="ph-bold ph-eye"></i> Pré-visualização ao vivo (como o cliente verá no checkout deste item):
+                            </label>
+                            <div class="bg-gradient-to-r from-primary/10 via-orange-500/10 to-amber-500/10 border border-primary/40 p-4 rounded-2xl flex items-start gap-3 max-w-xl shadow-lg">
+                                <input type="checkbox" checked disabled class="mt-1 w-5 h-5 accent-primary rounded cursor-not-allowed">
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between gap-2 flex-wrap">
+                                        <p class="text-xs md:text-sm font-extrabold text-white flex items-center gap-1.5">
+                                            <i class="ph-fill ph-fire text-orange-500 text-base"></i> LEVAR TAMBÉM: <span id="preview-upsell-title">Acesso VIP</span>
+                                        </p>
+                                        <span id="preview-upsell-tag" class="text-[10px] bg-red-500/20 text-red-400 font-extrabold px-2 py-0.5 rounded-full border border-red-500/30">
+                                            15% OFF
+                                        </span>
+                                    </div>
+                                    <p class="text-xs text-gray-300 leading-snug mt-1">
+                                        <span id="preview-upsell-desc">Garanta suporte prioritário e atualizações</span> de 
+                                        <span id="preview-upsell-orig" class="line-through text-gray-500 font-semibold">De R$ 35,00</span> 
+                                        por apenas <span id="preview-upsell-promo" class="text-emerald-400 font-extrabold text-sm">R$ 29,75</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-2">
+                            <button type="submit" class="bg-gradient-to-r from-orange-500 to-amber-500 hover:opacity-90 text-black font-extrabold px-6 py-3.5 rounded-xl text-xs uppercase tracking-wider transition shadow-lg shadow-orange-500/20 flex items-center gap-2 cursor-pointer">
+                                <i class="ph-bold ph-floppy-disk text-base"></i> Salvar Order Bump deste Produto
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- VISÃO GERAL DE TODOS OS PRODUTOS DA LOJA -->
+                    <div class="mt-10 pt-6 border-t border-white/10">
+                        <div class="flex items-center justify-between flex-wrap gap-3 mb-4">
+                            <div>
+                                <h4 class="text-sm font-black text-white flex items-center gap-2">
+                                    <i class="ph-bold ph-squares-four text-orange-400"></i> Visão Geral de Order Bumps por Produto
+                                </h4>
+                                <p class="text-xs text-gray-400 mt-0.5">
+                                    Confira abaixo qual produto está configurado para cada item do seu catálogo:
+                                </p>
+                            </div>
+                        </div>
+
+                        <div id="upsell-overview-list" class="space-y-3">
+                            <!-- Lista renderizada dinamicamente via JS -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- MODAL: ADICIONAR / EDITAR PRODUTO -->
+    <div id="modal-game" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass-card w-full max-w-lg rounded-3xl p-6 md:p-8 border border-white/10 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-5 pb-3 border-b border-white/10">
+                <h3 id="modal-game-title" class="text-lg font-black text-white">Novo Produto</h3>
+                <button onclick="closeGameModal()" class="text-gray-400 hover:text-white"><i class="ph-bold ph-x text-lg"></i></button>
+            </div>
+
+            <form onsubmit="handleSaveGame(event)" class="space-y-4">
+                <input type="hidden" id="form-game-id">
+                
+                <div>
+                    <label class="text-xs text-gray-300 font-bold block mb-1">Título do Produto</label>
+                    <input type="text" id="form-game-name" required class="w-full bg-black/60 border border-white/10 rounded-xl p-2.5 text-xs text-white focus:border-primary focus:outline-none" placeholder="Ex: ChatGPT Plus 1 Mês, Canva Pro, Netflix 4K...">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs text-gray-300 font-bold block mb-1">Preço Original Cortado (De R$)</label>
+                        <input type="number" step="0.01" id="form-game-old-price" class="w-full bg-black/60 border border-white/10 rounded-xl p-2.5 text-xs text-white focus:border-primary focus:outline-none" placeholder="Ex: 96.90">
+                        <span class="text-[10px] text-gray-500">Aparecerá riscado na vitrine</span>
+                    </div>
+                    <div>
+                        <label class="text-xs text-emerald-400 font-bold block mb-1">Preço Promocional (Por R$)</label>
+                        <input type="number" step="0.01" id="form-game-price" required class="w-full bg-black/60 border border-emerald-500/30 rounded-xl p-2.5 text-xs text-white focus:border-emerald-400 focus:outline-none" placeholder="Ex: 54.90">
+                        <span class="text-[10px] text-emerald-400/80">Preço real cobrado no checkout</span>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-xs text-gray-300 font-bold block mb-1">Categoria do Produto</label>
+                    <select id="form-game-category" required class="w-full bg-black/60 border border-white/10 rounded-xl p-2.5 text-xs text-white focus:border-primary focus:outline-none">
+                        <option value="Inteligencia artificial">Inteligencia artificial</option>
+                        <option value="streaming">streaming</option>
+                        <option value="Edição video">Edição video</option>
+                        <option value="Novidade">Novidade</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="text-xs text-gray-300 font-bold block mb-1">
+                        <i class="ph-bold ph-image text-primary"></i> Imagem do Produto (Arquivo do Dispositivo ou Link Web)
+                    </label>
+                    <div class="space-y-2">
+                        <div>
+                            <input type="text" id="form-game-img" oninput="handleImageUrlInput(this.value)" class="w-full bg-black/60 border border-white/10 rounded-xl p-2.5 text-xs text-white focus:border-primary focus:outline-none placeholder-gray-500" placeholder="Cole o link da imagem (https://...) ou escolha um arquivo abaixo">
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <input type="file" id="form-game-file" accept="image/*" onchange="previewGameImage(event)" class="w-full bg-black/60 border border-white/10 rounded-xl p-1.5 text-xs text-gray-300 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-primary/20 file:text-primary hover:file:bg-primary/30 cursor-pointer">
+                            <button type="button" onclick="clearProductImage()" class="px-3 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 rounded-xl text-xs font-bold shrink-0 transition" title="Remover Imagem">
+                                <i class="ph-bold ph-trash"></i>
+                            </button>
+                        </div>
+                        <p class="text-[11px] text-gray-500">Você pode colar um link direto ou carregar uma foto do computador/celular.</p>
+                    </div>
+                    
+                    <!-- Preview da Imagem Selecionada -->
+                    <div id="form-game-preview-container" class="mt-2.5 hidden">
+                        <p class="text-[10px] text-gray-400 mb-1 font-bold">Pré-visualização da Capa:</p>
+                        <div class="relative w-full h-36 rounded-xl overflow-hidden border border-white/10 bg-black/50">
+                            <img id="form-game-preview" src="" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600'">
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-xs text-cyan-300 font-bold flex items-center gap-1.5 mb-1">
+                        <i class="ph-bold ph-list-checks"></i> Especificações do Produto & O que vem incluso:
+                    </label>
+                    <textarea id="form-game-specs" rows="3" class="w-full bg-black/60 border border-cyan-500/30 rounded-xl p-2.5 text-xs text-white focus:border-cyan-400 focus:outline-none placeholder-gray-500" placeholder="Digite as especificações (1 por linha). Ex:&#10;• Acesso vitalício oficial&#10;• 2TB de armazenamento em nuvem&#10;• Entrega imediata no seu e-mail&#10;• Suporte prioritário 24/7"></textarea>
+                    <p class="text-[11px] text-gray-500 mt-1">Essas informações aparecerão em destaque no modal de compra da loja logo abaixo da foto do produto.</p>
+                </div>
+
+                <div class="pt-3 border-t border-white/10 flex justify-end gap-3">
+                    <button type="button" onclick="closeGameModal()" class="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-white text-xs font-bold">Cancelar</button>
+                    <button type="submit" class="px-5 py-2 rounded-xl bg-primary hover:bg-primaryHover text-white text-xs font-black">Salvar Produto</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: GERENCIAR ESTOQUE DE CHAVES/LINKS DE USO ÚNICO -->
+    <div id="modal-stock" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass-card w-full max-w-xl rounded-3xl p-6 md:p-8 border border-white/10 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4 pb-3 border-b border-white/10">
+                <div>
+                    <h3 id="stock-modal-title" class="text-lg font-black text-white">Estoque de Chaves / Links Únicos</h3>
+                    <p class="text-xs text-emerald-400" id="stock-modal-count"></p>
+                </div>
+                <button onclick="closeStockModal()" class="text-gray-400 hover:text-white"><i class="ph-bold ph-x text-lg"></i></button>
+            </div>
+
+            <div class="space-y-4">
+                <div class="bg-black/40 p-4 rounded-2xl border border-white/5">
+                    <label class="text-xs font-bold text-gray-300 block mb-1">Inserir Chaves / Links de Uso Único (1 por linha):</label>
+                    <p class="text-[11px] text-gray-500 mb-2">Cole suas licenças ou links de ativação. Cada cliente receberá exclusivamente um item e ele sairá do estoque.</p>
+                    <textarea id="stock-input-bulk" rows="4" class="w-full bg-black/70 border border-white/10 rounded-xl p-3 font-mono text-xs text-emerald-400 focus:outline-none focus:border-emerald-500" placeholder="https://link-unico.com/ativar/392942&#10;CYBER-KEY-8829-PRO&#10;https://steam-gift.com/redeem/99120"></textarea>
+                    <button type="button" onclick="addBulkKeys()" class="mt-2.5 w-full bg-emerald-600 hover:bg-emerald-500 text-white py-2 rounded-xl font-bold text-xs transition">
+                        + Inserir Chaves no Estoque
+                    </button>
+                </div>
+
+                <div>
+                    <h4 class="text-xs font-extrabold uppercase text-gray-400 tracking-wider mb-2">Chaves Atuais Disponíveis:</h4>
+                    <div id="stock-keys-list" class="max-h-48 overflow-y-auto space-y-1.5 pr-1">
+                        <!-- Lista de chaves renderizada via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-white/10 flex justify-end">
+                <button onclick="closeStockModal()" class="px-5 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-bold transition">Concluir</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: CRIAR CUPOM -->
+    <div id="modal-coupon" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass-card w-full max-w-sm rounded-3xl p-6 border border-emerald-500/30">
+            <div class="flex justify-between items-center mb-4 pb-2 border-b border-white/10">
+                <h3 class="text-base font-black text-white">Criar Cupom de Desconto</h3>
+                <button onclick="closeCouponModal()" class="text-gray-400 hover:text-white"><i class="ph-bold ph-x text-lg"></i></button>
+            </div>
+
+            <form onsubmit="handleSaveCoupon(event)" class="space-y-3.5">
+                <div>
+                    <label class="text-xs text-gray-400 block mb-1">Código do Cupom</label>
+                    <input type="text" id="coupon-code" required class="w-full bg-black/60 border border-white/10 rounded-xl p-2.5 text-xs text-white uppercase focus:border-emerald-400 focus:outline-none" placeholder="Ex: CYBER15">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400 block mb-1">Porcentagem de Desconto (%)</label>
+                    <input type="number" min="1" max="90" id="coupon-discount" required class="w-full bg-black/60 border border-white/10 rounded-xl p-2.5 text-xs text-white focus:border-emerald-400 focus:outline-none" placeholder="Ex: 15">
+                </div>
+                <div class="pt-2 flex justify-end gap-2">
+                    <button type="button" onclick="closeCouponModal()" class="px-4 py-2 rounded-xl bg-white/5 text-white text-xs">Cancelar</button>
+                    <button type="submit" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold">Salvar Cupom</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: ADICIONAR VÍDEO TUTORIAL -->
+    <div id="modal-tutorial" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass-card w-full max-w-md rounded-3xl p-6 border border-cyan-500/30 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4 pb-2 border-b border-white/10">
+                <h3 class="text-base font-black text-white">Adicionar Vídeo Tutorial</h3>
+                <button onclick="closeTutorialModal()" class="text-gray-400 hover:text-white"><i class="ph-bold ph-x text-lg"></i></button>
+            </div>
+
+            <form onsubmit="handleSaveTutorial(event)" class="space-y-3.5">
+                <input type="hidden" id="tutorial-file-data">
+                <div>
+                    <label class="text-xs text-gray-400 block mb-1">Título do Vídeo Tutorial</label>
+                    <input type="text" id="tutorial-title" required class="w-full bg-black/60 border border-white/10 rounded-xl p-2.5 text-xs text-white focus:border-cyan-400 focus:outline-none" placeholder="Ex: Como Ativar ChatGPT Plus ou Netflix Passo a Passo">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs text-gray-400 block mb-1">Plataforma / Categoria</label>
+                        <input type="text" id="tutorial-platform" required class="w-full bg-black/60 border border-white/10 rounded-xl p-2.5 text-xs text-white focus:border-cyan-400 focus:outline-none" placeholder="Ex: YouTube, TikTok, Instagram, Steam">
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-400 block mb-1">Duração Estimada</label>
+                        <input type="text" id="tutorial-duration" class="w-full bg-black/60 border border-white/10 rounded-xl p-2.5 text-xs text-white focus:border-cyan-400 focus:outline-none" placeholder="Ex: 3:20 min">
+                    </div>
+                </div>
+
+                <!-- SELETOR DE ORIGEM DO VÍDEO (URL OU DISPOSITIVO) -->
+                <div>
+                    <label class="text-xs font-bold text-gray-300 block mb-1.5">Origem do Vídeo:</label>
+                    <div class="grid grid-cols-2 gap-2 bg-black/50 p-1.5 rounded-xl border border-white/10 mb-2.5">
+                        <button type="button" id="btn-tut-mode-url" onclick="setTutorialVideoMode('url')" class="py-1.5 px-3 rounded-lg text-xs font-bold transition bg-cyan-500/20 text-cyan-400 border border-cyan-500/40">
+                            <i class="ph-bold ph-link"></i> Link / Plataforma
+                        </button>
+                        <button type="button" id="btn-tut-mode-file" onclick="setTutorialVideoMode('file')" class="py-1.5 px-3 rounded-lg text-xs font-bold transition text-gray-400 hover:text-white">
+                            <i class="ph-bold ph-folder"></i> Do Dispositivo
+                        </button>
+                    </div>
+
+                    <!-- Bloco URL -->
+                    <div id="tut-input-url-container">
+                        <label class="text-[11px] text-gray-400 block mb-1">URL do Vídeo (YouTube, TikTok, Instagram ou Link direto):</label>
+                        <input type="text" id="tutorial-url" class="w-full bg-black/60 border border-white/10 rounded-xl p-2.5 text-xs text-white focus:border-cyan-400 focus:outline-none" placeholder="https://www.youtube.com/watch?v=... ou link TikTok/Instagram">
+                    </div>
+
+                    <!-- Bloco Arquivo Local -->
+                    <div id="tut-input-file-container" class="hidden">
+                        <label class="text-[11px] text-gray-400 block mb-1">Selecionar Vídeo da Galeria do Dispositivo:</label>
+                        <input type="file" id="tutorial-file-input" accept="video/*" onchange="handleTutorialFileSelect(event)" class="w-full bg-black/60 border border-white/10 rounded-xl p-2 text-xs text-gray-300 file:mr-3 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-cyan-500/20 file:text-cyan-400 cursor-pointer">
+                        <p id="tut-file-status" class="text-[10px] text-gray-500 mt-1">Formatos suportados: MP4, WebM, MOV</p>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-xs text-gray-400 block mb-1">Descrição Curta</label>
+                    <textarea id="tutorial-desc" rows="2" class="w-full bg-black/60 border border-white/10 rounded-xl p-2.5 text-xs text-white focus:border-cyan-400 focus:outline-none" placeholder="Instruções adicionais de ativação..."></textarea>
+                </div>
+                <div class="pt-2 flex justify-end gap-2">
+                    <button type="button" onclick="closeTutorialModal()" class="px-4 py-2 rounded-xl bg-white/5 text-white text-xs">Cancelar</button>
+                    <button type="submit" class="px-5 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold">Salvar Vídeo</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: ADICIONAR COMPROVANTES DE CLIENTES (MÚLTIPLO ATÉ 10) -->
+    <div id="modal-feedback" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass-card w-full max-w-lg rounded-3xl p-6 border border-purple-500/30">
+            <div class="flex justify-between items-center mb-4 pb-2 border-b border-white/10">
+                <div>
+                    <h3 class="text-base font-black text-white flex items-center gap-2">
+                        <i class="ph-fill ph-images text-purple-400"></i> Anexar Comprovantes / Provas Sociais
+                    </h3>
+                    <p class="text-[11px] text-gray-400">Selecione até 10 prints do seu dispositivo (Pix, conversas, entregas)</p>
+                </div>
+                <button onclick="closeFeedbackModal()" class="text-gray-400 hover:text-white"><i class="ph-bold ph-x text-lg"></i></button>
+            </div>
+
+            <form onsubmit="handleSaveMultipleFeedbacks(event)" class="space-y-4">
+                <div>
+                    <label class="text-xs text-gray-300 font-bold block mb-1">
+                        <i class="ph-bold ph-upload-simple text-purple-400"></i> Selecionar Imagens (Permite Múltiplos Arquivos)
+                    </label>
+                    <input type="file" id="feedback-file-input" accept="image/*" multiple onchange="handleFeedbackFilesSelected(event)" class="w-full bg-black/60 border border-white/10 rounded-xl p-2.5 text-xs text-gray-300 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-purple-500/20 file:text-purple-400 cursor-pointer">
+                    <p class="text-[11px] text-purple-300/80 mt-1 flex items-center gap-1">
+                        <i class="ph-bold ph-info"></i> Você pode segurar Ctrl (ou tocar em vários no celular) para selecionar até 10 imagens de uma vez.
+                    </p>
+                </div>
+
+                <div id="feedback-preview-box" class="hidden space-y-2">
+                    <div class="flex justify-between items-center text-[11px]">
+                        <span class="text-gray-300 font-bold" id="feedback-selected-count">0 imagens prontas para salvar</span>
+                        <span class="text-purple-400 font-mono text-[10px]" id="feedback-remaining-slots"></span>
+                    </div>
+                    <div id="feedback-previews-grid" class="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-48 overflow-y-auto p-1 bg-black/50 rounded-xl border border-white/10">
+                        <!-- Miniaturas geradas dinamicamente -->
+                    </div>
+                </div>
+
+                <div class="pt-2 flex justify-between items-center border-t border-white/10">
+                    <button type="button" onclick="closeFeedbackModal()" class="px-4 py-2 rounded-xl bg-white/5 text-white text-xs">Cancelar</button>
+                    <button type="submit" id="feedback-submit-btn" class="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold flex items-center gap-1.5 shadow-lg shadow-purple-600/30">
+                        <i class="ph-bold ph-check"></i> Salvar Comprovantes na Loja
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: VISUALIZAR COMPROVANTE PIX AMPLIADO -->
+    <div id="modal-pix-view" class="hidden fixed inset-0 z-[120] bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass-card w-full max-w-lg rounded-3xl p-5 border border-emerald-500/40 relative">
+            <button onclick="closePixViewModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                <i class="ph-bold ph-x text-xl"></i>
+            </button>
+            <h3 id="pix-view-title" class="text-base font-black text-white mb-3 flex items-center gap-2">
+                <i class="ph-fill ph-check-circle text-emerald-400"></i> Comprovante Pix do Pedido
+            </h3>
+            <div class="rounded-2xl overflow-hidden border border-white/10 max-h-[70vh] flex items-center justify-center bg-black/70">
+                <img id="pix-view-img" src="" class="w-full h-auto max-h-[68vh] object-contain">
+            </div>
+            <div class="mt-3 flex justify-between items-center text-xs text-gray-400">
+                <span id="pix-view-client" class="font-bold text-white"></span>
+                <button onclick="closePixViewModal()" class="px-4 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 text-white font-bold">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: REGISTRAR VENDA MANUAL COM COMPROVANTE PIX -->
+    <div id="modal-register-order" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass-card w-full max-w-md rounded-3xl p-6 border border-amber-500/30 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4 pb-2 border-b border-white/10">
+                <h3 class="text-base font-black text-white">Registrar Venda & Comprovante</h3>
+                <button onclick="closeRegisterOrderModal()" class="text-gray-400 hover:text-white"><i class="ph-bold ph-x text-lg"></i></button>
+            </div>
+
+            <form onsubmit="handleSaveManualOrder(event)" class="space-y-3.5">
+                <div>
+                    <label class="text-xs text-gray-400 block mb-1">Nome do Cliente no Comprovante</label>
+                    <input type="text" id="order-client-name" required class="w-full bg-black/60 border border-white/10 rounded-xl p-2.5 text-xs text-white focus:border-amber-400 focus:outline-none" placeholder="Ex: Carlos Eduardo Silva">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400 block mb-1">Produto Comprado</label>
+                    <input type="text" id="order-product-name" required class="w-full bg-black/60 border border-white/10 rounded-xl p-2.5 text-xs text-white focus:border-amber-400 focus:outline-none" placeholder="Ex: ChatGPT Plus 1 Mês">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400 block mb-1">Chave / Licença / Link Entregue</label>
+                    <input type="text" id="order-key-value" required class="w-full bg-black/60 border border-white/10 rounded-xl p-2.5 text-xs text-white font-mono text-emerald-400 focus:border-amber-400 focus:outline-none" placeholder="Ex: CYBER-AI-88392-PREMIUM">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400 block mb-1">Anexar Comprovante Pix (Opcional - Do Dispositivo)</label>
+                    <input type="file" id="order-pix-file" accept="image/*" onchange="previewOrderPixFile(event)" class="w-full bg-black/60 border border-white/10 rounded-xl p-2 text-xs text-gray-300 file:mr-3 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-amber-500/20 file:text-amber-400 cursor-pointer">
+                    <div id="order-pix-preview-box" class="mt-2 hidden">
+                        <img id="order-pix-preview-img" src="" class="w-full h-28 object-cover rounded-xl border border-white/10">
+                    </div>
+                </div>
+                <div class="pt-2 flex justify-end gap-2">
+                    <button type="button" onclick="closeRegisterOrderModal()" class="px-4 py-2 rounded-xl bg-white/5 text-white text-xs">Cancelar</button>
+                    <button type="submit" class="px-5 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold">Salvar no Histórico</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: CONCLUIR ENTREGA MANUAL DE PRODUTO SEM ESTOQUE -->
+    <div id="modal-deliver-manual" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass-card w-full max-w-md rounded-3xl p-6 border border-amber-500/50 shadow-[0_0_50px_rgba(245,158,11,0.25)] relative">
+            <div class="flex justify-between items-center mb-4 pb-2 border-b border-white/10">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg border border-amber-500/30">
+                        <i class="ph-bold ph-hand-pointing"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-black text-white font-orbitron uppercase">Entrega Manual de Pedido</h3>
+                        <p class="text-[11px] text-amber-300/80">Item comprado sob encomenda pelo cliente</p>
+                    </div>
+                </div>
+                <button onclick="closeDeliverManualModal()" class="text-gray-400 hover:text-white"><i class="ph-bold ph-x text-lg"></i></button>
+            </div>
+
+            <form onsubmit="handleConfirmDeliverManual(event)" class="space-y-4">
+                <input type="hidden" id="deliver-manual-order-id">
+                
+                <div class="bg-black/60 rounded-xl p-3 border border-white/10 space-y-1.5 text-xs">
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Pedido:</span>
+                        <span id="deliver-manual-display-id" class="font-mono font-bold text-amber-400">#000000</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Produto:</span>
+                        <span id="deliver-manual-display-product" class="font-bold text-white">-</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Cliente:</span>
+                        <span id="deliver-manual-display-client" class="text-gray-300">-</span>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-xs text-gray-300 font-bold block mb-1">
+                        Chave / Código de Ativação ou Link do Produto:
+                    </label>
+                    <textarea id="deliver-manual-key-input" rows="3" required class="w-full bg-black/80 border border-amber-500/50 rounded-xl p-3 text-xs text-emerald-400 font-mono focus:border-amber-400 focus:outline-none placeholder-gray-600 shadow-inner" placeholder="Cole aqui a chave, licença ou link gerado para o cliente..."></textarea>
+                    <p class="text-[10px] text-gray-500 mt-1">
+                        Assim que você confirmar, esta chave ficará disponível imediatamente para o cliente na aba "Meus Pedidos" dele.
+                    </p>
+                </div>
+
+                <div class="pt-2 flex justify-end gap-2 border-t border-white/10">
+                    <button type="button" onclick="closeDeliverManualModal()" class="px-4 py-2 rounded-xl bg-white/5 text-white text-xs hover:bg-white/10 transition">Cancelar</button>
+                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:opacity-90 text-black font-extrabold text-xs uppercase tracking-wider transition shadow-lg shadow-amber-500/25 flex items-center gap-1.5">
+                        <i class="ph-bold ph-check-circle text-base"></i> Confirmar Entrega Manual
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ALERTA TOAST -->
+    <div id="admin-alert" class="hidden fixed top-6 right-6 z-[100] bg-[#140f22] border border-primary/50 p-4 rounded-2xl shadow-2xl flex items-center gap-3">
+        <i id="admin-alert-icon" class="ph-fill ph-check-circle text-2xl text-emerald-400"></i>
+        <p id="admin-alert-msg" class="text-xs font-bold text-white"></p>
+    </div>
+
+    <!-- ================= JAVASCRIPT: LÓGICA DO PAINEL ================= -->
+    <script>
+        const AUTH_STORAGE_KEY = 'gplay_admin_session_auth';
+        const HASH_KEY = 'gplay_admin_key_hash';
+        const STORE_KEY = 'gplay_store_database';
+
+        // ================= IndexedDB: Armazenamento robusto para comprovantes (sem limite de quota) =================
+        const IDB_NAME = 'gplay_store_idb';
+        const IDB_STORE = 'feedbacks';
+        let _idbReady = null;
+
+        function openIDB() {
+            if (_idbReady) return _idbReady;
+            _idbReady = new Promise((resolve, reject) => {
+                const req = indexedDB.open(IDB_NAME, 1);
+                req.onupgradeneeded = (e) => {
+                    const db = e.target.result;
+                    if (!db.objectStoreNames.contains(IDB_STORE)) {
+                        db.createObjectStore(IDB_STORE, { keyPath: 'key' });
+                    }
+                };
+                req.onsuccess = (e) => resolve(e.target.result);
+                req.onerror = (e) => reject(e.target.error);
+            });
+            return _idbReady;
+        }
+
+        async function idbSaveFeedbacks(list) {
+            try {
+                const db = await openIDB();
+                return new Promise((resolve, reject) => {
+                    const tx = db.transaction(IDB_STORE, 'readwrite');
+                    const store = tx.objectStore(IDB_STORE);
+                    store.put({ key: 'feedbacks', data: list });
+                    tx.oncomplete = () => {
+                        // Também salva um flag simples no localStorage para notificar index.html
+                        try { localStorage.setItem('gplay_feedbacks_ts', Date.now().toString()); } catch(e) {}
+                        resolve(true);
+                    };
+                    tx.onerror = (e) => reject(e.target.error);
+                });
+            } catch(e) {
+                console.error('IndexedDB write error:', e);
+                // Fallback: tenta localStorage com compressão agressiva
+                try {
+                    localStorage.setItem('gplay_store_feedbacks', JSON.stringify(list));
+                    localStorage.setItem('gplay_feedbacks_ts', Date.now().toString());
+                } catch(le) { console.error('localStorage also failed:', le); }
+                return false;
+            }
+        }
+
+        async function idbLoadFeedbacks() {
+            try {
+                const db = await openIDB();
+                return new Promise((resolve, reject) => {
+                    const tx = db.transaction(IDB_STORE, 'readonly');
+                    const store = tx.objectStore(IDB_STORE);
+                    const req = store.get('feedbacks');
+                    req.onsuccess = (e) => {
+                        const result = e.target.result;
+                        resolve((result && Array.isArray(result.data)) ? result.data : []);
+                    };
+                    req.onerror = (e) => reject(e.target.error);
+                });
+            } catch(e) {
+                // Fallback: tenta localStorage
+                try {
+                    const raw = localStorage.getItem('gplay_store_feedbacks');
+                    if (raw) return JSON.parse(raw);
+                } catch(le) {}
+                return [];
+            }
+        }
+
+        // Base de dados padrão se não houver dados no localStorage
+        const defaultDatabase = {
+            gateway: {
+                handle: "ruben_alisson",
+                fallbackUrl: "https://checkout.infinitepay.io/inchk_wbuyHsivNKGwk1pQGRI1QSkfmkiH-5s_eeotrmmFfQE"
+            },
+            officialLinks: {
+                whatsapp: "https://wa.me/558598243142",
+                vipGroup: "https://chat.whatsapp.com/GQxe7oL12ud2TABWfWgPJz?s=cl&p=a&mlu=4&ilr=4",
+                instagram: "https://www.instagram.com/cybertron_ads/"
+            },
+            orderBump: {
+                enabled: true,
+                productId: "prod-duolingo",
+                title: "Acesso VIP + Futuras Atualizações",
+                description: "Garanta suporte prioritário, ferramentas adicionais e atualizações vitalícias",
+                originalPrice: 35.00,
+                promoPrice: 29.75,
+                discountPercent: 15
+            },
+            coupons: [
+                { code: "CYBER10", discountPercent: 10 },
+                { code: "CYBER15", discountPercent: 15 }
+            ],
+            items: [
+                {
+                    id: "prod-google-ai",
+                    name: "Google AI Pro (Gemini Advanced 1.5 Pro + 2TB Nuvem)",
+                    oldPrice: 96.90,
+                    price: 18.00,
+                    category: "Inteligencia artificial",
+                    img: "https://images.unsplash.com/photo-1677442136019-21780efad99a?q=80&w=600",
+                    specs: "• Acesso oficial com Gemini 1.5 Pro e janela de 1 milhão de tokens\n• 2TB de armazenamento em nuvem no Google One (Drive, Gmail, Fotos)\n• Integração direta com Docs, Sheets e Gmail para criação de conteúdo\n• Entrega imediata no seu e-mail pessoal",
+                    isFeatured: true,
+                    orderBump: {
+                        enabled: true,
+                        productId: "prod-muse-ai",
+                        title: "Muse AI (1 Bilhão de Tokens)",
+                        description: "Adicione IA para criação e transcrição rápida de vídeos em 4K",
+                        originalPrice: 149.90,
+                        promoPrice: 29.90,
+                        discountTag: "80% OFF"
+                    },
+                    keys: [
+                        "https://one.google.com/redeem/ai-pro-99210",
+                        "GOOGLE-AI-PRO-KEY-88219-FAST",
+                        "https://google.com/ai/activation/44012"
+                    ]
+                },
+                {
+                    id: "prod-duolingo",
+                    name: "Duolingo Super (12 Meses / Aprender Inglês)",
+                    oldPrice: 279.90,
+                    price: 49.90,
+                    category: "Inteligencia artificial",
+                    img: "https://images.unsplash.com/photo-1546410531-bb4caa6b424d?q=80&w=600",
+                    specs: "• Licença oficial anual (12 meses) de Duolingo Super\n• Vidas ilimitadas para aprender sem interrupções\n• Sem nenhum anúncio ou propaganda\n• Prática personalizada de erros e testes ilimitados",
+                    isFeatured: false,
+                    orderBump: {
+                        enabled: true,
+                        productId: "prod-google-ai",
+                        title: "Google AI Pro (Gemini + 2TB)",
+                        description: "Potencialize seus estudos com 2TB no Drive e inteligência avançada",
+                        originalPrice: 96.90,
+                        promoPrice: 15.00,
+                        discountTag: "84% OFF"
+                    },
+                    keys: [
+                        "https://duolingo.com/redeem/SUPER-12M-88391",
+                        "DUO-SUPER-ANNUAL-VIP-99201",
+                        "https://duolingo.com/gift/annual-33910"
+                    ]
+                },
+                {
+                    id: "prod-muse-ai",
+                    name: "Muse AI (1 Bilhão de Tokens - Criação & Armazenamento de Vídeo)",
+                    oldPrice: 149.90,
+                    price: 59.90,
+                    category: "Inteligencia artificial",
+                    img: "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?q=80&w=600",
+                    specs: "• 1 Bilhão de tokens de IA para processamento e transcrição de vídeo\n• Busca inteligente por fala e texto dentro dos vídeos\n• Armazenamento na nuvem e streaming em até 4K\n• Player ultrarrápido sem anúncios incorporável",
+                    isFeatured: false,
+                    orderBump: {
+                        enabled: true,
+                        productId: "prod-google-ai",
+                        title: "Google AI Pro (Gemini + 2TB)",
+                        description: "2TB de espaço em nuvem ideal para salvar seus vídeos em 4K",
+                        originalPrice: 96.90,
+                        promoPrice: 15.00,
+                        discountTag: "84% OFF"
+                    },
+                    keys: [
+                        "MUSE-AI-1B-TOKENS-KEY-77192",
+                        "https://muse.ai/workspace/redeem/99104",
+                        "MUSE-AI-VIP-STORAGE-88390"
+                    ]
+                },
+                {
+                    id: "prod-spotify",
+                    name: "Spotify Premium (3 Meses Sem Anúncios)",
+                    oldPrice: 65.70,
+                    price: 24.90,
+                    category: "streaming",
+                    img: "https://images.unsplash.com/photo-1614680376593-902f749f7ffc?q=80&w=600",
+                    specs: "• 3 Meses de assinatura Spotify Premium oficial\n• Músicas sem anúncios com máxima qualidade de áudio (320kbps)\n• Modo offline para ouvir suas músicas e podcasts favoritos\n• Pule faixas sem limites",
+                    isFeatured: false,
+                    orderBump: {
+                        enabled: true,
+                        productId: "prod-youtube",
+                        title: "YouTube Premium (3 Meses)",
+                        description: "Vídeos sem anúncios e reprodução em segundo plano com super desconto",
+                        originalPrice: 74.70,
+                        promoPrice: 19.90,
+                        discountTag: "73% OFF"
+                    },
+                    keys: [
+                        "https://spotify.com/redeem/3m-vip-9912",
+                        "SPOTIFY-PREMIUM-3M-PIN-88301"
+                    ]
+                },
+                {
+                    id: "prod-youtube",
+                    name: "YouTube Premium (3 Meses Vídeo & Música Sem Anúncios)",
+                    oldPrice: 74.70,
+                    price: 27.90,
+                    category: "streaming",
+                    img: "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?q=80&w=600",
+                    specs: "• 3 Meses de YouTube Premium + YouTube Music inclusos\n• Reprodução de vídeos sem nenhum anúncio\n• Reprodução em segundo plano no celular com tela bloqueada\n• Downloads para assistir vídeos e ouvir músicas offline",
+                    isFeatured: false,
+                    orderBump: {
+                        enabled: true,
+                        productId: "prod-spotify",
+                        title: "Spotify Premium (3 Meses)",
+                        description: "Músicas e podcasts ilimitados com máxima qualidade sonora",
+                        originalPrice: 65.70,
+                        promoPrice: 19.90,
+                        discountTag: "70% OFF"
+                    },
+                    keys: [
+                        "https://youtube.com/redeem/yt-premium-3m-9921",
+                        "YT-PREMIUM-3M-ACTIVATION-44120"
+                    ]
+                }
+            ],
+            tutorials: [
+                {
+                    id: "tut_1",
+                    title: "Como Ativar sua Licença de Inteligência Artificial",
+                    platform: "Inteligência Artificial",
+                    duration: "2:15 min",
+                    videoType: "url",
+                    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                    description: "Guia completo de primeiro acesso à sua chave e configurações recomendadas."
+                },
+                {
+                    id: "tut_2",
+                    title: "Ativação Rápida de Streaming e Perfil",
+                    platform: "Streaming",
+                    duration: "1:40 min",
+                    videoType: "url",
+                    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                    description: "Como conectar seu dispositivo com segurança e salvar seus dados."
+                }
+            ],
+            feedbacks: [
+                "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?q=80&w=500&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1563986768609-322da13575f3?q=80&w=500&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1556742049-0a67c5574f73?q=80&w=500&auto=format&fit=crop"
+            ],
+            ordersHistory: [
+                {
+                    id: "ORD-9412",
+                    clientName: "Carlos Eduardo Silva",
+                    pixReceipt: "https://images.unsplash.com/photo-1556742049-0a67c5574f73?q=80&w=500",
+                    item: "ChatGPT Plus GPT-4o (Acesso Mensal)",
+                    key: "CYBER-GPT-KEY-99210-PRO",
+                    status: "ENTREGUE",
+                    date: "Hoje, 21:40"
+                },
+                {
+                    id: "ORD-9411",
+                    clientName: "Amanda Ribeiro",
+                    pixReceipt: "",
+                    item: "Netflix 4K Ultra HD (Tela Privada)",
+                    key: "NETFLIX-PREMIUM-PIN-44012",
+                    status: "ENTREGUE",
+                    date: "Hoje, 20:15"
+                }
+            ]
+        };
+
+        function getDB() {
+            const data = localStorage.getItem(STORE_KEY);
+            if (!data) {
+                localStorage.setItem(STORE_KEY, JSON.stringify(defaultDatabase));
+                return defaultDatabase;
+            }
+            try {
+                const parsed = JSON.parse(data);
+                let changed = false;
+                if (!parsed.gateway) { parsed.gateway = defaultDatabase.gateway; changed = true; }
+                if (!parsed.officialLinks) { parsed.officialLinks = defaultDatabase.officialLinks; changed = true; }
+                if (!parsed.tutorials) { parsed.tutorials = defaultDatabase.tutorials; changed = true; }
+                // NOTA: feedbacks agora são gerenciados pelo IndexedDB — NÃO repomos mocks no banco principal
+                if (!parsed.feedbacks) { parsed.feedbacks = []; }
+                if (!parsed.ordersHistory) { 
+                    parsed.ordersHistory = defaultDatabase.ordersHistory; 
+                    changed = true; 
+                } else if (Array.isArray(parsed.ordersHistory)) {
+                    // Limpeza preventiva: remove comprovantes gigantes em Base64 antigos para liberar cota
+                    parsed.ordersHistory.forEach(ord => {
+                        if (ord.pixReceipt && ord.pixReceipt.length > 50000) {
+                            ord.pixReceipt = '';
+                            changed = true;
+                        }
+                    });
+                    if (parsed.ordersHistory.length > 25) {
+                        parsed.ordersHistory = parsed.ordersHistory.slice(-25);
+                        changed = true;
+                    }
+                }
+                if (!parsed.orderBump) { parsed.orderBump = defaultDatabase.orderBump; changed = true; }
+                if (parsed.items && Array.isArray(parsed.items)) {
+                    parsed.items.forEach(it => {
+                        // Se algum produto do passado tiver imagem Base64 gigante (>120KB), substitui por imagem padrão leve
+                        if (it.img && it.img.startsWith('data:image/') && it.img.length > 120000) {
+                            it.img = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600";
+                            changed = true;
+                        }
+                        if (!it.specs) {
+                            const defItem = defaultDatabase.items.find(d => d.id === it.id);
+                            if (defItem && defItem.specs) {
+                                it.specs = defItem.specs;
+                                changed = true;
+                            }
+                        }
+                        if (!it.orderBump) {
+                            const defItem = defaultDatabase.items.find(d => d.id === it.id);
+                            if (defItem && defItem.orderBump) {
+                                it.orderBump = JSON.parse(JSON.stringify(defItem.orderBump));
+                                changed = true;
+                            }
+                        }
+                    });
+                }
+                if (changed) localStorage.setItem(STORE_KEY, JSON.stringify(parsed));
+                return parsed;
+            } catch(e) {
+                return defaultDatabase;
+            }
+        }
+
+        // Formata e comprime imagens de produtos garantindo tamanho leve (< 28KB), sem estourar limites do navegador
+        function compressImageFile(fileOrBlobOrDataUrl, maxDim = 420, quality = 0.65) {
+            return new Promise((resolve, reject) => {
+                if (!fileOrBlobOrDataUrl) {
+                    resolve(null);
+                    return;
+                }
+
+                let objectUrl = null;
+                let isCreatedUrl = false;
+                const img = new Image();
+
+                const cleanup = () => {
+                    if (isCreatedUrl && objectUrl) {
+                        try { URL.revokeObjectURL(objectUrl); } catch(e) {}
+                    }
+                };
+
+                img.onload = () => {
+                    try {
+                        let width = img.naturalWidth || img.width;
+                        let height = img.naturalHeight || img.height;
+
+                        if (!width || !height) {
+                            cleanup();
+                            resolve(null);
+                            return;
+                        }
+
+                        // Redimensionamento proporcional bidirecional (largura e altura limitadas a maxDim)
+                        if (width > maxDim || height > maxDim) {
+                            const scale = Math.min(maxDim / width, maxDim / height);
+                            width = Math.max(1, Math.round(width * scale));
+                            height = Math.max(1, Math.round(height * scale));
+                        }
+
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d', { alpha: false });
+                        if (!ctx) {
+                            cleanup();
+                            resolve(null);
+                            return;
+                        }
+
+                        // Fundo branco sólido para evitar fundo preto caso a imagem original tenha canal alfa
+                        ctx.fillStyle = '#FFFFFF';
+                        ctx.fillRect(0, 0, width, height);
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        // Compressão adaptativa: garante que o Base64 final fique ultraleve (< 28KB)
+                        let targetQ = quality;
+                        let dataUrl = canvas.toDataURL('image/jpeg', targetQ);
+
+                        if (dataUrl.length > 38000 && targetQ > 0.50) {
+                            dataUrl = canvas.toDataURL('image/jpeg', 0.50);
+                        }
+                        if (dataUrl.length > 38000) {
+                            dataUrl = canvas.toDataURL('image/jpeg', 0.38);
+                        }
+
+                        cleanup();
+                        resolve(dataUrl);
+                    } catch(err) {
+                        cleanup();
+                        reject(err);
+                    }
+                };
+
+                img.onerror = () => {
+                    cleanup();
+                    reject(new Error("Não foi possível carregar os dados da imagem."));
+                };
+
+                if (typeof fileOrBlobOrDataUrl === 'string') {
+                    img.src = fileOrBlobOrDataUrl;
+                } else if (fileOrBlobOrDataUrl instanceof Blob || fileOrBlobOrDataUrl instanceof File) {
+                    try {
+                        objectUrl = URL.createObjectURL(fileOrBlobOrDataUrl);
+                        isCreatedUrl = true;
+                        img.src = objectUrl;
+                    } catch(e) {
+                        const reader = new FileReader();
+                        reader.onload = (ev) => { img.src = ev.target.result; };
+                        reader.onerror = () => { cleanup(); reject(new Error("Erro ao ler arquivo.")); };
+                        reader.readAsDataURL(fileOrBlobOrDataUrl);
+                    }
+                } else {
+                    resolve(null);
+                }
+            });
+        }
+
+        function saveDB(db) {
+            // Salva o banco sem feedbacks para evitar quota overflow (feedbacks ficam no IndexedDB)
+            const dbToSave = Object.assign({}, db, { feedbacks: [] });
+
+            try {
+                localStorage.setItem(STORE_KEY, JSON.stringify(dbToSave));
+                try { localStorage.setItem('gplay_store_ts', Date.now().toString()); } catch(e) {}
+                return true;
+            } catch (err) {
+                console.warn("Aviso de limite do localStorage atingido, ativando auto-recuperação do banco...", err);
+
+                // Auto-recuperação de emergência:
+                // 1. Mantém apenas os 5 pedidos mais recentes no histórico e remove comprovantes pesados
+                if (dbToSave.ordersHistory && Array.isArray(dbToSave.ordersHistory)) {
+                    dbToSave.ordersHistory = dbToSave.ordersHistory.slice(-5).map(o => ({
+                        ...o,
+                        pixReceipt: (o.pixReceipt && o.pixReceipt.length > 500) ? '' : o.pixReceipt
+                    }));
+                }
+
+                // 2. Remove imagens Base64 que possam estar pesadas nos produtos
+                if (dbToSave.items && Array.isArray(dbToSave.items)) {
+                    dbToSave.items.forEach(it => {
+                        if (it.img && it.img.startsWith('data:image/') && it.img.length > 45000) {
+                            it.img = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600";
+                        }
+                    });
+                }
+
+                try {
+                    localStorage.setItem(STORE_KEY, JSON.stringify(dbToSave));
+                    try { localStorage.setItem('gplay_store_ts', Date.now().toString()); } catch(e) {}
+                    console.log("Banco salvo com sucesso após auto-recuperação de espaço!");
+                    return true;
+                } catch(secondErr) {
+                    console.error("Erro crítico ao salvar no localStorage:", secondErr);
+                    showAlert("⚠️ Limite de dados do navegador atingido. Cole um link direto da imagem (URL) ou remova itens não utilizados.", false);
+                    return false;
+                }
+            }
+        }
+
+        // ================= AUTENTICAÇÃO SEGURA =================
+        function togglePasswordVisibility() {
+            const input = document.getElementById('auth-input');
+            const icon = document.getElementById('auth-eye-icon');
+            if (!input || !icon) return;
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'ph-bold ph-eye-slash text-lg text-cyan-400';
+            } else {
+                input.type = 'password';
+                icon.className = 'ph-bold ph-eye text-lg';
+            }
+        }
+
+        // Algoritmo SHA-256 nativo em JavaScript (compatível com qualquer protocolo, inclusive file:// e HTTP)
+        function sha256Sync(str) {
+            function rotateRight(n, x) { return ((x >>> n) | (x << (32 - n))); }
+            function choice(x, y, z) { return ((x & y) ^ (~x & z)); }
+            function majority(x, y, z) { return ((x & y) ^ (x & z) ^ (y & z)); }
+            function sigma0(x) { return (rotateRight(2, x) ^ rotateRight(13, x) ^ rotateRight(22, x)); }
+            function sigma1(x) { return (rotateRight(6, x) ^ rotateRight(11, x) ^ rotateRight(25, x)); }
+            function gamma0(x) { return (rotateRight(7, x) ^ rotateRight(18, x) ^ (x >>> 3)); }
+            function gamma1(x) { return (rotateRight(17, x) ^ rotateRight(19, x) ^ (x >>> 10)); }
+
+            const utf8 = unescape(encodeURIComponent(str));
+            const words = [];
+            for (let i = 0; i < utf8.length; i++) {
+                words[i >> 2] |= (utf8.charCodeAt(i) & 0xff) << (24 - (i % 4) * 8);
+            }
+            const bitLen = utf8.length * 8;
+            words[bitLen >> 5] |= 0x80 << (24 - (bitLen % 32));
+            words[(((bitLen + 64) >> 9) << 4) + 15] = bitLen;
+
+            const K = [
+                0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
+                0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
+                0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
+                0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
+                0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
+                0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
+                0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
+                0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
+            ];
+
+            let H0 = 0x6a09e667, H1 = 0xbb67ae85, H2 = 0x3c6ef372, H3 = 0xa54ff53a;
+            let H4 = 0x510e527f, H5 = 0x9b05688c, H6 = 0x1f83d9ab, H7 = 0x5be0cd19;
+
+            const W = new Array(64);
+            for (let i = 0; i < words.length; i += 16) {
+                for (let t = 0; t < 16; t++) W[t] = words[i + t] || 0;
+                for (let t = 16; t < 64; t++) W[t] = (gamma1(W[t - 2]) + W[t - 7] + gamma0(W[t - 15]) + W[t - 16]) | 0;
+
+                let a = H0, b = H1, c = H2, d = H3, e = H4, f = H5, g = H6, h = H7;
+
+                for (let t = 0; t < 64; t++) {
+                    const T1 = (h + sigma1(e) + choice(e, f, g) + K[t] + W[t]) | 0;
+                    const T2 = (sigma0(a) + majority(a, b, c)) | 0;
+                    h = g; g = f; f = e; e = (d + T1) | 0;
+                    d = c; c = b; b = a; a = (T1 + T2) | 0;
+                }
+
+                H0 = (H0 + a) | 0; H1 = (H1 + b) | 0; H2 = (H2 + c) | 0; H3 = (H3 + d) | 0;
+                H4 = (H4 + e) | 0; H5 = (H5 + f) | 0; H6 = (H6 + g) | 0; H7 = (H7 + h) | 0;
+            }
+
+            return [H0, H1, H2, H3, H4, H5, H6, H7].map(h => {
+                let s = (h >>> 0).toString(16);
+                while (s.length < 8) s = '0' + s;
+                return s;
+            }).join('');
+        }
+
+        async function computeHash(str) {
+            try {
+                if (window.crypto && window.crypto.subtle && typeof window.crypto.subtle.digest === 'function') {
+                    const buffer = new TextEncoder().encode(str);
+                    const digest = await window.crypto.subtle.digest('SHA-256', buffer);
+                    return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
+                }
+            } catch(e) {}
+            return sha256Sync(str);
+        }
+
+        // Hashes autorizados (reconhece tanto a senha exata quanto digitação sem maiúscula inicial no celular)
+        const VALID_HASHES = [
+            "6274f758ffc8e958a49df6215f148989b14dfb4b18dc4dedf1896571837073ef", // Hash Mestre Primário
+            "68631242e7ab946e67ee5b3a5ac9b404d36f8ffaa3d0ea21c1df3d49f632eb1c"  // Hash Mestre Alternativo
+        ];
+
+        async function handleLogin(e) {
+            if (e && e.preventDefault) e.preventDefault();
+            const inputEl = document.getElementById('auth-input');
+            const errorEl = document.getElementById('auth-error-msg');
+            if (errorEl) errorEl.classList.add('hidden');
+
+            const pass = (inputEl ? inputEl.value : '').trim();
+            if (!pass) return;
+
+            try {
+                const hashed = await computeHash(pass);
+                const isMatch = VALID_HASHES.includes(hashed);
+
+                if (isMatch) {
+                    sessionStorage.setItem(AUTH_STORAGE_KEY, "authenticated");
+                    const authScreen = document.getElementById('auth-screen');
+                    const dashboard = document.getElementById('admin-dashboard');
+                    if (authScreen) authScreen.classList.add('hidden');
+                    if (dashboard) dashboard.classList.remove('hidden');
+
+                    try {
+                        initDashboard();
+                    } catch(dashErr) {
+                        console.warn("Aviso ao carregar dados do dashboard:", dashErr);
+                    }
+
+                    showAlert("🔓 Bem-vindo ao Painel de Controle!");
+                } else {
+                    if (errorEl) {
+                        errorEl.innerText = "⚠️ Senha incorreta. Verifique se digitou a chave mestra corretamente.";
+                        errorEl.classList.remove('hidden');
+                    } else {
+                        alert("Senha incorreta! Acesso restrito.");
+                    }
+                }
+            } catch(err) {
+                console.error("Erro na autenticação:", err);
+                if (errorEl) {
+                    errorEl.innerText = "⚠️ Erro ao processar autenticação: " + (err.message || err);
+                    errorEl.classList.remove('hidden');
+                }
+            }
+        }
+
+        function checkAuth() {
+            if (sessionStorage.getItem(AUTH_STORAGE_KEY) === "authenticated") {
+                document.getElementById('auth-screen').classList.add('hidden');
+                document.getElementById('admin-dashboard').classList.remove('hidden');
+                initDashboard();
+            }
+        }
+
+        function logout() {
+            sessionStorage.removeItem(AUTH_STORAGE_KEY);
+            window.location.reload();
+        }
+
+        function showAlert(msg, isSuccess = true) {
+            const alertBox = document.getElementById('admin-alert');
+            const alertMsg = document.getElementById('admin-alert-msg');
+            const alertIcon = document.getElementById('admin-alert-icon');
+            alertMsg.innerText = msg;
+            alertIcon.className = isSuccess ? "ph-fill ph-check-circle text-2xl text-emerald-400" : "ph-fill ph-warning-circle text-2xl text-red-400";
+            alertBox.classList.remove('hidden');
+            setTimeout(() => alertBox.classList.add('hidden'), 4000);
+        }
+
+        // ================= CONTROLE DE ABAS =================
+        function switchTab(tab) {
+            document.querySelectorAll('.admin-tab').forEach(b => {
+                b.classList.remove('active', 'bg-primary/20', 'text-primary');
+                b.classList.add('text-gray-400');
+            });
+            const activeBtn = document.getElementById(`tab-btn-${tab}`);
+            if (activeBtn) {
+                activeBtn.classList.add('active', 'bg-primary/20', 'text-primary');
+                activeBtn.classList.remove('text-gray-400');
+            }
+
+            document.getElementById('section-catalog').classList.add('hidden');
+            document.getElementById('section-coupons').classList.add('hidden');
+            document.getElementById('section-tutorials').classList.add('hidden');
+            document.getElementById('section-gateway').classList.add('hidden');
+            document.getElementById('section-links').classList.add('hidden');
+            document.getElementById('section-feedbacks').classList.add('hidden');
+            document.getElementById('section-orders').classList.add('hidden');
+            document.getElementById('section-upsell').classList.add('hidden');
+
+            const targetSection = document.getElementById(`section-${tab}`);
+            if (targetSection) targetSection.classList.remove('hidden');
+
+            if (tab === 'upsell') {
+                renderUpsellSettings(getDB());
+            }
+        }
+
+        // ================= INDEXEDDB PARA VÍDEOS DO DISPOSITIVO (SEM LIMITE DE LOCALSTORAGE) =================
+        const IDB_MEDIA_NAME = 'CybertronMediaDB';
+        const IDB_MEDIA_VERSION = 1;
+        const IDB_MEDIA_STORE = 'tutorials_videos';
+
+        function openMediaDB() {
+            return new Promise((resolve) => {
+                if (!window.indexedDB) {
+                    resolve(null);
+                    return;
+                }
+                const req = indexedDB.open(IDB_MEDIA_NAME, IDB_MEDIA_VERSION);
+                req.onupgradeneeded = (e) => {
+                    const db = e.target.result;
+                    if (!db.objectStoreNames.contains(IDB_MEDIA_STORE)) {
+                        db.createObjectStore(IDB_MEDIA_STORE, { keyPath: 'id' });
+                    }
+                };
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => resolve(null);
+            });
+        }
+
+        async function saveVideoToIndexedDB(id, blobOrDataUrl) {
+            try {
+                const db = await openMediaDB();
+                if (!db) return false;
+                return new Promise((resolve) => {
+                    const tx = db.transaction(IDB_MEDIA_STORE, 'readwrite');
+                    const store = tx.objectStore(IDB_MEDIA_STORE);
+                    store.put({ id, data: blobOrDataUrl, updatedAt: Date.now() });
+                    tx.oncomplete = () => resolve(true);
+                    tx.onerror = () => resolve(false);
+                });
+            } catch(e) {
+                console.warn("IndexedDB error:", e);
+                return false;
+            }
+        }
+
+        async function getVideoFromIndexedDB(id) {
+            try {
+                const db = await openMediaDB();
+                if (!db) return null;
+                return new Promise((resolve) => {
+                    const tx = db.transaction(IDB_MEDIA_STORE, 'readonly');
+                    const store = tx.objectStore(IDB_MEDIA_STORE);
+                    const req = store.get(id);
+                    req.onsuccess = () => resolve(req.result ? req.result.data : null);
+                    req.onerror = () => resolve(null);
+                });
+            } catch(e) {
+                return null;
+            }
+        }
+
+        async function deleteVideoFromIndexedDB(id) {
+            try {
+                const db = await openMediaDB();
+                if (!db) return;
+                const tx = db.transaction(IDB_MEDIA_STORE, 'readwrite');
+                tx.objectStore(IDB_MEDIA_STORE).delete(id);
+            } catch(e) {}
+        }
+
+        // ================= RENDERIZADORES DE CONTEÚDO =================
+        let currentSelectedGameForStock = null;
+        let currentTutorialVideoMode = 'url';
+        let currentTutorialVideoFile = null;
+        let currentTutorialFileBase64 = '';
+        let currentFeedbackImageBase64 = '';
+        let currentOrderPixBase64 = '';
+
+        function initDashboard() {
+            const db = getDB();
+            renderCatalog(db);
+            renderCoupons(db);
+            renderTutorials(db);
+            renderFeedbacksAdmin(db);
+            renderOrders(db);
+            renderOfficialLinks(db);
+            renderUpsellSettings(db);
+            document.getElementById('gw-handle').value = db.gateway.handle || "ruben_alisson";
+            document.getElementById('gw-fallback').value = db.gateway.fallbackUrl || "";
+        }
+
+        function renderOfficialLinks(db) {
+            const links = db.officialLinks || defaultDatabase.officialLinks;
+            const waInput = document.getElementById('link-cfg-whatsapp');
+            const vipInput = document.getElementById('link-cfg-vip');
+            const instaInput = document.getElementById('link-cfg-instagram');
+            if (waInput) waInput.value = links.whatsapp || "";
+            if (vipInput) vipInput.value = links.vipGroup || "";
+            if (instaInput) instaInput.value = links.instagram || "";
+        }
+
+        function saveOfficialLinksSettings(e) {
+            e.preventDefault();
+            const db = getDB();
+            db.officialLinks = {
+                whatsapp: document.getElementById('link-cfg-whatsapp').value.trim(),
+                vipGroup: document.getElementById('link-cfg-vip').value.trim(),
+                instagram: document.getElementById('link-cfg-instagram').value.trim()
+            };
+            saveDB(db);
+            showAlert("✅ Links oficiais salvos e sincronizados com a página da loja!");
+        }
+
+        // ================= GESTÃO DE PRODUTOS =================
+        function handleImageUrlInput(val) {
+            const trimmed = (val || '').trim();
+            const previewContainer = document.getElementById('form-game-preview-container');
+            const previewImg = document.getElementById('form-game-preview');
+            if (trimmed) {
+                previewImg.src = trimmed;
+                previewContainer.classList.remove('hidden');
+            } else {
+                previewContainer.classList.add('hidden');
+                previewImg.src = '';
+            }
+        }
+
+        function clearProductImage() {
+            document.getElementById('form-game-img').value = '';
+            document.getElementById('form-game-file').value = '';
+            const previewContainer = document.getElementById('form-game-preview-container');
+            const previewImg = document.getElementById('form-game-preview');
+            previewContainer.classList.add('hidden');
+            previewImg.src = '';
+        }
+
+        async function previewGameImage(e) {
+            const file = e.target.files && e.target.files[0];
+            if (!file) return;
+
+            const inputImg = document.getElementById('form-game-img');
+            const previewContainer = document.getElementById('form-game-preview-container');
+            const previewImg = document.getElementById('form-game-preview');
+
+            const previousVal = inputImg.value;
+            inputImg.value = '⚡ Formatando e otimizando imagem automaticamente...';
+            previewContainer.classList.remove('hidden');
+
+            try {
+                // Formata proporcionalmente em no máximo 420px com qualidade otimizada (~18KB a 25KB)
+                const optimizedBase64 = await compressImageFile(file, 420, 0.65);
+                if (!optimizedBase64) {
+                    throw new Error("Não foi possível gerar a imagem otimizada.");
+                }
+                inputImg.value = optimizedBase64;
+                previewImg.src = optimizedBase64;
+            } catch(err) {
+                console.error("Erro ao formatar imagem do produto:", err);
+                inputImg.value = previousVal || '';
+                if (!inputImg.value) {
+                    previewContainer.classList.add('hidden');
+                    previewImg.src = '';
+                }
+                showAlert("⚠️ Não foi possível processar essa foto. Escolha um arquivo de imagem válido (JPG, PNG ou WebP).", false);
+            }
+        }
+
+        function openCreateGameModal() {
+            document.getElementById('modal-game-title').innerText = "Novo Produto";
+            document.getElementById('form-game-id').value = '';
+            document.getElementById('form-game-name').value = '';
+            document.getElementById('form-game-old-price').value = '';
+            document.getElementById('form-game-price').value = '';
+            document.getElementById('form-game-category').value = 'Inteligencia artificial';
+            document.getElementById('form-game-specs').value = '';
+            document.getElementById('form-game-img').value = '';
+            document.getElementById('form-game-file').value = '';
+            document.getElementById('form-game-preview-container').classList.add('hidden');
+            document.getElementById('form-game-preview').src = '';
+            document.getElementById('modal-game').classList.remove('hidden');
+        }
+
+        function openEditGameModal(id) {
+            const db = getDB();
+            const item = db.items.find(i => i.id === id);
+            if (!item) return;
+
+            document.getElementById('modal-game-title').innerText = "Editar Produto & Especificações";
+            document.getElementById('form-game-id').value = item.id;
+            document.getElementById('form-game-name').value = item.name || '';
+            document.getElementById('form-game-old-price').value = item.oldPrice || '';
+            document.getElementById('form-game-price').value = item.price || '';
+            document.getElementById('form-game-category').value = item.category || 'Inteligencia artificial';
+            document.getElementById('form-game-specs').value = item.specs || '';
+            document.getElementById('form-game-img').value = item.img || '';
+            document.getElementById('form-game-file').value = '';
+
+            if (item.img) {
+                document.getElementById('form-game-preview').src = item.img;
+                document.getElementById('form-game-preview-container').classList.remove('hidden');
+            } else {
+                document.getElementById('form-game-preview-container').classList.add('hidden');
+                document.getElementById('form-game-preview').src = '';
+            }
+
+            document.getElementById('modal-game').classList.remove('hidden');
+        }
+
+        function closeGameModal() {
+            document.getElementById('modal-game').classList.add('hidden');
+        }
+
+        async function handleSaveGame(e) {
+            e.preventDefault();
+            const db = getDB();
+            const editingId = document.getElementById('form-game-id').value.trim();
+            const name = document.getElementById('form-game-name').value.trim();
+            const oldPrice = parseFloat(document.getElementById('form-game-old-price').value) || 0;
+            const price = parseFloat(document.getElementById('form-game-price').value);
+            const category = document.getElementById('form-game-category').value;
+            const specs = document.getElementById('form-game-specs').value.trim();
+            let img = document.getElementById('form-game-img').value.trim();
+
+            if (!img) {
+                img = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600";
+            } else if (img.startsWith('data:image/') && img.length > 40000) {
+                // Se o Base64 for pesado, re-comprime preventivamente antes de salvar
+                try {
+                    const optimized = await compressImageFile(img, 420, 0.65);
+                    if (optimized) img = optimized;
+                } catch(err) {
+                    console.warn("Aviso ao otimizar Base64 antes de salvar:", err);
+                }
+            }
+
+            if (editingId) {
+                // Modo Edição
+                const item = db.items.find(i => i.id === editingId);
+                if (item) {
+                    item.name = name;
+                    item.oldPrice = oldPrice;
+                    item.price = price;
+                    item.category = category;
+                    item.specs = specs;
+                    item.img = img;
+                }
+                const saved = saveDB(db);
+                if (!saved) return;
+                closeGameModal();
+                renderCatalog(db);
+                showAlert("✅ Produto e imagem atualizados com sucesso!");
+            } else {
+                // Novo Produto
+                const id = 'prod_' + Date.now();
+                db.items.push({
+                    id,
+                    name,
+                    oldPrice,
+                    price,
+                    category,
+                    specs,
+                    img,
+                    isFeatured: db.items.length === 0,
+                    keys: []
+                });
+                const saved = saveDB(db);
+                if (!saved) return;
+                closeGameModal();
+                renderCatalog(db);
+                showAlert("✅ Novo produto cadastrado com sucesso! Agora adicione as chaves em 'Gerenciar Estoque'.");
+            }
+        }
+
+        function deleteGame(id) {
+            if (!confirm("Tem certeza que deseja remover este produto da vitrine?")) return;
+            const db = getDB();
+            db.items = db.items.filter(i => i.id !== id);
+            saveDB(db);
+            renderCatalog(db);
+            showAlert("🗑️ Produto removido com sucesso!");
+        }
+
+        function renderCatalog(db) {
+            const container = document.getElementById('catalog-list');
+            container.innerHTML = '';
+
+            db.items.forEach(item => {
+                const stockCount = item.keys ? item.keys.length : 0;
+                const badgeColor = stockCount > 0 ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" : "bg-red-500/20 text-red-400 border-red-500/30";
+                const oldPriceText = item.oldPrice && item.oldPrice > item.price ? `De R$ ${item.oldPrice.toFixed(2).replace('.', ',')}` : '';
+
+                container.innerHTML += `
+                    <div class="glass-card rounded-2xl p-4 border border-white/5 flex flex-col justify-between">
+                        <div>
+                            <div class="relative rounded-xl overflow-hidden mb-3 aspect-video bg-black/50">
+                                <img src="${item.img}" class="w-full h-full object-cover">
+                                <span class="absolute top-2 right-2 text-[10px] font-bold px-2 py-0.5 rounded-full border ${badgeColor}">
+                                    ${stockCount} Chaves em Estoque
+                                </span>
+                                <span class="absolute bottom-2 left-2 text-[10px] bg-black/70 text-cyan-300 font-bold px-2 py-0.5 rounded border border-cyan-500/30">
+                                    ${item.category}
+                                </span>
+                            </div>
+                            <h4 class="font-bold text-white text-sm mb-1">${item.name}</h4>
+                            <div class="flex items-center gap-2 mb-2">
+                                ${oldPriceText ? `<span class="line-through text-gray-500 text-xs">${oldPriceText}</span>` : ''}
+                                <span class="text-xs text-emerald-400 font-black">Por R$ ${item.price.toFixed(2).replace('.', ',')}</span>
+                            </div>
+                            ${item.specs ? `
+                                <div class="mb-3 p-2 rounded-lg bg-black/40 border border-white/5 text-[10px] text-gray-300 line-clamp-2" title="${item.specs.replace(/"/g, '&quot;')}">
+                                    <strong class="text-cyan-400 block mb-0.5"><i class="ph-bold ph-list-checks"></i> Incluso:</strong>
+                                    ${item.specs.split('\n')[0]}
+                                </div>
+                            ` : ''}
+                        </div>
+
+                        <div class="pt-3 border-t border-white/5 flex gap-2">
+                            <button onclick="openStockModal('${item.id}')" class="flex-1 bg-white/5 hover:bg-white/10 text-white py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 border border-white/10">
+                                <i class="ph-bold ph-stack text-emerald-400"></i> Estoque
+                            </button>
+                            <button onclick="openEditGameModal('${item.id}')" class="p-2 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/20 transition" title="Editar Produto & Especificações">
+                                <i class="ph-bold ph-pencil-simple text-sm"></i>
+                            </button>
+                            <button onclick="deleteGame('${item.id}')" class="p-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 transition" title="Remover Produto">
+                                <i class="ph-bold ph-trash text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // ================= GESTÃO DE LEVAR TAMBÉM (UPSELL / ORDER BUMP INDIVIDUAL POR PRODUTO) =================
+        let currentTargetProductId = null;
+
+        function renderUpsellSettings(db) {
+            if (!db) db = getDB();
+            const items = db.items || [];
+            if (items.length === 0) return;
+
+            // Popula o seletor do produto da vitrine
+            const targetSelect = document.getElementById('target-product-select');
+            if (targetSelect) {
+                const currentVal = currentTargetProductId || targetSelect.value || items[0].id;
+                targetSelect.innerHTML = '';
+                items.forEach(prod => {
+                    const hasBump = prod.orderBump && prod.orderBump.enabled !== false;
+                    const badgeText = hasBump ? ' 🔥 [Bump Ativo]' : ' ⚪ [Desativado]';
+                    targetSelect.innerHTML += `<option value="${prod.id}" ${prod.id === currentVal ? 'selected' : ''}>${prod.name} (R$ ${prod.price.toFixed(2).replace('.', ',')})${badgeText}</option>`;
+                });
+                currentTargetProductId = currentVal;
+            }
+
+            loadOrderBumpForTargetProduct(currentTargetProductId);
+            renderUpsellOverviewTable(db);
+        }
+
+        function handleSelectTargetProduct(prodId) {
+            currentTargetProductId = prodId;
+            loadOrderBumpForTargetProduct(prodId);
+        }
+
+        function loadOrderBumpForTargetProduct(prodId) {
+            const db = getDB();
+            const items = db.items || [];
+            if (items.length === 0) return;
+            const targetProd = items.find(i => i.id === prodId) || items[0];
+            if (!targetProd) return;
+            currentTargetProductId = targetProd.id;
+
+            // Atualiza resumo do produto alvo selecionado
+            const targetInfoName = document.getElementById('target-product-info-name');
+            if (targetInfoName) targetInfoName.innerText = targetProd.name;
+            const targetInfoPrice = document.getElementById('target-product-info-price');
+            if (targetInfoPrice) targetInfoPrice.innerText = 'R$ ' + targetProd.price.toFixed(2).replace('.', ',');
+            const targetInfoImg = document.getElementById('target-product-info-img');
+            if (targetInfoImg) targetInfoImg.src = targetProd.img;
+
+            // Se o produto não tiver orderBump ainda, busca no default ou cria default
+            if (!targetProd.orderBump) {
+                const def = defaultDatabase.items.find(d => d.id === targetProd.id);
+                targetProd.orderBump = def && def.orderBump ? JSON.parse(JSON.stringify(def.orderBump)) : {
+                    enabled: true,
+                    productId: "",
+                    title: "Acesso VIP + Ferramentas Exclusivas",
+                    description: "Garanta recursos adicionais e suporte prioritário",
+                    originalPrice: Math.round(targetProd.price * 1.3 * 100) / 100,
+                    promoPrice: Math.round(targetProd.price * 0.85 * 100) / 100,
+                    discountTag: "15% OFF"
+                };
+            }
+
+            const bump = targetProd.orderBump;
+
+            // Popula o select dos produtos oferecidos (exclui o próprio produto alvo)
+            const offeredSelect = document.getElementById('upsell-offered-product-select');
+            if (offeredSelect) {
+                offeredSelect.innerHTML = `<option value="">-- Oferta Personalizada (Preenchimento manual) --</option>`;
+                items.forEach(prod => {
+                    if (prod.id !== targetProd.id) {
+                        const isSelected = bump.productId === prod.id ? 'selected' : '';
+                        offeredSelect.innerHTML += `<option value="${prod.id}" ${isSelected}>${prod.name} (R$ ${prod.price.toFixed(2).replace('.', ',')})</option>`;
+                    }
+                });
+            }
+
+            document.getElementById('upsell-enabled').checked = bump.enabled !== false;
+            document.getElementById('upsell-title').value = bump.title || "";
+            document.getElementById('upsell-description').value = bump.description || "";
+            document.getElementById('upsell-orig-price').value = bump.originalPrice || "";
+            document.getElementById('upsell-promo-price').value = bump.promoPrice || "";
+            document.getElementById('upsell-discount-tag').value = bump.discountTag || (bump.discountPercent ? `${bump.discountPercent}% OFF` : "15% OFF");
+
+            updateUpsellPreview();
+        }
+
+        function handleSelectOfferedProduct(offeredId) {
+            if (!offeredId) return;
+            const db = getDB();
+            const prod = db.items.find(i => i.id === offeredId);
+            if (!prod) return;
+
+            document.getElementById('upsell-title').value = prod.name;
+            document.getElementById('upsell-description').value = prod.specs ? prod.specs.split('\n')[0].replace(/^[•\-\*✓]\s*/, '') : `Acesso completo ao plano oficial de ${prod.name}`;
+
+            const origPrice = prod.oldPrice && prod.oldPrice > prod.price ? prod.oldPrice : Math.round(prod.price * 1.3 * 100) / 100;
+            const promoPrice = Math.round(prod.price * 0.85 * 100) / 100; // 15% OFF no order bump
+
+            document.getElementById('upsell-orig-price').value = origPrice.toFixed(2);
+            document.getElementById('upsell-promo-price').value = promoPrice.toFixed(2);
+            document.getElementById('upsell-discount-tag').value = "15% OFF";
+
+            updateUpsellPreview();
+        }
+
+        function calcUpsellDiscount() {
+            const orig = parseFloat(document.getElementById('upsell-orig-price').value) || 0;
+            const promo = parseFloat(document.getElementById('upsell-promo-price').value) || 0;
+            if (orig > promo && promo > 0) {
+                const pct = Math.round(((orig - promo) / orig) * 100);
+                document.getElementById('upsell-discount-tag').value = `${pct}% OFF`;
+            }
+            updateUpsellPreview();
+        }
+
+        function updateUpsellPreview() {
+            const isEnabled = document.getElementById('upsell-enabled').checked;
+            const title = document.getElementById('upsell-title').value.trim() || "Oferta Especial";
+            const desc = document.getElementById('upsell-description').value.trim() || "Benefício exclusivo";
+            const orig = parseFloat(document.getElementById('upsell-orig-price').value) || 35.00;
+            const promo = parseFloat(document.getElementById('upsell-promo-price').value) || 29.75;
+            const tag = document.getElementById('upsell-discount-tag').value.trim() || "15% OFF";
+
+            document.getElementById('preview-upsell-title').innerText = title;
+            document.getElementById('preview-upsell-desc').innerText = desc;
+            document.getElementById('preview-upsell-orig').innerText = 'De R$ ' + orig.toFixed(2).replace('.', ',');
+            document.getElementById('preview-upsell-promo').innerText = 'R$ ' + promo.toFixed(2).replace('.', ',');
+            document.getElementById('preview-upsell-tag').innerText = tag;
+
+            // Opacidade se desativado
+            const previewCard = document.getElementById('preview-upsell-title').closest('.bg-gradient-to-r');
+            if (previewCard) {
+                previewCard.style.opacity = isEnabled ? '1' : '0.4';
+            }
+        }
+
+        function handleSaveUpsell(e) {
+            e.preventDefault();
+            const db = getDB();
+            if (!currentTargetProductId) {
+                if (db.items && db.items.length > 0) currentTargetProductId = db.items[0].id;
+                else return;
+            }
+
+            const targetItem = db.items.find(i => i.id === currentTargetProductId);
+            if (!targetItem) return;
+
+            const enabled = document.getElementById('upsell-enabled').checked;
+            const offeredProductId = document.getElementById('upsell-offered-product-select').value;
+            const title = document.getElementById('upsell-title').value.trim();
+            const description = document.getElementById('upsell-description').value.trim();
+            const originalPrice = parseFloat(document.getElementById('upsell-orig-price').value) || 0;
+            const promoPrice = parseFloat(document.getElementById('upsell-promo-price').value) || 0;
+            const discountTag = document.getElementById('upsell-discount-tag').value.trim() || "15% OFF";
+            const discountPercent = parseInt(discountTag) || 15;
+
+            targetItem.orderBump = {
+                enabled,
+                productId: offeredProductId,
+                title,
+                description,
+                originalPrice,
+                promoPrice,
+                discountPercent,
+                discountTag
+            };
+
+            // Mantém também db.orderBump como fallback geral sincronizado
+            db.orderBump = targetItem.orderBump;
+
+            saveDB(db);
+            renderUpsellSettings(db);
+            showAlert(`🔥 Order Bump de "${targetItem.name}" salvo com sucesso!`);
+        }
+
+        function toggleProductBumpStatus(prodId) {
+            const db = getDB();
+            const item = db.items.find(i => i.id === prodId);
+            if (!item) return;
+            if (!item.orderBump) {
+                item.orderBump = { enabled: true, title: "Acesso VIP", description: "Benefício extra", originalPrice: 35, promoPrice: 29.75, discountTag: "15% OFF" };
+            } else {
+                item.orderBump.enabled = !item.orderBump.enabled;
+            }
+            saveDB(db);
+            renderUpsellSettings(db);
+            showAlert(`Order Bump de "${item.name}" ${item.orderBump.enabled ? 'ATIVADO' : 'DESATIVADO'}!`);
+        }
+
+        function renderUpsellOverviewTable(db) {
+            const container = document.getElementById('upsell-overview-list');
+            if (!container) return;
+            const items = db.items || [];
+            if (items.length === 0) {
+                container.innerHTML = `<p class="text-xs text-gray-500 py-4 text-center">Nenhum produto cadastrado na vitrine.</p>`;
+                return;
+            }
+
+            container.innerHTML = '';
+            items.forEach(item => {
+                const bump = item.orderBump;
+                const isEnabled = bump && bump.enabled !== false;
+                const bumpTitle = bump && bump.title ? bump.title : 'Nenhum Order Bump configurado';
+                const bumpOrig = bump && bump.originalPrice ? `De R$ ${bump.originalPrice.toFixed(2).replace('.', ',')}` : '';
+                const bumpPromo = bump && bump.promoPrice ? `R$ ${bump.promoPrice.toFixed(2).replace('.', ',')}` : 'R$ 0,00';
+                const bumpTag = bump && bump.discountTag ? bump.discountTag : '';
+
+                const card = document.createElement('div');
+                card.className = `p-4 rounded-2xl border transition flex items-center justify-between gap-4 flex-wrap ${item.id === currentTargetProductId ? 'border-orange-500/60 bg-orange-500/10' : 'border-white/10 bg-black/40 hover:border-white/20'}`;
+                card.innerHTML = `
+                    <div class="flex items-center gap-3 min-w-[220px]">
+                        <img src="${item.img}" class="w-12 h-12 rounded-xl object-cover border border-white/10 shrink-0">
+                        <div>
+                            <h4 class="text-xs font-bold text-white line-clamp-1">${item.name}</h4>
+                            <p class="text-[11px] text-gray-400">Preço Vitrine: <span class="text-emerald-400 font-bold">R$ ${item.price.toFixed(2).replace('.', ',')}</span></p>
+                        </div>
+                    </div>
+
+                    <div class="flex-1 min-w-[240px]">
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full ${isEnabled ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30' : 'bg-gray-800 text-gray-400'}">
+                                ${isEnabled ? '🔥 Levar Também Ativo' : '⚪ Desativado'}
+                            </span>
+                            ${bumpTag && isEnabled ? `<span class="text-[10px] bg-red-500/20 text-red-400 font-bold px-1.5 py-0.5 rounded border border-red-500/30">${bumpTag}</span>` : ''}
+                        </div>
+                        <p class="text-xs text-white font-bold mt-1 line-clamp-1">${bumpTitle}</p>
+                        ${isEnabled ? `<p class="text-[11px] text-gray-400">${bumpOrig ? `<span class="line-through mr-1">${bumpOrig}</span>` : ''}<span class="text-emerald-400 font-bold">Por ${bumpPromo}</span></p>` : ''}
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="handleSelectTargetProduct('${item.id}'); document.getElementById('section-upsell').scrollIntoView({behavior:'smooth'});" class="px-3 py-1.5 rounded-xl bg-orange-500/20 hover:bg-orange-500/30 border border-orange-500/40 text-orange-300 text-xs font-bold flex items-center gap-1 transition cursor-pointer">
+                            <i class="ph-bold ph-pencil-simple"></i> Editar Bump
+                        </button>
+                        <button type="button" onclick="toggleProductBumpStatus('${item.id}')" class="px-3 py-1.5 rounded-xl ${isEnabled ? 'bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30' : 'bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'} text-xs font-bold transition cursor-pointer">
+                            ${isEnabled ? 'Desativar' : 'Ativar'}
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // ================= GESTÃO DE TUTORIAIS EM VÍDEO =================
+        function setTutorialVideoMode(mode) {
+            currentTutorialVideoMode = mode;
+            const btnUrl = document.getElementById('btn-tut-mode-url');
+            const btnFile = document.getElementById('btn-tut-mode-file');
+            const boxUrl = document.getElementById('tut-input-url-container');
+            const boxFile = document.getElementById('tut-input-file-container');
+
+            if (mode === 'url') {
+                btnUrl.className = "py-1.5 px-3 rounded-lg text-xs font-bold transition bg-cyan-500/20 text-cyan-400 border border-cyan-500/40";
+                btnFile.className = "py-1.5 px-3 rounded-lg text-xs font-bold transition text-gray-400 hover:text-white";
+                boxUrl.classList.remove('hidden');
+                boxFile.classList.add('hidden');
+            } else {
+                btnFile.className = "py-1.5 px-3 rounded-lg text-xs font-bold transition bg-cyan-500/20 text-cyan-400 border border-cyan-500/40";
+                btnUrl.className = "py-1.5 px-3 rounded-lg text-xs font-bold transition text-gray-400 hover:text-white";
+                boxFile.classList.remove('hidden');
+                boxUrl.classList.add('hidden');
+            }
+        }
+
+        function handleTutorialFileSelect(e) {
+            const file = e.target.files[0];
+            if (!file) {
+                currentTutorialVideoFile = null;
+                return;
+            }
+
+            currentTutorialVideoFile = file;
+            const sizeMb = (file.size / 1024 / 1024).toFixed(1);
+            const statusEl = document.getElementById('tut-file-status');
+            if (statusEl) {
+                statusEl.innerHTML = `<span class="text-emerald-400 font-bold">✅ Vídeo pronto: ${file.name} (${sizeMb} MB)</span>`;
+            }
+        }
+
+        function openCreateTutorialModal() {
+            document.getElementById('tutorial-title').value = '';
+            document.getElementById('tutorial-platform').value = '';
+            document.getElementById('tutorial-duration').value = '';
+            document.getElementById('tutorial-url').value = '';
+            document.getElementById('tutorial-desc').value = '';
+            document.getElementById('tutorial-file-data').value = '';
+            const fileInput = document.getElementById('tutorial-file-input');
+            if (fileInput) fileInput.value = '';
+            currentTutorialVideoFile = null;
+            currentTutorialFileBase64 = '';
+            document.getElementById('tut-file-status').innerText = "Formatos suportados: MP4, WebM, MOV";
+            setTutorialVideoMode('url');
+            document.getElementById('modal-tutorial').classList.remove('hidden');
+        }
+
+        function closeTutorialModal() {
+            document.getElementById('modal-tutorial').classList.add('hidden');
+        }
+
+        async function handleSaveTutorial(e) {
+            e.preventDefault();
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn ? submitBtn.innerText : 'Salvar Vídeo';
+
+            const title = document.getElementById('tutorial-title').value.trim();
+            const platform = document.getElementById('tutorial-platform').value.trim();
+            const duration = document.getElementById('tutorial-duration').value.trim();
+            const description = document.getElementById('tutorial-desc').value.trim();
+            const id = 'tut_' + Date.now();
+
+            let videoUrl = '';
+            let videoType = currentTutorialVideoMode;
+
+            try {
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="ph-bold ph-spinner animate-spin"></i> Publicando Vídeo...';
+                }
+
+                if (currentTutorialVideoMode === 'file') {
+                    if (!currentTutorialVideoFile) {
+                        alert("Por favor, selecione um arquivo de vídeo do seu dispositivo antes de salvar.");
+                        if (submitBtn) { submitBtn.disabled = false; submitBtn.innerText = originalBtnText; }
+                        return;
+                    }
+
+                    // Armazena no IndexedDB de forma assíncrona para não exceder cota do localStorage
+                    await saveVideoToIndexedDB(id, currentTutorialVideoFile);
+                    videoUrl = 'indexeddb://' + id;
+                } else {
+                    videoUrl = document.getElementById('tutorial-url').value.trim();
+                    if (!videoUrl) {
+                        alert("Insira a URL do vídeo (YouTube, TikTok, Instagram ou Link direto).");
+                        if (submitBtn) { submitBtn.disabled = false; submitBtn.innerText = originalBtnText; }
+                        return;
+                    }
+                }
+
+                const db = getDB();
+                if (!db.tutorials) db.tutorials = [];
+                db.tutorials.push({
+                    id,
+                    title,
+                    platform,
+                    duration,
+                    videoType,
+                    videoUrl,
+                    description
+                });
+
+                saveDB(db);
+                closeTutorialModal();
+                renderTutorials(db);
+                showAlert("✅ Novo vídeo tutorial publicado e pronto na central de tutoriais!");
+            } catch(err) {
+                console.error("Erro ao salvar tutorial:", err);
+                alert("Falha ao salvar o vídeo tutorial: " + (err.message || "Tente novamente."));
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = originalBtnText;
+                }
+            }
+        }
+
+        async function deleteTutorial(index) {
+            if (!confirm("Tem certeza que deseja excluir este vídeo tutorial?")) return;
+            const db = getDB();
+            if (db.tutorials && db.tutorials[index]) {
+                const tut = db.tutorials[index];
+                if (tut.id) {
+                    await deleteVideoFromIndexedDB(tut.id);
+                }
+                db.tutorials.splice(index, 1);
+                saveDB(db);
+                renderTutorials(db);
+                showAlert("🗑️ Vídeo tutorial removido com sucesso!");
+            }
+        }
+
+        function renderTutorials(db) {
+            const container = document.getElementById('tutorials-list');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const list = db.tutorials || [];
+            if (list.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full p-8 text-center glass-card rounded-2xl border border-white/5">
+                        <i class="ph-fill ph-video text-4xl text-gray-500 mb-2 block"></i>
+                        <p class="text-sm text-gray-400">Nenhum vídeo tutorial cadastrado ainda.</p>
+                        <button onclick="openCreateTutorialModal()" class="mt-3 text-cyan-400 font-bold text-xs hover:underline">+ Cadastrar Primeiro Vídeo</button>
+                    </div>
+                `;
+                return;
+            }
+
+            list.forEach((tut, index) => {
+                const isLocalFile = tut.videoType === 'file' || (tut.videoUrl && (tut.videoUrl.startsWith('indexeddb://') || tut.videoUrl.startsWith('data:video')));
+                const displayLink = isLocalFile ? "Arquivo do Dispositivo (Armazenamento Seguro)" : tut.videoUrl;
+
+                container.innerHTML += `
+                    <div class="glass-card rounded-2xl p-4 border border-white/5 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-[10px] bg-cyan-500/20 text-cyan-400 px-2 py-0.5 rounded font-bold uppercase">
+                                    ${tut.platform}
+                                </span>
+                                <span class="text-[11px] text-gray-500 font-mono">${tut.duration || "Guia"}</span>
+                            </div>
+                            <h4 class="font-bold text-white text-sm mb-1 leading-snug">${tut.title}</h4>
+                            <p class="text-xs text-gray-400 mb-2 line-clamp-2">${tut.description || ""}</p>
+                            <p class="text-[11px] text-gray-500 font-mono truncate mb-3 bg-black/40 p-1.5 rounded">${displayLink}</p>
+                        </div>
+                        <div class="pt-3 border-t border-white/5 flex justify-between items-center">
+                            <span class="text-xs text-cyan-400 font-bold flex items-center gap-1">
+                                <i class="ph-bold ph-${isLocalFile ? 'film-strip' : 'play-circle'}"></i> ${isLocalFile ? 'Vídeo Local' : 'Vídeo Online'}
+                            </span>
+                            <div class="flex items-center gap-1.5">
+                                <a href="tutoriais.html" target="_blank" class="p-2 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 transition" title="Ver na Central">
+                                    <i class="ph-bold ph-arrow-square-out"></i>
+                                </a>
+                                <button onclick="deleteTutorial(${index})" class="p-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 transition" title="Excluir Tutorial">
+                                    <i class="ph-bold ph-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // ================= GESTÃO DE COMPROVANTES (COLUNA AO LADO DO CHAT) =================
+        let pendingFeedbackImagesBase64 = [];
+        const MAX_FEEDBACKS_LIMIT = 10;
+
+        function openFeedbackModal() {
+            const input = document.getElementById('feedback-file-input');
+            if (input) input.value = '';
+            const previewBox = document.getElementById('feedback-preview-box');
+            if (previewBox) previewBox.classList.add('hidden');
+            const previewsGrid = document.getElementById('feedback-previews-grid');
+            if (previewsGrid) previewsGrid.innerHTML = '';
+            pendingFeedbackImagesBase64 = [];
+            
+            const db = getDB();
+            const currentList = db.feedbacks || [];
+            const remaining = Math.max(0, MAX_FEEDBACKS_LIMIT - currentList.length);
+            const remainingEl = document.getElementById('feedback-remaining-slots');
+            if (remainingEl) remainingEl.innerText = `Slots livres: ${remaining} de ${MAX_FEEDBACKS_LIMIT}`;
+
+            document.getElementById('modal-feedback').classList.remove('hidden');
+        }
+
+        function closeFeedbackModal() {
+            document.getElementById('modal-feedback').classList.add('hidden');
+            pendingFeedbackImagesBase64 = [];
+        }
+
+        async function handleFeedbackFilesSelected(e) {
+            const files = Array.from(e.target.files || []);
+            if (files.length === 0) return;
+
+            const db = getDB();
+            // Desconsidera imagens do Unsplash ao calcular slots reais
+            const existingReal = (db.feedbacks || []).filter(u => !u.includes('images.unsplash.com'));
+            const availableSlots = Math.max(0, MAX_FEEDBACKS_LIMIT - existingReal.length);
+
+            if (files.length > availableSlots && availableSlots > 0 && availableSlots < files.length) {
+                showAlert(`ℹ️ Limite máximo é de 10 comprovantes. Processando os primeiros ${availableSlots} arquivos.`, false);
+            }
+
+            const filesToProcess = files.slice(0, Math.max(availableSlots, MAX_FEEDBACKS_LIMIT));
+            const previewBox = document.getElementById('feedback-preview-box');
+            const previewsGrid = document.getElementById('feedback-previews-grid');
+            const countLabel = document.getElementById('feedback-selected-count');
+            const submitBtn = document.getElementById('feedback-submit-btn');
+
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="ph-bold ph-spinner animate-spin"></i> Otimizando imagens...';
+            }
+
+            pendingFeedbackImagesBase64 = [];
+            previewsGrid.innerHTML = '';
+            previewBox.classList.remove('hidden');
+
+            for (let i = 0; i < filesToProcess.length; i++) {
+                try {
+                    // Otimiza para 480px e 0.62 de qualidade: texto perfeitamente legível e cada imagem com apenas ~20KB
+                    const compressed = await compressImageFile(filesToProcess[i], 480, 0.62);
+                    if (compressed) {
+                        pendingFeedbackImagesBase64.push(compressed);
+                        
+                        const thumb = document.createElement('div');
+                        thumb.className = "relative rounded-lg overflow-hidden border border-purple-500/30 aspect-square bg-black/60 group shadow";
+                        thumb.innerHTML = `
+                            <img src="${compressed}" class="w-full h-full object-cover">
+                            <span class="absolute bottom-1 left-1 bg-black/80 text-[9px] text-purple-300 font-mono px-1 rounded border border-purple-500/20">#${pendingFeedbackImagesBase64.length}</span>
+                        `;
+                        previewsGrid.appendChild(thumb);
+                    }
+                } catch(err) {
+                    console.error("Erro ao comprimir imagem:", err);
+                }
+            }
+
+            if (countLabel) {
+                countLabel.innerText = `${pendingFeedbackImagesBase64.length} comprovante(s) pronto(s) para salvar`;
+            }
+
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="ph-bold ph-check"></i> Salvar Comprovantes na Loja';
+            }
+        }
+
+        async function handleSaveMultipleFeedbacks(e) {
+            e.preventDefault();
+            if (pendingFeedbackImagesBase64.length === 0) {
+                alert("Por favor, selecione pelo menos uma imagem válida do seu dispositivo!");
+                return;
+            }
+
+            // Carrega lista atual do IndexedDB
+            let currentList = await idbLoadFeedbacks();
+            
+            // Remove automaticamente os mocks do Unsplash
+            currentList = currentList.filter(url => !url.includes('images.unsplash.com'));
+
+            // Adiciona as novas imagens no topo
+            pendingFeedbackImagesBase64.forEach(imgBase64 => {
+                currentList.unshift(imgBase64);
+            });
+
+            // Garante o teto estrito de no máximo 10 comprovantes sociais
+            if (currentList.length > MAX_FEEDBACKS_LIMIT) {
+                currentList = currentList.slice(0, MAX_FEEDBACKS_LIMIT);
+            }
+
+            // Salva no IndexedDB (sem limite de quota!)
+            const saved = await idbSaveFeedbacks(currentList);
+
+            // Salva no banco geral (sem feedbacks para evitar quota overflow)
+            const db = getDB();
+            db.feedbacks = []; // Feedbacks ficam no IDB, não no localStorage
+            saveDB(db);
+
+            closeFeedbackModal();
+            const count = pendingFeedbackImagesBase64.length;
+            renderFeedbacksAdmin();
+            showAlert(`✅ ${count} comprovante(s) salvo(s) com sucesso na loja!`);
+        }
+
+        async function deleteFeedbackImage(index) {
+            if (!confirm("Excluir esta imagem de comprovante?")) return;
+            let list = await idbLoadFeedbacks();
+            list.splice(index, 1);
+            await idbSaveFeedbacks(list);
+            const db = getDB();
+            db.feedbacks = [];
+            saveDB(db);
+            renderFeedbacksAdmin();
+            showAlert("🗑️ Imagem de comprovante removida!");
+        }
+
+        async function clearDemoFeedbacks() {
+            if (!confirm("Deseja remover as imagens de teste (Netflix/Unsplash) para deixar apenas os seus comprovantes reais?")) return;
+            let list = await idbLoadFeedbacks();
+            list = list.filter(url => !url.includes('images.unsplash.com'));
+            await idbSaveFeedbacks(list);
+            const db = getDB();
+            db.feedbacks = [];
+            saveDB(db);
+            renderFeedbacksAdmin();
+            showAlert("🗑️ Imagens de teste removidas com sucesso!");
+        }
+
+        async function renderFeedbacksAdmin(dbIgnored) {
+            const container = document.getElementById('feedbacks-admin-list');
+            const badgeCounter = document.getElementById('feedback-counter-badge');
+            if (!container) return;
+            container.innerHTML = '<div class="col-span-full text-center py-4 text-gray-500 text-xs"><i class="ph-bold ph-spinner animate-spin mr-1"></i>Carregando comprovantes...</div>';
+
+            // Carrega sempre do IndexedDB (fonte de verdade para imagens)
+            let list = await idbLoadFeedbacks();
+
+            if (badgeCounter) {
+                badgeCounter.innerText = `${list.length} / ${MAX_FEEDBACKS_LIMIT} Cadastrados`;
+            }
+
+            if (list.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full p-8 text-center glass-card rounded-2xl border border-white/5">
+                        <i class="ph-fill ph-images text-4xl text-gray-500 mb-2 block"></i>
+                        <p class="text-sm text-gray-400">Nenhum comprovante cadastrado ainda.</p>
+                        <p class="text-xs text-purple-400 mt-1">Clique abaixo para anexar até 10 prints reais dos seus clientes.</p>
+                        <button onclick="openFeedbackModal()" class="mt-4 bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs px-4 py-2 rounded-xl transition shadow">+ Anexar Comprovantes do Dispositivo</button>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = '';
+            list.forEach((url, idx) => {
+                const isDemo = url.includes('unsplash.com');
+                container.innerHTML += `
+                    <div class="relative rounded-2xl overflow-hidden border ${isDemo ? 'border-amber-500/30' : 'border-purple-500/40'} group bg-black/60 aspect-square shadow-lg">
+                        <img src="${url}" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-2 p-2">
+                            <button onclick="deleteFeedbackImage(${idx})" class="p-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white transition shadow" title="Excluir Print">
+                                <i class="ph-bold ph-trash text-base"></i>
+                            </button>
+                        </div>
+                        <span class="absolute bottom-1.5 left-1.5 text-[9px] ${isDemo ? 'bg-amber-500/80 text-black' : 'bg-black/80 text-emerald-400'} font-bold px-1.5 py-0.5 rounded border border-white/10 font-mono">
+                            #${idx + 1} ${isDemo ? 'Demo' : 'Real'}
+                        </span>
+                    </div>
+                `;
+            });
+        }
+
+        // ================= HISTÓRICO DE VENDAS & COMPROVANTE PIX =================
+        function openRegisterOrderModal() {
+            document.getElementById('order-client-name').value = '';
+            document.getElementById('order-product-name').value = '';
+            document.getElementById('order-key-value').value = '';
+            document.getElementById('order-pix-file').value = '';
+            document.getElementById('order-pix-preview-box').classList.add('hidden');
+            currentOrderPixBase64 = '';
+            document.getElementById('modal-register-order').classList.remove('hidden');
+        }
+
+        function closeRegisterOrderModal() {
+            document.getElementById('modal-register-order').classList.add('hidden');
+        }
+
+        async function previewOrderPixFile(e) {
+            const file = e.target.files && e.target.files[0];
+            if (!file) return;
+
+            try {
+                const compressed = await compressImageFile(file, 450, 0.60);
+                if (!compressed) throw new Error("Falha ao otimizar comprovante");
+                currentOrderPixBase64 = compressed;
+                document.getElementById('order-pix-preview-img').src = currentOrderPixBase64;
+                document.getElementById('order-pix-preview-box').classList.remove('hidden');
+            } catch(err) {
+                console.error("Erro ao processar comprovante:", err);
+                currentOrderPixBase64 = '';
+                document.getElementById('order-pix-preview-box').classList.add('hidden');
+                showAlert("⚠️ Formato de comprovante não suportado. Escolha um arquivo JPG ou PNG.", false);
+            }
+        }
+
+        function handleSaveManualOrder(e) {
+            e.preventDefault();
+            const clientName = document.getElementById('order-client-name').value.trim();
+            const item = document.getElementById('order-product-name').value.trim();
+            const key = document.getElementById('order-key-value').value.trim();
+
+            const db = getDB();
+            if (!db.ordersHistory) db.ordersHistory = [];
+
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('pt-BR') + ', ' + now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+            db.ordersHistory.push({
+                id: 'ORD-' + Math.floor(1000 + Math.random() * 9000),
+                clientName,
+                pixReceipt: currentOrderPixBase64 || '',
+                item,
+                key,
+                status: 'ENTREGUE',
+                date: dateStr
+            });
+
+            saveDB(db);
+            closeRegisterOrderModal();
+            renderOrders(db);
+            showAlert("✅ Venda registrada com sucesso no histórico!");
+        }
+
+        function openPixViewModal(imgSrc, clientName) {
+            document.getElementById('pix-view-img').src = imgSrc;
+            document.getElementById('pix-view-client').innerText = `Cliente: ${clientName || 'Não identificado'}`;
+            document.getElementById('modal-pix-view').classList.remove('hidden');
+        }
+
+        function closePixViewModal() {
+            document.getElementById('modal-pix-view').classList.add('hidden');
+        }
+
+        function renderOrders(db) {
+            const tbody = document.getElementById('orders-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            const list = db.ordersHistory || [];
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-gray-500">Nenhuma venda ou entrega registrada ainda.</td></tr>`;
+                return;
+            }
+
+            list.slice().reverse().forEach(ord => {
+                const clientName = ord.clientName || "Cliente Desconhecido";
+                const hasPix = Boolean(ord.pixReceipt);
+                const isManual = ord.deliveryType === 'manual' || ord.isManualDelivery === true || (ord.status && ord.status.includes('MANUAL'));
+                const isPending = (ord.status && (ord.status.includes('PENDENTE') || ord.status.includes('AGUARDANDO'))) || ord.paid === false;
+
+                const pixButton = hasPix 
+                    ? `<button onclick="openPixViewModal('${ord.pixReceipt}', '${clientName}')" class="text-xs bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 px-2.5 py-1 rounded-lg border border-emerald-500/30 font-bold inline-flex items-center gap-1 transition">
+                        <i class="ph-bold ph-file-text"></i> Ver Pix
+                       </button>`
+                    : `<span class="text-[11px] text-gray-500 italic">Sem anexo</span>`;
+
+                // Status e Tags Diferenciadas
+                let statusBadge = '';
+                let typeBadge = '';
+
+                if (isManual) {
+                    typeBadge = `<span class="inline-flex items-center gap-1 text-[10px] font-bold text-amber-300 bg-amber-500/20 border border-amber-500/40 px-2 py-0.5 rounded-full mt-1 tracking-wide font-mono shadow-sm"><i class="ph-bold ph-hand-pointing"></i> PEDIDO ENTREGA MANUAL (SEM ESTOQUE)</span>`;
+                    if (isPending) {
+                        statusBadge = `<span class="bg-amber-500/25 text-amber-300 border border-amber-500/50 px-2.5 py-1 rounded-full font-bold inline-flex items-center gap-1 shadow-sm shadow-amber-500/20 animate-pulse font-mono text-[11px]"><i class="ph-bold ph-user-gear"></i> AGUARDANDO ENTREGA MANUAL</span>`;
+                    } else {
+                        statusBadge = `<span class="bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 px-2.5 py-1 rounded-full font-bold inline-flex items-center gap-1 font-mono text-[11px]"><i class="ph-bold ph-check-circle"></i> MANUAL ENTREGUE</span>`;
+                    }
+                } else {
+                    typeBadge = `<span class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded-full mt-1 font-mono"><i class="ph-bold ph-lightning"></i> Entrega Automática</span>`;
+                    if (isPending) {
+                        statusBadge = `<span class="bg-amber-500/20 text-amber-400 border border-amber-500/40 px-2.5 py-1 rounded-full font-bold inline-flex items-center gap-1 font-mono text-[11px]"><i class="ph-bold ph-clock"></i> PENDENTE</span>`;
+                    } else {
+                        statusBadge = `<span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2.5 py-1 rounded-full font-bold inline-flex items-center gap-1 font-mono text-[11px]"><i class="ph-bold ph-check-circle"></i> ENTREGUE</span>`;
+                    }
+                }
+
+                const keyDisplay = (isPending && (!ord.key || ord.key === 'null'))
+                    ? (isManual 
+                        ? `<span class="text-amber-400 font-mono text-xs font-bold flex items-center gap-1"><i class="ph-bold ph-warning"></i> Aguardando Chave Manual</span>`
+                        : `<span class="text-amber-400/80 font-mono text-xs italic">🔒 Aguardando Pagamento</span>`)
+                    : `<span class="font-mono text-emerald-400 select-all font-bold text-xs">${ord.key}</span>`;
+
+                let actionButtons = '';
+                if (isManual && isPending) {
+                    actionButtons = `
+                        <button onclick="openDeliverManualModal('${ord.id}')" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:opacity-90 text-black font-extrabold text-xs inline-flex items-center gap-1.5 shadow-md shadow-amber-500/30 transition mr-2" title="Entregar Chave / Link Manualmente ao Cliente">
+                            <i class="ph-bold ph-hand-pointing text-sm"></i> Fazer Entrega Manual
+                        </button>
+                        <button onclick="deleteOrder('${ord.id}')" class="p-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 transition inline-flex items-center gap-1 font-bold text-xs" title="Cancelar/Apagar Pedido">
+                            <i class="ph-bold ph-trash"></i>
+                        </button>
+                    `;
+                } else if (isPending) {
+                    actionButtons = `
+                        <button onclick="approveAndDeliverOrder('${ord.id}')" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs inline-flex items-center gap-1 shadow-md shadow-emerald-600/30 transition mr-2" title="Confirmar pagamento e liberar chave do estoque">
+                            <i class="ph-bold ph-check"></i> Aprovar & Entregar
+                        </button>
+                        <button onclick="deleteOrder('${ord.id}')" class="p-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 transition inline-flex items-center gap-1 font-bold text-xs" title="Cancelar/Apagar Pedido">
+                            <i class="ph-bold ph-trash"></i>
+                        </button>
+                    `;
+                } else {
+                    actionButtons = `
+                        <button onclick="deleteOrder('${ord.id}')" class="p-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 transition inline-flex items-center gap-1 font-bold text-xs" title="Apagar Registro de Venda">
+                            <i class="ph-bold ph-trash"></i> Apagar
+                        </button>
+                    `;
+                }
+
+                const trClass = isManual
+                    ? "bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent border-l-4 border-l-amber-500 hover:bg-amber-500/15 transition"
+                    : (isPending ? "bg-amber-500/5 border-l-2 border-l-amber-500/30 hover:bg-white/[0.02] transition" : "hover:bg-white/[0.02] transition");
+
+                tbody.innerHTML += `
+                    <tr class="${trClass}">
+                        <td class="p-4 font-mono font-bold ${isManual ? 'text-amber-400' : 'text-primary'}">#${ord.id}</td>
+                        <td class="p-4 text-white">
+                            <div class="font-bold text-xs">${clientName}</div>
+                            <div class="mt-1">${pixButton}</div>
+                        </td>
+                        <td class="p-4 text-white font-medium">
+                            <div>${ord.item}</div>
+                            ${typeBadge}
+                        </td>
+                        <td class="p-4">${keyDisplay}</td>
+                        <td class="p-4">${statusBadge}</td>
+                        <td class="p-4 text-gray-400 font-mono text-[11px]">${ord.date}</td>
+                        <td class="p-4 text-center whitespace-nowrap">
+                            ${actionButtons}
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function openDeliverManualModal(orderId) {
+            const db = getDB();
+            if (!db.ordersHistory) return;
+            const ord = db.ordersHistory.find(o => String(o.id) === String(orderId));
+            if (!ord) {
+                showAlert("Pedido não encontrado.", false);
+                return;
+            }
+
+            document.getElementById('deliver-manual-order-id').value = ord.id;
+            document.getElementById('deliver-manual-display-id').innerText = '#' + ord.id;
+            document.getElementById('deliver-manual-display-product').innerText = ord.item;
+            document.getElementById('deliver-manual-display-client').innerText = ord.clientName || 'Cliente Online';
+            document.getElementById('deliver-manual-key-input').value = (ord.key && ord.key !== 'null') ? ord.key : '';
+
+            document.getElementById('modal-deliver-manual').classList.remove('hidden');
+        }
+
+        function closeDeliverManualModal() {
+            document.getElementById('modal-deliver-manual').classList.add('hidden');
+        }
+
+        function handleConfirmDeliverManual(e) {
+            e.preventDefault();
+            const orderId = document.getElementById('deliver-manual-order-id').value;
+            const keyText = document.getElementById('deliver-manual-key-input').value.trim();
+
+            if (!keyText) {
+                showAlert("⚠️ Insira a chave ou link de ativação a ser entregue!", false);
+                return;
+            }
+
+            const db = getDB();
+            if (!db.ordersHistory) return;
+            const ord = db.ordersHistory.find(o => String(o.id) === String(orderId));
+            if (!ord) {
+                showAlert("Pedido não encontrado.", false);
+                return;
+            }
+
+            ord.key = keyText;
+            ord.status = "MANUAL ENTREGUE";
+            ord.paid = true;
+            ord.deliveryType = "manual";
+            ord.isManualDelivery = true;
+
+            saveDB(db);
+            closeDeliverManualModal();
+            renderOrders(db);
+            showAlert(`✅ Entrega manual do pedido #${ord.id} concluída com sucesso! A chave já está liberada para o cliente.`);
+        }
+
+        function approveAndDeliverOrder(orderId) {
+            const db = getDB();
+            if (!db.ordersHistory) return;
+            const ord = db.ordersHistory.find(o => String(o.id) === String(orderId));
+            if (!ord) {
+                showAlert("Pedido não encontrado.", false);
+                return;
+            }
+
+            // Se for pedido manual, abre a tela de entrega manual diretamente
+            if (ord.deliveryType === 'manual' || ord.isManualDelivery) {
+                openDeliverManualModal(orderId);
+                return;
+            }
+
+            if (!confirm(`Confirmar que o pagamento do pedido #${ord.id} (${ord.item}) foi concluído e deseja liberar a chave do estoque para o cliente?`)) {
+                return;
+            }
+
+            // Busca produto correspondente no estoque
+            const itemNameClean = (ord.item || "").toLowerCase().trim();
+            const gameItem = db.items?.find(i => i.name.toLowerCase().trim() === itemNameClean || itemNameClean.includes(i.name.toLowerCase().trim()) || i.name.toLowerCase().includes(itemNameClean));
+
+            let assignedKey = null;
+            if (gameItem && gameItem.keys && gameItem.keys.length > 0) {
+                assignedKey = gameItem.keys.shift();
+                ord.key = assignedKey;
+                ord.status = "PAGAMENTO APROVADO - ENTREGUE";
+                ord.paid = true;
+                ord.deliveryType = "auto";
+
+                saveDB(db);
+                renderOrders(db);
+                renderProducts(db);
+                showAlert(`✅ Pagamento confirmado! Chave automática liberada e entregue ao cliente: ${assignedKey}`);
+            } else {
+                // Se o produto está sem estoque, redireciona para a entrega manual amigável
+                ord.deliveryType = "manual";
+                ord.isManualDelivery = true;
+                saveDB(db);
+                openDeliverManualModal(orderId);
+            }
+        }
+
+        function deleteOrder(orderId) {
+            if (!confirm(`Tem certeza que deseja apagar o pedido #${orderId} do histórico?`)) return;
+            const db = getDB();
+            if (db.ordersHistory) {
+                db.ordersHistory = db.ordersHistory.filter(o => String(o.id) !== String(orderId));
+                saveDB(db);
+                renderOrders(db);
+                showAlert("🗑️ Pedido apagado do histórico com sucesso!");
+            }
+        }
+
+        function clearAllOrders() {
+            const db = getDB();
+            if (!db.ordersHistory || db.ordersHistory.length === 0) {
+                showAlert("O histórico de vendas já está vazio.", false);
+                return;
+            }
+            if (!confirm("⚠️ Atenção: Deseja realmente apagar TODO o histórico de vendas? Essa ação não pode ser desfeita.")) return;
+            db.ordersHistory = [];
+            saveDB(db);
+            renderOrders(db);
+            showAlert("🗑️ Todo o histórico de vendas foi apagado com sucesso!");
+        }
+
+        // ================= GESTÃO DE ESTOQUE (CHAVES/LINKS ÚNICOS) =================
+        function openStockModal(gameId) {
+            const db = getDB();
+            const game = db.items.find(i => i.id === gameId);
+            if (!game) return;
+
+            currentSelectedGameForStock = gameId;
+            document.getElementById('stock-modal-title').innerText = `Estoque: ${game.name}`;
+            document.getElementById('stock-modal-count').innerText = `${game.keys.length} links/chaves de ativação únicas cadastradas`;
+            
+            renderStockList(game.keys);
+            document.getElementById('stock-input-bulk').value = '';
+            document.getElementById('modal-stock').classList.remove('hidden');
+        }
+
+        function closeStockModal() {
+            document.getElementById('modal-stock').classList.add('hidden');
+            currentSelectedGameForStock = null;
+            renderCatalog(getDB());
+        }
+
+        function renderStockList(keys) {
+            const container = document.getElementById('stock-keys-list');
+            container.innerHTML = '';
+
+            if (!keys || keys.length === 0) {
+                container.innerHTML = `<p class="text-xs text-red-400 p-3 bg-red-500/10 rounded-xl">⚠️ Estoque esgotado! Insira novos links ou chaves acima.</p>`;
+                return;
+            }
+
+            keys.forEach((k, idx) => {
+                container.innerHTML += `
+                    <div class="bg-black/50 p-2.5 rounded-xl border border-white/5 flex items-center justify-between text-xs">
+                        <span class="font-mono text-gray-200 truncate max-w-[85%]">${k}</span>
+                        <button onclick="removeSingleKey(${idx})" class="text-gray-500 hover:text-red-400" title="Excluir"><i class="ph-bold ph-trash"></i></button>
+                    </div>
+                `;
+            });
+        }
+
+        function addBulkKeys() {
+            if (!currentSelectedGameForStock) return;
+            const text = document.getElementById('stock-input-bulk').value.trim();
+            if (!text) return;
+
+            const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+            if (lines.length === 0) return;
+
+            const db = getDB();
+            const game = db.items.find(i => i.id === currentSelectedGameForStock);
+            if (game) {
+                if (!game.keys) game.keys = [];
+                lines.forEach(l => {
+                    if (!game.keys.includes(l)) game.keys.push(l);
+                });
+                saveDB(db);
+                openStockModal(currentSelectedGameForStock);
+                showAlert(`✅ ${lines.length} itens adicionados ao estoque com sucesso!`);
+            }
+        }
+
+        function removeSingleKey(index) {
+            if (!currentSelectedGameForStock) return;
+            const db = getDB();
+            const game = db.items.find(i => i.id === currentSelectedGameForStock);
+            if (game && game.keys) {
+                game.keys.splice(index, 1);
+                saveDB(db);
+                openStockModal(currentSelectedGameForStock);
+            }
+        }
+
+        // ================= GESTÃO & VALIDAÇÃO DE CUPONS =================
+        function openCreateCouponModal() {
+            document.getElementById('coupon-code').value = '';
+            document.getElementById('coupon-discount').value = '';
+            document.getElementById('modal-coupon').classList.remove('hidden');
+        }
+
+        function closeCouponModal() {
+            document.getElementById('modal-coupon').classList.add('hidden');
+        }
+
+        function handleSaveCoupon(e) {
+            e.preventDefault();
+            const codeInput = document.getElementById('coupon-code').value.trim().toUpperCase().replace(/\s+/g, '');
+            const discountInput = parseFloat(document.getElementById('coupon-discount').value);
+
+            if (!codeInput) {
+                alert("Digite o código do cupom!");
+                return;
+            }
+            if (isNaN(discountInput) || discountInput <= 0 || discountInput > 90) {
+                alert("Digite uma porcentagem de desconto válida entre 1% e 90%!");
+                return;
+            }
+
+            const db = getDB();
+            if (!db.coupons) db.coupons = [];
+
+            // Se o cupom já existir, atualiza; senão, adiciona
+            const existingIdx = db.coupons.findIndex(c => c.code.toUpperCase() === codeInput);
+            if (existingIdx !== -1) {
+                db.coupons[existingIdx].discountPercent = discountInput;
+            } else {
+                db.coupons.push({ code: codeInput, discountPercent: discountInput });
+            }
+
+            saveDB(db);
+            closeCouponModal();
+            renderCoupons(db);
+            showAlert(`✅ Cupom ${codeInput} com ${discountInput}% de desconto salvo com sucesso!`);
+
+            // Executa automaticamente o teste com o cupom cadastrado para confirmação visual
+            const testInput = document.getElementById('admin-test-coupon-input');
+            if (testInput) {
+                testInput.value = codeInput;
+                adminTestCoupon();
+            }
+        }
+
+        function deleteCoupon(index) {
+            if (!confirm("Tem certeza que deseja excluir este cupom de desconto?")) return;
+            const db = getDB();
+            if (db.coupons && db.coupons[index]) {
+                const removedCode = db.coupons[index].code;
+                db.coupons.splice(index, 1);
+                saveDB(db);
+                renderCoupons(db);
+                showAlert(`🗑️ Cupom ${removedCode} removido com sucesso!`);
+                const testResult = document.getElementById('admin-test-coupon-result');
+                if (testResult) testResult.classList.add('hidden');
+            }
+        }
+
+        function renderCoupons(db) {
+            const container = document.getElementById('coupons-list');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const list = db.coupons || [];
+            if (list.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full p-8 text-center glass-card rounded-2xl border border-white/5">
+                        <i class="ph-fill ph-tag text-4xl text-gray-500 mb-2 block"></i>
+                        <p class="text-sm text-gray-400">Nenhum cupom de desconto ativo no momento.</p>
+                        <button onclick="openCreateCouponModal()" class="mt-3 text-emerald-400 font-bold text-xs hover:underline">+ Criar Primeiro Cupom</button>
+                    </div>
+                `;
+                return;
+            }
+
+            list.forEach((coupon, index) => {
+                container.innerHTML += `
+                    <div class="glass-card rounded-2xl p-4 border border-emerald-500/30 flex flex-col justify-between group hover:border-emerald-500/60 transition">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-[10px] bg-emerald-500/20 text-emerald-400 font-bold px-2 py-0.5 rounded-full border border-emerald-500/30 flex items-center gap-1">
+                                    <i class="ph-fill ph-check-circle"></i> ATIVO NA LOJA
+                                </span>
+                                <span class="text-xs font-black text-emerald-400 font-mono">
+                                    ${coupon.discountPercent}% OFF
+                                </span>
+                            </div>
+                            <div class="bg-black/60 p-3 rounded-xl border border-white/10 mb-3 flex items-center justify-between">
+                                <span class="font-mono text-base font-black text-white tracking-wider">${coupon.code}</span>
+                                <button onclick="navigator.clipboard.writeText('${coupon.code}'); showAlert('📋 Cupom ${coupon.code} copiado!');" class="text-gray-400 hover:text-white text-xs font-bold transition flex items-center gap-1" title="Copiar Código">
+                                    <i class="ph-bold ph-copy"></i> Copiar
+                                </button>
+                            </div>
+                            <p class="text-[11px] text-gray-400 mb-3">
+                                Dá <strong class="text-emerald-400 font-black">${coupon.discountPercent}% de desconto imediato</strong> em qualquer produto no checkout.
+                            </p>
+                        </div>
+                        <div class="pt-3 border-t border-white/5 flex items-center justify-between">
+                            <button onclick="document.getElementById('admin-test-coupon-input').value = '${coupon.code}'; adminTestCoupon();" class="text-xs text-cyan-400 hover:underline font-bold flex items-center gap-1">
+                                <i class="ph-bold ph-play"></i> Testar Validade
+                            </button>
+                            <button onclick="deleteCoupon(${index})" class="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 transition" title="Excluir Cupom">
+                                <i class="ph-bold ph-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function adminTestCoupon() {
+            const input = document.getElementById('admin-test-coupon-input');
+            const resultBox = document.getElementById('admin-test-coupon-result');
+            if (!input || !resultBox) return;
+
+            const code = input.value.trim().toUpperCase().replace(/\s+/g, '');
+            if (!code) {
+                resultBox.className = "mt-3 p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-bold flex items-center gap-2";
+                resultBox.innerHTML = `<i class="ph-fill ph-warning-circle text-base"></i> Digite um código de cupom para validar.`;
+                resultBox.classList.remove('hidden');
+                return;
+            }
+
+            const db = getDB();
+            const coupons = db.coupons || [];
+            const found = coupons.find(c => c.code.toUpperCase() === code);
+
+            if (found) {
+                const samplePrice = 54.90;
+                const discountVal = (samplePrice * (found.discountPercent / 100));
+                const finalPrice = samplePrice - discountVal;
+
+                resultBox.className = "mt-3 p-3.5 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 text-xs space-y-1";
+                resultBox.innerHTML = `
+                    <div class="flex items-center justify-between font-black text-emerald-400 text-sm">
+                        <span class="flex items-center gap-1.5"><i class="ph-fill ph-check-circle text-base"></i> CUPOM VÁLIDO E 100% OPERACIONAL!</span>
+                        <span class="bg-emerald-500/30 px-2 py-0.5 rounded font-mono">${found.discountPercent}% OFF</span>
+                    </div>
+                    <p class="text-gray-300 text-[11px] mt-1">
+                        Código: <strong class="text-white font-mono">${found.code}</strong>. Este cupom é reconhecido no checkout da loja e aplica o desconto automaticamente.
+                    </p>
+                    <p class="text-emerald-400/90 text-[11px] font-mono">
+                        Simulação em produto de R$ ${samplePrice.toFixed(2).replace('.', ',')}: Cliente paga R$ ${finalPrice.toFixed(2).replace('.', ',')} (Economiza R$ ${discountVal.toFixed(2).replace('.', ',')}).
+                    </p>
+                `;
+                resultBox.classList.remove('hidden');
+            } else {
+                resultBox.className = "mt-3 p-3.5 rounded-xl bg-red-500/15 border border-red-500/40 text-red-300 text-xs space-y-1";
+                resultBox.innerHTML = `
+                    <div class="flex items-center gap-1.5 font-black text-red-400 text-sm">
+                        <i class="ph-fill ph-x-circle text-base"></i> CUPOM INVÁLIDO OU NÃO CADASTRADO
+                    </div>
+                    <p class="text-gray-300 text-[11px] mt-1">
+                        O código <strong class="text-white font-mono">${code}</strong> não existe na lista de cupons ativos. Caso o cliente digite este código na loja, receberá alerta de cupom inválido.
+                    </p>
+                    <button onclick="document.getElementById('coupon-code').value = '${code}'; openCreateCouponModal();" class="mt-1 text-cyan-400 hover:underline font-bold text-[11px] flex items-center gap-1">
+                        <i class="ph-bold ph-plus-circle"></i> Deseja cadastrar o cupom "${code}" agora?
+                    </button>
+                `;
+                resultBox.classList.remove('hidden');
+            }
+        }
+
+        // ================= SALVAR GATEWAY INFINITEPAY =================
+        function saveGatewaySettings(e) {
+            e.preventDefault();
+            const handle = document.getElementById('gw-handle').value.trim();
+            const fallbackUrl = document.getElementById('gw-fallback').value.trim();
+
+            const db = getDB();
+            db.gateway.handle = handle;
+            db.gateway.fallbackUrl = fallbackUrl;
+            saveDB(db);
+            showAlert("✅ Configurações da InfinitePay salvas e ativas na loja!");
+        }
+
+        // Inicializar
+        checkAuth();
+    </script>
+</body>
+</html>
