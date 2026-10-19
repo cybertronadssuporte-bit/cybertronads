@@ -1576,6 +1576,17 @@
                     }
                 }, 10);
             }
+
+            // Disparo de rastreamento: ViewContent
+            try {
+                trackPixelEvent('ViewContent', {
+                    id: currentModalGame.id || '',
+                    name: currentModalGame.name,
+                    price: currentModalGame.price,
+                    currency: 'BRL',
+                    category: itemCategory || 'Produtos'
+                });
+            } catch(e) {}
         }
 
         function closeModal() {
@@ -1734,6 +1745,15 @@
                 originalPrice: 150.00,
                 promoPrice: 29.90,
                 discountPercent: 80
+            },
+            pixels: {
+                metaPixelId: "",
+                metaPixelEnabled: true,
+                googleTagId: "",
+                googleTagEnabled: true,
+                tiktokPixelId: "",
+                tiktokPixelEnabled: true,
+                customHeadScripts: ""
             },
             coupons: [
                 { code: "CYBER10", discountPercent: 10 },
@@ -1951,6 +1971,211 @@
             ]
         };
 
+        // ================= SISTEMA INTELIGENTE DE RASTREAMENTO & PIXELS =================
+        let pixelConfig = {
+            metaPixelId: "",
+            metaPixelEnabled: true,
+            googleTagId: "",
+            googleTagEnabled: true,
+            tiktokPixelId: "",
+            tiktokPixelEnabled: true,
+            customHeadScripts: ""
+        };
+
+        let metaPixelInitialized = false;
+        let googleTagInitialized = false;
+        let tiktokPixelInitialized = false;
+
+        function initTrackingPixels(pixels) {
+            if (!pixels) return;
+            pixelConfig = Object.assign({}, pixelConfig, pixels);
+
+            // 1. Meta Pixel (Facebook / Instagram Ads)
+            if (pixelConfig.metaPixelEnabled && pixelConfig.metaPixelId && pixelConfig.metaPixelId.trim() !== '' && !metaPixelInitialized) {
+                const pixelId = pixelConfig.metaPixelId.trim();
+                try {
+                    !function(f,b,e,v,n,t,s)
+                    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+                    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+                    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+                    n.queue=[];t=b.createElement(e);t.async=!0;
+                    t.src=v;s=b.getElementsByTagName(e)[0];
+                    s.parentNode.insertBefore(t,s)}(window, document,'script',
+                    'https://connect.facebook.net/en_US/fbevents.js');
+                    
+                    window.fbq('init', pixelId);
+                    window.fbq('track', 'PageView');
+                    metaPixelInitialized = true;
+                    console.log('✅ Meta Pixel ativo:', pixelId);
+                } catch(e) {
+                    console.warn('Erro ao inicializar Meta Pixel:', e);
+                }
+            }
+
+            // 2. Google Tag (Google Ads / GA4)
+            if (pixelConfig.googleTagEnabled && pixelConfig.googleTagId && pixelConfig.googleTagId.trim() !== '' && !googleTagInitialized) {
+                const tagId = pixelConfig.googleTagId.trim();
+                try {
+                    const script = document.createElement('script');
+                    script.async = true;
+                    script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(tagId)}`;
+                    document.head.appendChild(script);
+
+                    window.dataLayer = window.dataLayer || [];
+                    function gtag(){ window.dataLayer.push(arguments); }
+                    window.gtag = gtag;
+                    gtag('js', new Date());
+                    gtag('config', tagId);
+                    googleTagInitialized = true;
+                    console.log('✅ Google Tag ativa:', tagId);
+                } catch(e) {
+                    console.warn('Erro ao inicializar Google Tag:', e);
+                }
+            }
+
+            // 3. TikTok Pixel
+            if (pixelConfig.tiktokPixelEnabled && pixelConfig.tiktokPixelId && pixelConfig.tiktokPixelId.trim() !== '' && !tiktokPixelInitialized) {
+                const ttId = pixelConfig.tiktokPixelId.trim();
+                try {
+                    !function (w, d, t) {
+                        w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var i="https://analytics.tiktok.com/i18n/pixel/events.js";ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=i,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};var o=document.createElement("script");o.type="text/javascript",o.async=!0,o.src=i+"?sdkid="+e+"&lib="+t;var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(o,a)};
+                        ttq.load(ttId);
+                        ttq.page();
+                    }(window, document, 'ttq');
+                    tiktokPixelInitialized = true;
+                    console.log('✅ TikTok Pixel ativo:', ttId);
+                } catch(e) {
+                    console.warn('Erro ao inicializar TikTok Pixel:', e);
+                }
+            }
+
+            // 4. Scripts Customizados no Head
+            if (pixelConfig.customHeadScripts && pixelConfig.customHeadScripts.trim() !== '') {
+                try {
+                    const oldInjected = document.getElementById('custom-head-injected');
+                    if (oldInjected) oldInjected.remove();
+
+                    const container = document.createElement('div');
+                    container.id = 'custom-head-injected';
+                    container.innerHTML = pixelConfig.customHeadScripts;
+                    document.head.appendChild(container);
+
+                    const scripts = container.getElementsByTagName('script');
+                    for (let s of scripts) {
+                        const newScript = document.createElement('script');
+                        if (s.src) newScript.src = s.src;
+                        if (s.innerHTML) newScript.innerHTML = s.innerHTML;
+                        if (s.async) newScript.async = true;
+                        document.head.appendChild(newScript);
+                    }
+                } catch(e) {
+                    console.warn('Erro ao injetar scripts customizados:', e);
+                }
+            }
+        }
+
+        // DISPARO UNIFICADO DE EVENTOS DE RASTREAMENTO
+        function trackPixelEvent(eventName, data = {}) {
+            try {
+                // META PIXEL (FACEBOOK / INSTAGRAM)
+                if (window.fbq && pixelConfig.metaPixelEnabled) {
+                    if (eventName === 'PageView') {
+                        window.fbq('track', 'PageView');
+                    } else if (eventName === 'ViewContent') {
+                        window.fbq('track', 'ViewContent', {
+                            content_name: data.name || '',
+                            content_ids: data.id ? [String(data.id)] : [],
+                            content_type: 'product',
+                            value: Number(data.price) || 0,
+                            currency: data.currency || 'BRL'
+                        });
+                    } else if (eventName === 'InitiateCheckout') {
+                        window.fbq('track', 'InitiateCheckout', {
+                            content_name: data.name || '',
+                            content_ids: data.id ? [String(data.id)] : [],
+                            value: Number(data.value) || 0,
+                            currency: data.currency || 'BRL',
+                            num_items: Number(data.quantity) || 1
+                        });
+                    } else if (eventName === 'Purchase') {
+                        window.fbq('track', 'Purchase', {
+                            content_name: data.name || '',
+                            content_ids: data.id ? [String(data.id)] : [],
+                            value: Number(data.value) || 0,
+                            currency: data.currency || 'BRL'
+                        });
+                    } else {
+                        window.fbq('trackCustom', eventName, data);
+                    }
+                }
+
+                // GOOGLE TAG (GA4 & GOOGLE ADS)
+                if (window.gtag && pixelConfig.googleTagEnabled) {
+                    if (eventName === 'PageView') {
+                        window.gtag('event', 'page_view');
+                    } else if (eventName === 'ViewContent') {
+                        window.gtag('event', 'view_item', {
+                            items: [{
+                                id: String(data.id || ''),
+                                name: data.name || '',
+                                price: Number(data.price) || 0
+                            }]
+                        });
+                    } else if (eventName === 'InitiateCheckout') {
+                        window.gtag('event', 'begin_checkout', {
+                            value: Number(data.value) || 0,
+                            currency: data.currency || 'BRL',
+                            items: [{
+                                id: String(data.id || ''),
+                                name: data.name || '',
+                                price: Number(data.value) || 0,
+                                quantity: Number(data.quantity) || 1
+                            }]
+                        });
+                    } else if (eventName === 'Purchase') {
+                        window.gtag('event', 'purchase', {
+                            transaction_id: String(data.id || Date.now()),
+                            value: Number(data.value) || 0,
+                            currency: data.currency || 'BRL',
+                            items: [{
+                                name: data.name || '',
+                                price: Number(data.value) || 0
+                            }]
+                        });
+                    }
+                }
+
+                // TIKTOK PIXEL
+                if (window.ttq && pixelConfig.tiktokPixelEnabled) {
+                    if (eventName === 'PageView') {
+                        window.ttq.page();
+                    } else if (eventName === 'ViewContent') {
+                        window.ttq.track('ViewContent', {
+                            content_name: data.name || '',
+                            content_id: String(data.id || ''),
+                            value: Number(data.price) || 0,
+                            currency: data.currency || 'BRL'
+                        });
+                    } else if (eventName === 'InitiateCheckout') {
+                        window.ttq.track('InitiateCheckout', {
+                            content_name: data.name || '',
+                            content_id: String(data.id || ''),
+                            value: Number(data.value) || 0,
+                            currency: data.currency || 'BRL'
+                        });
+                    } else if (eventName === 'Purchase') {
+                        window.ttq.track('CompletePayment', {
+                            content_name: data.name || '',
+                            value: Number(data.value) || 0,
+                            currency: data.currency || 'BRL'
+                        });
+                    }
+                }
+            } catch(err) {
+                console.warn('Erro seguro ao disparar pixel event:', err);
+            }
+        }
+
         // ================= SINCRONIZAÇÃO DA LOJA E CANAIS OFICIAIS =================
         function syncStoreWithDatabase() {
             try {
@@ -1969,6 +2194,10 @@
                 }
 
                 if (db) {
+                    // Sincroniza e inicializa pixels configurados no painel admin
+                    if (db.pixels) {
+                        initTrackingPixels(db.pixels);
+                    }
                     // Sincroniza canais oficiais caso configurados no painel admin
                     if (db.officialLinks) {
                         const waLink = document.getElementById('link-whatsapp-support');
@@ -2460,6 +2689,17 @@
             const btn = document.getElementById('buy-btn-infinity');
             const total = getFinalCheckoutTotal();
             const isManualDelivery = !currentModalGame.hasStock;
+
+            // Disparo de rastreamento: InitiateCheckout
+            try {
+                trackPixelEvent('InitiateCheckout', {
+                    id: currentModalGame.id || '',
+                    name: currentModalGame.name,
+                    value: total,
+                    currency: 'BRL',
+                    quantity: currentModalQuantity
+                });
+            } catch(e) {}
             
             btn.innerHTML = '<i class="ph-bold ph-spinner animate-spin text-xl"></i> GERANDO CHECKOUT INFINITYPAY...';
             btn.classList.add('opacity-80');
@@ -2667,6 +2907,17 @@
                             saveCustomerOrders(orders);
                             renderCustomerOrders();
                             renderProductsGrid();
+
+                            // Disparo de rastreamento: Purchase (Venda Aprovada e Chave Entregue)
+                            try {
+                                trackPixelEvent('Purchase', {
+                                    id: String(latest.id),
+                                    name: latest.item || '',
+                                    value: Number(latest.amount) || storeConfig.gamePrice,
+                                    currency: 'BRL'
+                                });
+                            } catch(e) {}
+
                             showCustomAlert(`🎉 Pagamento confirmado com sucesso! Sua chave de ativação foi liberada automaticamente na sua tela abaixo.`, true);
                             return;
                         }

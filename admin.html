@@ -155,6 +155,9 @@
             <button onclick="switchTab('upsell')" id="tab-btn-upsell" class="admin-tab px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 text-orange-400/90 hover:text-orange-300">
                 <i class="ph-fill ph-fire text-orange-400"></i> Levar Também (Upsell)
             </button>
+            <button onclick="switchTab('pixels')" id="tab-btn-pixels" class="admin-tab px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 text-cyan-400/90 hover:text-cyan-300">
+                <i class="ph-fill ph-chart-line-up text-cyan-400"></i> Pixels & Rastreamento
+            </button>
         </div>
 
         <!-- CONTEÚDO DAS ABAS -->
@@ -539,6 +542,164 @@
                             <!-- Lista renderizada dinamicamente via JS -->
                         </div>
                     </div>
+                </div>
+            </section>
+
+            <!-- ================= ABA 9: PIXELS & RASTREAMENTO INTELIGENTE ================= -->
+            <section id="section-pixels" class="space-y-6 hidden">
+                <div class="glass-card p-6 md:p-8 rounded-3xl border border-cyan-500/30">
+                    <div class="flex items-center justify-between flex-wrap gap-4 mb-6 pb-4 border-b border-white/10">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="bg-cyan-500/20 text-cyan-400 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full border border-cyan-500/30 tracking-wider">
+                                    Tráfego Pago & Conversões
+                                </span>
+                            </div>
+                            <h3 class="text-xl font-black text-white flex items-center gap-2.5 mt-1">
+                                <i class="ph-fill ph-chart-line-up text-cyan-400"></i> Pixels & Rastreamento Inteligente
+                            </h3>
+                            <p class="text-xs text-gray-400 mt-1">
+                                Configure seus pixels da Meta (Facebook/Instagram Ads), Google Ads/Analytics e TikTok para rastrear visitas, visualização de produtos, abertura de checkout e compras confirmadas.
+                            </p>
+                        </div>
+                        <button type="button" onclick="testPixelEvents()" class="px-3.5 py-2 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 text-xs font-bold transition flex items-center gap-2">
+                            <i class="ph-bold ph-lightning text-cyan-400"></i> Verificar Status do Rastreamento
+                        </button>
+                    </div>
+
+                    <form onsubmit="handleSavePixels(event)" class="space-y-6 max-w-4xl">
+                        <!-- META PIXEL (FACEBOOK / INSTAGRAM ADS) -->
+                        <div class="bg-gradient-to-r from-blue-600/10 via-cyan-500/5 to-transparent border border-blue-500/30 rounded-2xl p-5 space-y-4">
+                            <div class="flex items-center justify-between flex-wrap gap-2">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center text-xl border border-blue-500/30">
+                                        <i class="ph-fill ph-facebook-logo"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-sm font-black text-white flex items-center gap-2">
+                                            Meta Pixel (Facebook & Instagram Ads)
+                                        </h4>
+                                        <p class="text-xs text-gray-400">Rastreia automaticamente PageView, ViewContent, InitiateCheckout e Purchase.</p>
+                                    </div>
+                                </div>
+                                <label class="flex items-center gap-2 cursor-pointer select-none">
+                                    <input type="checkbox" id="pixel-meta-enabled" checked class="w-4 h-4 accent-cyan-400 rounded">
+                                    <span class="text-xs font-bold text-gray-300">Ativar Meta Pixel</span>
+                                </label>
+                            </div>
+                            <div>
+                                <label class="text-[11px] font-bold text-gray-300 uppercase tracking-wider block mb-1.5">
+                                    ID do Pixel da Meta (Conjunto de Dados)
+                                </label>
+                                <input type="text" id="pixel-meta-id" placeholder="Ex: 1234567890123456" class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-400 transition font-mono">
+                                <p class="text-[10px] text-gray-400 mt-1">Cole aqui apenas o número do Pixel (encontrado no Gerenciador de Eventos da Meta).</p>
+                            </div>
+                        </div>
+
+                        <!-- GOOGLE TAG (GA4 & GOOGLE ADS) -->
+                        <div class="bg-gradient-to-r from-emerald-600/10 via-teal-500/5 to-transparent border border-emerald-500/30 rounded-2xl p-5 space-y-4">
+                            <div class="flex items-center justify-between flex-wrap gap-2">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl border border-emerald-500/30">
+                                        <i class="ph-fill ph-google-logo"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-sm font-black text-white flex items-center gap-2">
+                                            Google Tag (Google Analytics GA4 & Google Ads)
+                                        </h4>
+                                        <p class="text-xs text-gray-400">Dispara eventos do Google gtag.js (view_item, begin_checkout, purchase).</p>
+                                    </div>
+                                </div>
+                                <label class="flex items-center gap-2 cursor-pointer select-none">
+                                    <input type="checkbox" id="pixel-google-enabled" checked class="w-4 h-4 accent-emerald-400 rounded">
+                                    <span class="text-xs font-bold text-gray-300">Ativar Google Tag</span>
+                                </label>
+                            </div>
+                            <div>
+                                <label class="text-[11px] font-bold text-gray-300 uppercase tracking-wider block mb-1.5">
+                                    ID da Tag Google (G-XXXXXXXXXX ou AW-XXXXXXXXXX)
+                                </label>
+                                <input type="text" id="pixel-google-id" placeholder="Ex: G-XXXXXXXXXX ou AW-XXXXXXXXXX" class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-emerald-400 transition font-mono">
+                                <p class="text-[10px] text-gray-400 mt-1">Insira seu ID de Medição do Google Analytics 4 ou ID de Conversão do Google Ads.</p>
+                            </div>
+                        </div>
+
+                        <!-- TIKTOK PIXEL -->
+                        <div class="bg-gradient-to-r from-pink-600/10 via-purple-500/5 to-transparent border border-pink-500/30 rounded-2xl p-5 space-y-4">
+                            <div class="flex items-center justify-between flex-wrap gap-2">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-xl bg-pink-500/20 text-pink-400 flex items-center justify-center text-xl border border-pink-500/30">
+                                        <i class="ph-fill ph-tiktok-logo"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-sm font-black text-white flex items-center gap-2">
+                                            TikTok Pixel (TikTok Ads Manager)
+                                        </h4>
+                                        <p class="text-xs text-gray-400">Rastreia conversões dos seus anúncios no TikTok.</p>
+                                    </div>
+                                </div>
+                                <label class="flex items-center gap-2 cursor-pointer select-none">
+                                    <input type="checkbox" id="pixel-tiktok-enabled" checked class="w-4 h-4 accent-pink-400 rounded">
+                                    <span class="text-xs font-bold text-gray-300">Ativar TikTok Pixel</span>
+                                </label>
+                            </div>
+                            <div>
+                                <label class="text-[11px] font-bold text-gray-300 uppercase tracking-wider block mb-1.5">
+                                    ID do TikTok Pixel
+                                </label>
+                                <input type="text" id="pixel-tiktok-id" placeholder="Ex: C1234567890ABCDEF" class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-pink-400 transition font-mono">
+                                <p class="text-[10px] text-gray-400 mt-1">Encontrado no TikTok Ads Manager > Ferramentas > Eventos.</p>
+                            </div>
+                        </div>
+
+                        <!-- SCRIPTS PERSONALIZADOS (HEAD / TAG MANAGER / HOTJAR) -->
+                        <div class="bg-gradient-to-r from-purple-600/10 via-indigo-500/5 to-transparent border border-purple-500/30 rounded-2xl p-5 space-y-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center text-xl border border-purple-500/30">
+                                    <i class="ph-fill ph-code"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-black text-white">Scripts Adicionais (Google Tag Manager / Clarity / etc.)</h4>
+                                    <p class="text-xs text-gray-400">Cole aqui qualquer código HTML/JavaScript adicional para ser inserido automaticamente na loja.</p>
+                                </div>
+                            </div>
+                            <div>
+                                <textarea id="pixel-custom-scripts" rows="3" placeholder="<!-- Cole tags personalizadas como &lt;script&gt;...&lt;/script&gt; aqui -->" class="w-full bg-black/60 border border-white/10 rounded-xl p-3 text-xs text-cyan-300 font-mono focus:outline-none focus:border-purple-400 transition resize-y"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- TABELA EXPLICATIVA DOS DISPAROS AUTOMÁTICOS -->
+                        <div class="bg-black/40 border border-white/10 rounded-2xl p-4">
+                            <h4 class="text-xs font-black uppercase tracking-wider text-cyan-400 mb-2 flex items-center gap-1.5">
+                                <i class="ph-bold ph-shield-check"></i> Eventos Rastreados Automaticamente na Loja:
+                            </h4>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+                                <div class="p-2.5 rounded-xl bg-white/5 border border-white/5">
+                                    <span class="text-emerald-400 font-bold block">1. PageView</span>
+                                    <span class="text-[11px] text-gray-400">Ao acessar a página da loja</span>
+                                </div>
+                                <div class="p-2.5 rounded-xl bg-white/5 border border-white/5">
+                                    <span class="text-cyan-400 font-bold block">2. ViewContent</span>
+                                    <span class="text-[11px] text-gray-400">Ao clicar e ver um produto</span>
+                                </div>
+                                <div class="p-2.5 rounded-xl bg-white/5 border border-white/5">
+                                    <span class="text-amber-400 font-bold block">3. InitiateCheckout</span>
+                                    <span class="text-[11px] text-gray-400">Ao abrir o pagamento Pix</span>
+                                </div>
+                                <div class="p-2.5 rounded-xl bg-white/5 border border-white/5">
+                                    <span class="text-purple-400 font-bold block">4. Purchase</span>
+                                    <span class="text-[11px] text-gray-400">Ao aprovar e entregar a chave</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- BOTÃO SALVAR -->
+                        <div class="flex items-center justify-end gap-3 pt-4 border-t border-white/10">
+                            <button type="submit" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-orbitron font-bold px-8 py-3.5 rounded-2xl text-xs uppercase tracking-wider transition shadow-lg shadow-cyan-500/25 flex items-center gap-2">
+                                <i class="ph-bold ph-floppy-disk text-base"></i> Salvar Configurações de Rastreamento
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </section>
         </main>
@@ -1001,6 +1162,15 @@
                 originalPrice: 150.00,
                 promoPrice: 29.90,
                 discountPercent: 80
+            },
+            pixels: {
+                metaPixelId: "",
+                metaPixelEnabled: true,
+                googleTagId: "",
+                googleTagEnabled: true,
+                tiktokPixelId: "",
+                tiktokPixelEnabled: true,
+                customHeadScripts: ""
             },
             coupons: [
                 { code: "CYBER10", discountPercent: 10 },
@@ -1646,12 +1816,15 @@
             document.getElementById('section-feedbacks').classList.add('hidden');
             document.getElementById('section-orders').classList.add('hidden');
             document.getElementById('section-upsell').classList.add('hidden');
+            document.getElementById('section-pixels')?.classList.add('hidden');
 
             const targetSection = document.getElementById(`section-${tab}`);
             if (targetSection) targetSection.classList.remove('hidden');
 
             if (tab === 'upsell') {
                 renderUpsellSettings(getDB());
+            } else if (tab === 'pixels') {
+                renderPixelsSettings(getDB());
             }
         }
 
@@ -1737,6 +1910,7 @@
             renderOrders(db);
             renderOfficialLinks(db);
             renderUpsellSettings(db);
+            renderPixelsSettings(db);
             document.getElementById('gw-handle').value = db.gateway.handle || "ruben_alisson";
             document.getElementById('gw-fallback').value = db.gateway.fallbackUrl || "";
         }
@@ -3186,6 +3360,62 @@
             };
             reader.readAsText(file);
             event.target.value = '';
+        }
+
+        // ================= CONFIGURAÇÃO DE PIXELS E RASTREAMENTO =================
+        function renderPixelsSettings(db) {
+            const pixels = (db && db.pixels) ? db.pixels : (defaultDatabase.pixels || {});
+
+            const metaIdEl = document.getElementById('pixel-meta-id');
+            const metaEnEl = document.getElementById('pixel-meta-enabled');
+            const googleIdEl = document.getElementById('pixel-google-id');
+            const googleEnEl = document.getElementById('pixel-google-enabled');
+            const tiktokIdEl = document.getElementById('pixel-tiktok-id');
+            const tiktokEnEl = document.getElementById('pixel-tiktok-enabled');
+            const customScriptsEl = document.getElementById('pixel-custom-scripts');
+
+            if (metaIdEl) metaIdEl.value = pixels.metaPixelId || '';
+            if (metaEnEl) metaEnEl.checked = pixels.metaPixelEnabled !== false;
+            if (googleIdEl) googleIdEl.value = pixels.googleTagId || '';
+            if (googleEnEl) googleEnEl.checked = pixels.googleTagEnabled !== false;
+            if (tiktokIdEl) tiktokIdEl.value = pixels.tiktokPixelId || '';
+            if (tiktokEnEl) tiktokEnEl.checked = pixels.tiktokPixelEnabled !== false;
+            if (customScriptsEl) customScriptsEl.value = pixels.customHeadScripts || '';
+        }
+
+        function handleSavePixels(e) {
+            if (e && e.preventDefault) e.preventDefault();
+            const db = getDB();
+            if (!db.pixels) db.pixels = {};
+
+            db.pixels.metaPixelId = (document.getElementById('pixel-meta-id')?.value || '').trim();
+            db.pixels.metaPixelEnabled = document.getElementById('pixel-meta-enabled')?.checked ?? true;
+
+            db.pixels.googleTagId = (document.getElementById('pixel-google-id')?.value || '').trim();
+            db.pixels.googleTagEnabled = document.getElementById('pixel-google-enabled')?.checked ?? true;
+
+            db.pixels.tiktokPixelId = (document.getElementById('pixel-tiktok-id')?.value || '').trim();
+            db.pixels.tiktokPixelEnabled = document.getElementById('pixel-tiktok-enabled')?.checked ?? true;
+
+            db.pixels.customHeadScripts = document.getElementById('pixel-custom-scripts')?.value || '';
+
+            saveDB(db);
+            showAlert("✅ Configurações de Pixels e Rastreamento salvas com sucesso!");
+        }
+
+        function testPixelEvents() {
+            const db = getDB();
+            const p = db.pixels || {};
+            let actives = [];
+            if (p.metaPixelEnabled && p.metaPixelId) actives.push(`Meta Pixel (${p.metaPixelId})`);
+            if (p.googleTagEnabled && p.googleTagId) actives.push(`Google Tag (${p.googleTagId})`);
+            if (p.tiktokPixelEnabled && p.tiktokPixelId) actives.push(`TikTok (${p.tiktokPixelId})`);
+
+            if (actives.length === 0) {
+                showAlert("⚠️ Nenhum pixel está configurado no momento. Preencha o ID e clique em Salvar.", false);
+            } else {
+                showAlert(`🎯 Pixels ativos: ${actives.join(', ')}. Os disparos de PageView, ViewContent, InitiateCheckout e Purchase estão ativos!`, true);
+            }
         }
 
         // Inicializar
