@@ -156,7 +156,7 @@
         ::-webkit-scrollbar-thumb { background: rgba(0, 195, 255, 0.25); border-radius: 999px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(0, 195, 255, 0.6); }
 
-        /* Regras do Chat Lateral (Desktop sempre visível / Mobile em modal drawer) */
+        /* Regras do Chat Lateral e Layout Responsivo Mobile */
         @media (min-width: 768px) {
             #right-sidebar {
                 display: flex !important;
@@ -169,6 +169,19 @@
             }
         }
         @media (max-width: 767px) {
+            /* Impedir que a página sambe ou tenha scroll horizontal no celular */
+            html, body {
+                max-width: 100vw !important;
+                overflow-x: hidden !important;
+            }
+
+            /* Inputs no mobile com 16px impedem zoom automático violento no iOS/Android */
+            input, textarea, select {
+                font-size: 16px !important;
+                user-select: text !important;
+                -webkit-user-select: text !important;
+            }
+
             #right-sidebar:not(.mobile-open) {
                 display: none !important;
             }
@@ -180,9 +193,44 @@
                 right: 0 !important;
                 bottom: 0 !important;
                 width: 100vw !important;
-                height: 100vh !important;
-                z-index: 100 !important;
+                height: 100dvh !important;
+                max-height: 100dvh !important;
+                z-index: 9999 !important;
                 background: #040914 !important;
+                flex-direction: column !important;
+                overflow: hidden !important;
+            }
+
+            /* Container de digitação do chat no mobile colado acima do teclado e safe-area */
+            #chat-input-container {
+                padding-bottom: max(10px, env(safe-area-inset-bottom)) !important;
+                background: rgba(4, 9, 20, 0.98) !important;
+            }
+
+            /* Ajuste do robô no mobile: altura amigável para não forçar rolagens vazias */
+            #hero-scroll-track {
+                height: 36vh !important;
+                min-height: 200px !important;
+            }
+            #hero-sticky-frame {
+                height: 100% !important;
+                padding-top: 0.5rem !important;
+                padding-bottom: 0.5rem !important;
+            }
+
+            /* Título e subtítulo Cybertron proporcionais em celulares */
+            #cybertron-interactive-title {
+                font-size: 2.1rem !important;
+                letter-spacing: -0.01em !important;
+            }
+            #cybertron-subtitle {
+                font-size: 10px !important;
+                letter-spacing: 0.12em !important;
+                flex-wrap: nowrap !important;
+            }
+            #cybertron-subtitle span.bg-gradient-to-r,
+            #cybertron-subtitle span.bg-gradient-to-l {
+                width: 1rem !important;
             }
         }
 
@@ -443,28 +491,28 @@
     <main class="flex-1 flex flex-col relative overflow-hidden z-10">
         
         <!-- BARRA STICKY TOP - CRONÔMETRO DE URGÊNCIA EM VERMELHO VIBRANTE (TRANSLÚCIDO) -->
-        <div class="sticky top-0 z-40 bg-gradient-to-r from-red-950/60 via-red-900/50 to-black/60 backdrop-blur-md border-b border-red-500/40 p-2.5 text-center shadow-[0_4px_25px_rgba(239,68,68,0.25)] flex items-center justify-center gap-2 md:gap-3 flex-wrap">
-            <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-red-500/20 text-red-400 border border-red-500/30">
-                <i class="ph-fill ph-fire text-lg animate-bounce text-red-400"></i>
+        <div class="sticky top-0 z-40 bg-gradient-to-r from-red-950/70 via-red-900/60 to-black/70 backdrop-blur-md border-b border-red-500/40 px-3 py-2 text-center shadow-[0_4px_25px_rgba(239,68,68,0.25)] flex items-center justify-center gap-2 sm:gap-3 shrink-0">
+            <span class="inline-flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-red-500/20 text-red-400 border border-red-500/30 shrink-0">
+                <i class="ph-fill ph-fire text-sm sm:text-base animate-bounce text-red-400"></i>
             </span>
-            <span class="text-xs md:text-sm font-black font-orbitron uppercase tracking-wider text-white flex items-center gap-1.5 drop-shadow">
-                OFERTA RELÂMPAGO CYBERTRON ENCERRA EM:
+            <span class="text-[10px] sm:text-xs md:text-sm font-black font-orbitron uppercase tracking-wider text-white flex items-center gap-1 drop-shadow whitespace-nowrap">
+                OFERTA RELÂMPAGO ENCERRA EM:
             </span>
-            <span id="countdown" class="font-mono bg-black/70 px-3 py-1 rounded-xl text-red-400 font-extrabold tracking-widest text-xs md:text-sm border border-red-500/60 shadow-[0_0_15px_rgba(239,68,68,0.4)]">
+            <span id="countdown" class="font-mono bg-black/80 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-xl text-red-400 font-extrabold tracking-wider text-[11px] sm:text-xs md:text-sm border border-red-500/60 shadow-[0_0_15px_rgba(239,68,68,0.4)] shrink-0">
                 02:15:43:10
             </span>
         </div>
 
         <!-- ÁREA COM ROLAGEM DE CONTEÚDO -->
-        <div id="main-scroll-container" class="flex-1 overflow-y-auto p-4 md:p-8 scroll-smooth pb-32">
+        <div id="main-scroll-container" class="flex-1 overflow-y-auto p-3 sm:p-5 md:p-8 scroll-smooth pb-32">
             
             <!-- HEADER TOPO: BUSCA & STATUS DE CARRINHO / NOTIFICAÇÃO -->
-            <header class="flex justify-between items-center mb-6 gap-4">
-                <div class="relative w-full max-w-md">
-                    <i class="ph ph-magnifying-glass absolute left-3.5 top-3 text-gray-400 text-lg"></i>
-                    <input type="text" id="search-input" onkeyup="filterGames()" placeholder="Buscar por GTA, Resident Evil, Cyberpunk..." class="w-full bg-surface border border-white/10 rounded-full py-2.5 pl-11 pr-4 text-sm focus:outline-none focus:border-primary text-white placeholder-gray-500 transition shadow-inner">
+            <header class="flex justify-between items-center mb-5 gap-3">
+                <div class="relative w-full">
+                    <i class="ph ph-magnifying-glass absolute left-3.5 top-3 text-cyan-400 text-lg"></i>
+                    <input type="text" id="search-input" onkeyup="filterGames()" placeholder="Buscar por IA, Canva, Capcut, Streaming..." class="w-full bg-[#081226]/80 border border-cyan-500/30 rounded-2xl py-2.5 pl-11 pr-4 text-sm focus:outline-none focus:border-cyan-400 text-white placeholder-gray-400 transition shadow-inner">
                 </div>
-                <div class="flex items-center gap-3">
+                <div class="hidden md:flex items-center gap-3 shrink-0">
                     <button onclick="showCustomAlert('🔔 Você já está inscrito para receber novidades de chaves!', true)" class="p-2.5 bg-surface hover:bg-white/10 rounded-full border border-white/10 text-white transition hover:scale-105 active:scale-95" title="Notificações">
                         <i class="ph ph-bell text-xl text-gray-300"></i>
                     </button>
@@ -492,11 +540,11 @@
                 </div>
 
                 <!-- ================= CYBERTRON PERFORMANCE MARKETING HERO ================= -->
-                <section class="relative w-full rounded-3xl overflow-hidden glass-card border border-cyan-500/25 shadow-[0_0_60px_rgba(0,195,255,0.18)] my-8 py-10 sm:py-14 md:py-16 px-6 sm:px-10 flex flex-col items-center justify-center cyber-grid-overlay group select-none">
+                <section class="relative w-full rounded-3xl overflow-hidden glass-card border border-cyan-500/25 shadow-[0_0_60px_rgba(0,195,255,0.18)] my-4 sm:my-8 py-8 sm:py-14 md:py-16 px-4 sm:px-10 flex flex-col items-center justify-center cyber-grid-overlay group select-none max-w-full">
                     
                     <!-- Fundo Tecnológico Holográfico Panorâmico -->
                     <div class="absolute inset-0 bg-gradient-to-b from-[#040914] via-[#040914]/95 to-[#081226]/85 pointer-events-none"></div>
-                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] sm:w-[750px] h-[220px] rounded-full bg-cyan-500/15 blur-[100px] pointer-events-none"></div>
+                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] sm:w-[750px] h-[180px] sm:h-[220px] rounded-full bg-cyan-500/15 blur-[80px] sm:blur-[100px] pointer-events-none"></div>
                     
                     <!-- Scanline de Luz Futurista -->
                     <div class="absolute inset-0 pointer-events-none overflow-hidden opacity-20">
@@ -504,8 +552,8 @@
                     </div>
 
                     <!-- NOME CYBERTRON + PERFORMANCE MARKETING COM ANIMAÇÃO DE GIRO EM CADA LETRA -->
-                    <div class="relative z-10 text-center flex flex-col items-center">
-                        <h1 id="cybertron-interactive-title" class="title-interactive-container text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-none font-orbitron text-white">
+                    <div class="relative z-10 text-center flex flex-col items-center max-w-full overflow-hidden px-2">
+                        <h1 id="cybertron-interactive-title" class="title-interactive-container text-2xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-none font-orbitron text-white">
                             <span class="cyber-char">C</span>
                             <span class="cyber-char">Y</span>
                             <span class="cyber-char">B</span>
@@ -518,10 +566,10 @@
                         </h1>
                         
                         <!-- PERFORMANCE MARKETING: LETRAS QUE GIRAM DE 1 EM 1 AO PASSAR O MOUSE -->
-                        <div id="cybertron-subtitle" class="subtitle-interactive flex items-center justify-center gap-3 sm:gap-5 text-xs sm:text-sm md:text-base font-bold tracking-[0.25em] sm:tracking-[0.35em] uppercase mt-3 sm:mt-4 font-rajdhani text-cyan-400">
-                            <span class="h-[1px] w-8 sm:w-20 bg-gradient-to-r from-transparent to-cyan-400"></span>
+                        <div id="cybertron-subtitle" class="subtitle-interactive flex items-center justify-center gap-1.5 sm:gap-4 text-[9px] sm:text-sm md:text-base font-bold tracking-[0.14em] sm:tracking-[0.35em] uppercase mt-2.5 sm:mt-4 font-rajdhani text-cyan-400 max-w-full overflow-hidden">
+                            <span class="h-[1px] w-3 sm:w-16 bg-gradient-to-r from-transparent to-cyan-400 shrink-0"></span>
                             
-                            <div class="inline-flex items-center gap-2 sm:gap-3">
+                            <div class="inline-flex items-center gap-1.5 sm:gap-3 shrink-0">
                                 <span class="inline-flex">
                                     <span class="spin-letter">P</span>
                                     <span class="spin-letter">E</span>
@@ -548,7 +596,7 @@
                                 </span>
                             </div>
 
-                            <span class="h-[1px] w-8 sm:w-20 bg-gradient-to-l from-transparent to-cyan-400"></span>
+                            <span class="h-[1px] w-3 sm:w-16 bg-gradient-to-l from-transparent to-cyan-400 shrink-0"></span>
                         </div>
                     </div>
 
@@ -573,188 +621,188 @@
                         <span class="text-xs text-gray-400">Entrega Imediata • Estoque Verificado</span>
                     </div>
 
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="games-grid">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4" id="games-grid">
                         <!-- Card 1: Google AI Pro 18m -->
-                        <div class="glass-card rounded-2xl p-3.5 card-interactive flex flex-col justify-between" onclick="openGameModalById('prod-google-ai-18m')" data-category="Inteligencia artificial" data-name="Google AI Pro 18m">
+                        <div class="glass-card rounded-2xl p-2.5 sm:p-3.5 card-interactive flex flex-col justify-between" onclick="openGameModalById('prod-google-ai-18m')" data-category="Inteligencia artificial" data-name="Google AI Pro 18m">
                             <div>
-                                <div class="relative rounded-xl overflow-hidden mb-3 aspect-[4/3] bg-[#070b14] flex items-center justify-center p-2 border border-white/5 shadow-inner">
-                                    <span class="absolute top-2 left-2 bg-cyan-600/90 text-white text-[10px] font-black px-2 py-0.5 rounded shadow">Inteligencia artificial</span>
-                                    <span class="absolute top-2 right-2 bg-emerald-500 text-black text-[10px] font-black px-1.5 py-0.5 rounded shadow">-64%</span>
+                                <div class="relative rounded-xl overflow-hidden mb-2.5 sm:mb-3 aspect-[4/3] bg-[#070b14] flex items-center justify-center p-2 border border-white/5 shadow-inner">
+                                    <span class="absolute top-2 left-2 bg-cyan-600/90 text-white text-[9px] sm:text-[10px] font-black px-1.5 sm:px-2 py-0.5 rounded shadow max-w-[60%] truncate">Inteligencia artificial</span>
+                                    <span class="absolute top-2 right-2 bg-emerald-500 text-black text-[9px] sm:text-[10px] font-black px-1.5 py-0.5 rounded shadow">-64%</span>
                                     <img src="products/google-ai-pro-18m.png" class="max-h-full max-w-full object-contain">
                                 </div>
-                                <h3 class="font-extrabold text-sm text-white mb-1 truncate">Google AI Pro 18m</h3>
+                                <h3 class="font-extrabold text-xs sm:text-sm text-white mb-1 truncate">Google AI Pro 18m</h3>
                                 <div class="flex items-center justify-between gap-1 mb-2 min-h-[18px]">
-                                    <span class="line-through text-gray-500 text-[10px] whitespace-nowrap">De R$ 97,00</span>
-                                    <span class="text-[9px] font-semibold text-emerald-400/90 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded whitespace-nowrap shrink-0 flex items-center gap-1"><i class="ph-bold ph-lightning"></i> Entrega Imediata</span>
+                                    <span class="line-through text-gray-500 text-[9px] sm:text-[10px] whitespace-nowrap">De R$ 97,00</span>
+                                    <span class="text-[8px] sm:text-[9px] font-semibold text-emerald-400/90 bg-emerald-500/10 border border-emerald-500/20 px-1 sm:px-1.5 py-0.5 rounded whitespace-nowrap shrink-0 flex items-center gap-0.5"><i class="ph-bold ph-lightning text-[9px]"></i> Entrega<span class="hidden sm:inline"> Imediata</span></span>
                                 </div>
                             </div>
                             <div class="flex items-center justify-between pt-2 border-t border-white/5">
                                 <div>
-                                    <p class="text-[9px] text-cyan-400/80 font-bold uppercase tracking-wider">POR APENAS</p>
-                                    <p class="text-base font-black text-cyan-400">R$ 34,90</p>
+                                    <p class="text-[8px] sm:text-[9px] text-cyan-400/80 font-bold uppercase tracking-wider">POR APENAS</p>
+                                    <p class="text-sm sm:text-base font-black text-cyan-400">R$ 34,90</p>
                                 </div>
-                                <span class="bg-primary/20 text-primary p-2 rounded-xl text-sm"><i class="ph-bold ph-shopping-cart-simple"></i></span>
+                                <span class="bg-primary/20 text-primary p-1.5 sm:p-2 rounded-xl text-xs sm:text-sm"><i class="ph-bold ph-shopping-cart-simple"></i></span>
                             </div>
                         </div>
 
                         <!-- Card 2: Muse AI 1M -->
-                        <div class="glass-card rounded-2xl p-3.5 card-interactive flex flex-col justify-between" onclick="openGameModalById('prod-muse-ai-1m')" data-category="Inteligencia artificial" data-name="Muse AI 1M">
+                        <div class="glass-card rounded-2xl p-2.5 sm:p-3.5 card-interactive flex flex-col justify-between" onclick="openGameModalById('prod-muse-ai-1m')" data-category="Inteligencia artificial" data-name="Muse AI 1M">
                             <div>
-                                <div class="relative rounded-xl overflow-hidden mb-3 aspect-[4/3] bg-[#070b14] flex items-center justify-center p-2 border border-white/5 shadow-inner">
-                                    <span class="absolute top-2 left-2 bg-cyan-600/90 text-white text-[10px] font-black px-2 py-0.5 rounded shadow">Inteligencia artificial</span>
-                                    <span class="absolute top-2 right-2 bg-emerald-500 text-black text-[10px] font-black px-1.5 py-0.5 rounded shadow">-67%</span>
+                                <div class="relative rounded-xl overflow-hidden mb-2.5 sm:mb-3 aspect-[4/3] bg-[#070b14] flex items-center justify-center p-2 border border-white/5 shadow-inner">
+                                    <span class="absolute top-2 left-2 bg-cyan-600/90 text-white text-[9px] sm:text-[10px] font-black px-1.5 sm:px-2 py-0.5 rounded shadow max-w-[60%] truncate">Inteligencia artificial</span>
+                                    <span class="absolute top-2 right-2 bg-emerald-500 text-black text-[9px] sm:text-[10px] font-black px-1.5 py-0.5 rounded shadow">-67%</span>
                                     <img src="products/muse-ai-1m.png" class="max-h-full max-w-full object-contain">
                                 </div>
-                                <h3 class="font-extrabold text-sm text-white mb-1 truncate">Muse AI 1M</h3>
+                                <h3 class="font-extrabold text-xs sm:text-sm text-white mb-1 truncate">Muse AI 1M</h3>
                                 <div class="flex items-center justify-between gap-1 mb-2 min-h-[18px]">
-                                    <span class="line-through text-gray-500 text-[10px] whitespace-nowrap">De R$ 150,00</span>
-                                    <span class="text-[9px] font-semibold text-emerald-400/90 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded whitespace-nowrap shrink-0 flex items-center gap-1"><i class="ph-bold ph-lightning"></i> Entrega Imediata</span>
+                                    <span class="line-through text-gray-500 text-[9px] sm:text-[10px] whitespace-nowrap">De R$ 150,00</span>
+                                    <span class="text-[8px] sm:text-[9px] font-semibold text-emerald-400/90 bg-emerald-500/10 border border-emerald-500/20 px-1 sm:px-1.5 py-0.5 rounded whitespace-nowrap shrink-0 flex items-center gap-0.5"><i class="ph-bold ph-lightning text-[9px]"></i> Entrega<span class="hidden sm:inline"> Imediata</span></span>
                                 </div>
                             </div>
                             <div class="flex items-center justify-between pt-2 border-t border-white/5">
                                 <div>
-                                    <p class="text-[9px] text-cyan-400/80 font-bold uppercase tracking-wider">POR APENAS</p>
-                                    <p class="text-base font-black text-cyan-400">R$ 49,90</p>
+                                    <p class="text-[8px] sm:text-[9px] text-cyan-400/80 font-bold uppercase tracking-wider">POR APENAS</p>
+                                    <p class="text-sm sm:text-base font-black text-cyan-400">R$ 49,90</p>
                                 </div>
-                                <span class="bg-primary/20 text-primary p-2 rounded-xl text-sm"><i class="ph-bold ph-shopping-cart-simple"></i></span>
+                                <span class="bg-primary/20 text-primary p-1.5 sm:p-2 rounded-xl text-xs sm:text-sm"><i class="ph-bold ph-shopping-cart-simple"></i></span>
                             </div>
                         </div>
 
                         <!-- Card 3: Duolingo Super 12m -->
-                        <div class="glass-card rounded-2xl p-3.5 card-interactive flex flex-col justify-between" onclick="openGameModalById('prod-duolingo-super-12m')" data-category="Novidade" data-name="Duolingo Super 12m">
+                        <div class="glass-card rounded-2xl p-2.5 sm:p-3.5 card-interactive flex flex-col justify-between" onclick="openGameModalById('prod-duolingo-super-12m')" data-category="Novidade" data-name="Duolingo Super 12m">
                             <div>
-                                <div class="relative rounded-xl overflow-hidden mb-3 aspect-[4/3] bg-[#070b14] flex items-center justify-center p-2 border border-white/5 shadow-inner">
-                                    <span class="absolute top-2 left-2 bg-cyan-600/90 text-white text-[10px] font-black px-2 py-0.5 rounded shadow">Novidade</span>
-                                    <span class="absolute top-2 right-2 bg-emerald-500 text-black text-[10px] font-black px-1.5 py-0.5 rounded shadow">-86%</span>
+                                <div class="relative rounded-xl overflow-hidden mb-2.5 sm:mb-3 aspect-[4/3] bg-[#070b14] flex items-center justify-center p-2 border border-white/5 shadow-inner">
+                                    <span class="absolute top-2 left-2 bg-cyan-600/90 text-white text-[9px] sm:text-[10px] font-black px-1.5 sm:px-2 py-0.5 rounded shadow max-w-[60%] truncate">Novidade</span>
+                                    <span class="absolute top-2 right-2 bg-emerald-500 text-black text-[9px] sm:text-[10px] font-black px-1.5 py-0.5 rounded shadow">-86%</span>
                                     <img src="products/duolingo-super-12m.png" class="max-h-full max-w-full object-contain">
                                 </div>
-                                <h3 class="font-extrabold text-sm text-white mb-1 truncate">Duolingo Super 12m</h3>
+                                <h3 class="font-extrabold text-xs sm:text-sm text-white mb-1 truncate">Duolingo Super 12m</h3>
                                 <div class="flex items-center justify-between gap-1 mb-2 min-h-[18px]">
-                                    <span class="line-through text-gray-500 text-[10px] whitespace-nowrap">De R$ 179,00</span>
-                                    <span class="text-[9px] font-semibold text-emerald-400/90 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded whitespace-nowrap shrink-0 flex items-center gap-1"><i class="ph-bold ph-lightning"></i> Entrega Imediata</span>
+                                    <span class="line-through text-gray-500 text-[9px] sm:text-[10px] whitespace-nowrap">De R$ 179,00</span>
+                                    <span class="text-[8px] sm:text-[9px] font-semibold text-emerald-400/90 bg-emerald-500/10 border border-emerald-500/20 px-1 sm:px-1.5 py-0.5 rounded whitespace-nowrap shrink-0 flex items-center gap-0.5"><i class="ph-bold ph-lightning text-[9px]"></i> Entrega<span class="hidden sm:inline"> Imediata</span></span>
                                 </div>
                             </div>
                             <div class="flex items-center justify-between pt-2 border-t border-white/5">
                                 <div>
-                                    <p class="text-[9px] text-cyan-400/80 font-bold uppercase tracking-wider">POR APENAS</p>
-                                    <p class="text-base font-black text-cyan-400">R$ 25,00</p>
+                                    <p class="text-[8px] sm:text-[9px] text-cyan-400/80 font-bold uppercase tracking-wider">POR APENAS</p>
+                                    <p class="text-sm sm:text-base font-black text-cyan-400">R$ 25,00</p>
                                 </div>
-                                <span class="bg-primary/20 text-primary p-2 rounded-xl text-sm"><i class="ph-bold ph-shopping-cart-simple"></i></span>
+                                <span class="bg-primary/20 text-primary p-1.5 sm:p-2 rounded-xl text-xs sm:text-sm"><i class="ph-bold ph-shopping-cart-simple"></i></span>
                             </div>
                         </div>
 
                         <!-- Card 4: Canva Pro Edu 6m -->
-                        <div class="glass-card rounded-2xl p-3.5 card-interactive flex flex-col justify-between" onclick="openGameModalById('prod-canva-pro-edu-6m')" data-category="Novidade" data-name="Canva Pro Edu 6m">
+                        <div class="glass-card rounded-2xl p-2.5 sm:p-3.5 card-interactive flex flex-col justify-between" onclick="openGameModalById('prod-canva-pro-edu-6m')" data-category="Novidade" data-name="Canva Pro Edu 6m">
                             <div>
-                                <div class="relative rounded-xl overflow-hidden mb-3 aspect-[4/3] bg-[#070b14] flex items-center justify-center p-2 border border-white/5 shadow-inner">
-                                    <span class="absolute top-2 left-2 bg-cyan-600/90 text-white text-[10px] font-black px-2 py-0.5 rounded shadow">Novidade</span>
-                                    <span class="absolute top-2 right-2 bg-emerald-500 text-black text-[10px] font-black px-1.5 py-0.5 rounded shadow">-84%</span>
+                                <div class="relative rounded-xl overflow-hidden mb-2.5 sm:mb-3 aspect-[4/3] bg-[#070b14] flex items-center justify-center p-2 border border-white/5 shadow-inner">
+                                    <span class="absolute top-2 left-2 bg-cyan-600/90 text-white text-[9px] sm:text-[10px] font-black px-1.5 sm:px-2 py-0.5 rounded shadow max-w-[60%] truncate">Novidade</span>
+                                    <span class="absolute top-2 right-2 bg-emerald-500 text-black text-[9px] sm:text-[10px] font-black px-1.5 py-0.5 rounded shadow">-84%</span>
                                     <img src="products/canva-pro-edu-6m.png" class="max-h-full max-w-full object-contain">
                                 </div>
-                                <h3 class="font-extrabold text-sm text-white mb-1 truncate">Canva Pro Edu 6m</h3>
+                                <h3 class="font-extrabold text-xs sm:text-sm text-white mb-1 truncate">Canva Pro Edu 6m</h3>
                                 <div class="flex items-center justify-between gap-1 mb-2 min-h-[18px]">
-                                    <span class="line-through text-gray-500 text-[10px] whitespace-nowrap">De R$ 216,00</span>
-                                    <span class="text-[9px] font-semibold text-emerald-400/90 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded whitespace-nowrap shrink-0 flex items-center gap-1"><i class="ph-bold ph-lightning"></i> Entrega Imediata</span>
+                                    <span class="line-through text-gray-500 text-[9px] sm:text-[10px] whitespace-nowrap">De R$ 216,00</span>
+                                    <span class="text-[8px] sm:text-[9px] font-semibold text-emerald-400/90 bg-emerald-500/10 border border-emerald-500/20 px-1 sm:px-1.5 py-0.5 rounded whitespace-nowrap shrink-0 flex items-center gap-0.5"><i class="ph-bold ph-lightning text-[9px]"></i> Entrega<span class="hidden sm:inline"> Imediata</span></span>
                                 </div>
                             </div>
                             <div class="flex items-center justify-between pt-2 border-t border-white/5">
                                 <div>
-                                    <p class="text-[9px] text-cyan-400/80 font-bold uppercase tracking-wider">POR APENAS</p>
-                                    <p class="text-base font-black text-cyan-400">R$ 34,90</p>
+                                    <p class="text-[8px] sm:text-[9px] text-cyan-400/80 font-bold uppercase tracking-wider">POR APENAS</p>
+                                    <p class="text-sm sm:text-base font-black text-cyan-400">R$ 34,90</p>
                                 </div>
-                                <span class="bg-primary/20 text-primary p-2 rounded-xl text-sm"><i class="ph-bold ph-shopping-cart-simple"></i></span>
+                                <span class="bg-primary/20 text-primary p-1.5 sm:p-2 rounded-xl text-xs sm:text-sm"><i class="ph-bold ph-shopping-cart-simple"></i></span>
                             </div>
                         </div>
 
                         <!-- Card 5: Capcut Pro 6m -->
-                        <div class="glass-card rounded-2xl p-3.5 card-interactive flex flex-col justify-between" onclick="openGameModalById('prod-capcut-pro-6m')" data-category="Edição video" data-name="Capcut Pro 6m">
+                        <div class="glass-card rounded-2xl p-2.5 sm:p-3.5 card-interactive flex flex-col justify-between" onclick="openGameModalById('prod-capcut-pro-6m')" data-category="Edição video" data-name="Capcut Pro 6m">
                             <div>
-                                <div class="relative rounded-xl overflow-hidden mb-3 aspect-[4/3] bg-[#070b14] flex items-center justify-center p-2 border border-white/5 shadow-inner">
-                                    <span class="absolute top-2 left-2 bg-cyan-600/90 text-white text-[10px] font-black px-2 py-0.5 rounded shadow">Edição video</span>
-                                    <span class="absolute top-2 right-2 bg-emerald-500 text-black text-[10px] font-black px-1.5 py-0.5 rounded shadow">-54%</span>
+                                <div class="relative rounded-xl overflow-hidden mb-2.5 sm:mb-3 aspect-[4/3] bg-[#070b14] flex items-center justify-center p-2 border border-white/5 shadow-inner">
+                                    <span class="absolute top-2 left-2 bg-cyan-600/90 text-white text-[9px] sm:text-[10px] font-black px-1.5 sm:px-2 py-0.5 rounded shadow max-w-[60%] truncate">Edição video</span>
+                                    <span class="absolute top-2 right-2 bg-emerald-500 text-black text-[9px] sm:text-[10px] font-black px-1.5 py-0.5 rounded shadow">-54%</span>
                                     <img src="products/capcut-pro-6m.png" class="max-h-full max-w-full object-contain">
                                 </div>
-                                <h3 class="font-extrabold text-sm text-white mb-1 truncate">Capcut Pro 6m</h3>
+                                <h3 class="font-extrabold text-xs sm:text-sm text-white mb-1 truncate">Capcut Pro 6m</h3>
                                 <div class="flex items-center justify-between gap-1 mb-2 min-h-[18px]">
-                                    <span class="line-through text-gray-500 text-[10px] whitespace-nowrap">De R$ 326,00</span>
-                                    <span class="text-[9px] font-semibold text-emerald-400/90 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded whitespace-nowrap shrink-0 flex items-center gap-1"><i class="ph-bold ph-lightning"></i> Entrega Imediata</span>
+                                    <span class="line-through text-gray-500 text-[9px] sm:text-[10px] whitespace-nowrap">De R$ 326,00</span>
+                                    <span class="text-[8px] sm:text-[9px] font-semibold text-emerald-400/90 bg-emerald-500/10 border border-emerald-500/20 px-1 sm:px-1.5 py-0.5 rounded whitespace-nowrap shrink-0 flex items-center gap-0.5"><i class="ph-bold ph-lightning text-[9px]"></i> Entrega<span class="hidden sm:inline"> Imediata</span></span>
                                 </div>
                             </div>
                             <div class="flex items-center justify-between pt-2 border-t border-white/5">
                                 <div>
-                                    <p class="text-[9px] text-cyan-400/80 font-bold uppercase tracking-wider">POR APENAS</p>
-                                    <p class="text-base font-black text-cyan-400">R$ 149,90</p>
+                                    <p class="text-[8px] sm:text-[9px] text-cyan-400/80 font-bold uppercase tracking-wider">POR APENAS</p>
+                                    <p class="text-sm sm:text-base font-black text-cyan-400">R$ 149,90</p>
                                 </div>
-                                <span class="bg-primary/20 text-primary p-2 rounded-xl text-sm"><i class="ph-bold ph-shopping-cart-simple"></i></span>
+                                <span class="bg-primary/20 text-primary p-1.5 sm:p-2 rounded-xl text-xs sm:text-sm"><i class="ph-bold ph-shopping-cart-simple"></i></span>
                             </div>
                         </div>
 
                         <!-- Card 6: Capcut Pro 1m -->
-                        <div class="glass-card rounded-2xl p-3.5 card-interactive flex flex-col justify-between" onclick="openGameModalById('prod-capcut-pro-1m')" data-category="Edição video" data-name="Capcut Pro 1m">
+                        <div class="glass-card rounded-2xl p-2.5 sm:p-3.5 card-interactive flex flex-col justify-between" onclick="openGameModalById('prod-capcut-pro-1m')" data-category="Edição video" data-name="Capcut Pro 1m">
                             <div>
-                                <div class="relative rounded-xl overflow-hidden mb-3 aspect-[4/3] bg-[#070b14] flex items-center justify-center p-2 border border-white/5 shadow-inner">
-                                    <span class="absolute top-2 left-2 bg-cyan-600/90 text-white text-[10px] font-black px-2 py-0.5 rounded shadow">Edição video</span>
-                                    <span class="absolute top-2 right-2 bg-emerald-500 text-black text-[10px] font-black px-1.5 py-0.5 rounded shadow">-39%</span>
+                                <div class="relative rounded-xl overflow-hidden mb-2.5 sm:mb-3 aspect-[4/3] bg-[#070b14] flex items-center justify-center p-2 border border-white/5 shadow-inner">
+                                    <span class="absolute top-2 left-2 bg-cyan-600/90 text-white text-[9px] sm:text-[10px] font-black px-1.5 sm:px-2 py-0.5 rounded shadow max-w-[60%] truncate">Edição video</span>
+                                    <span class="absolute top-2 right-2 bg-emerald-500 text-black text-[9px] sm:text-[10px] font-black px-1.5 py-0.5 rounded shadow">-39%</span>
                                     <img src="products/capcut-pro-1m.png" class="max-h-full max-w-full object-contain">
                                 </div>
-                                <h3 class="font-extrabold text-sm text-white mb-1 truncate">Capcut Pro 1m</h3>
+                                <h3 class="font-extrabold text-xs sm:text-sm text-white mb-1 truncate">Capcut Pro 1m</h3>
                                 <div class="flex items-center justify-between gap-1 mb-2 min-h-[18px]">
-                                    <span class="line-through text-gray-500 text-[10px] whitespace-nowrap">De R$ 65,90</span>
-                                    <span class="text-[9px] font-semibold text-emerald-400/90 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded whitespace-nowrap shrink-0 flex items-center gap-1"><i class="ph-bold ph-lightning"></i> Entrega Imediata</span>
+                                    <span class="line-through text-gray-500 text-[9px] sm:text-[10px] whitespace-nowrap">De R$ 65,90</span>
+                                    <span class="text-[8px] sm:text-[9px] font-semibold text-emerald-400/90 bg-emerald-500/10 border border-emerald-500/20 px-1 sm:px-1.5 py-0.5 rounded whitespace-nowrap shrink-0 flex items-center gap-0.5"><i class="ph-bold ph-lightning text-[9px]"></i> Entrega<span class="hidden sm:inline"> Imediata</span></span>
                                 </div>
                             </div>
                             <div class="flex items-center justify-between pt-2 border-t border-white/5">
                                 <div>
-                                    <p class="text-[9px] text-cyan-400/80 font-bold uppercase tracking-wider">POR APENAS</p>
-                                    <p class="text-base font-black text-cyan-400">R$ 39,90</p>
+                                    <p class="text-[8px] sm:text-[9px] text-cyan-400/80 font-bold uppercase tracking-wider">POR APENAS</p>
+                                    <p class="text-sm sm:text-base font-black text-cyan-400">R$ 39,90</p>
                                 </div>
-                                <span class="bg-primary/20 text-primary p-2 rounded-xl text-sm"><i class="ph-bold ph-shopping-cart-simple"></i></span>
+                                <span class="bg-primary/20 text-primary p-1.5 sm:p-2 rounded-xl text-xs sm:text-sm"><i class="ph-bold ph-shopping-cart-simple"></i></span>
                             </div>
                         </div>
 
                         <!-- Card 7: Youtube Premium 3m -->
-                        <div class="glass-card rounded-2xl p-3.5 card-interactive flex flex-col justify-between" onclick="openGameModalById('prod-youtube-premium-3m')" data-category="streaming" data-name="Youtube Premium 3m">
+                        <div class="glass-card rounded-2xl p-2.5 sm:p-3.5 card-interactive flex flex-col justify-between" onclick="openGameModalById('prod-youtube-premium-3m')" data-category="streaming" data-name="Youtube Premium 3m">
                             <div>
-                                <div class="relative rounded-xl overflow-hidden mb-3 aspect-[4/3] bg-[#070b14] flex items-center justify-center p-2 border border-white/5 shadow-inner">
-                                    <span class="absolute top-2 left-2 bg-cyan-600/90 text-white text-[10px] font-black px-2 py-0.5 rounded shadow">streaming</span>
-                                    <span class="absolute top-2 right-2 bg-emerald-500 text-black text-[10px] font-black px-1.5 py-0.5 rounded shadow">-51%</span>
+                                <div class="relative rounded-xl overflow-hidden mb-2.5 sm:mb-3 aspect-[4/3] bg-[#070b14] flex items-center justify-center p-2 border border-white/5 shadow-inner">
+                                    <span class="absolute top-2 left-2 bg-cyan-600/90 text-white text-[9px] sm:text-[10px] font-black px-1.5 sm:px-2 py-0.5 rounded shadow max-w-[60%] truncate">streaming</span>
+                                    <span class="absolute top-2 right-2 bg-emerald-500 text-black text-[9px] sm:text-[10px] font-black px-1.5 py-0.5 rounded shadow">-51%</span>
                                     <img src="products/youtube-premium-3m.png" class="max-h-full max-w-full object-contain">
                                 </div>
-                                <h3 class="font-extrabold text-sm text-white mb-1 truncate">Youtube Premium 3m</h3>
+                                <h3 class="font-extrabold text-xs sm:text-sm text-white mb-1 truncate">Youtube Premium 3m</h3>
                                 <div class="flex items-center justify-between gap-1 mb-2 min-h-[18px]">
-                                    <span class="line-through text-gray-500 text-[10px] whitespace-nowrap">De R$ 80,70</span>
-                                    <span class="text-[9px] font-semibold text-emerald-400/90 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded whitespace-nowrap shrink-0 flex items-center gap-1"><i class="ph-bold ph-lightning"></i> Entrega Imediata</span>
+                                    <span class="line-through text-gray-500 text-[9px] sm:text-[10px] whitespace-nowrap">De R$ 80,70</span>
+                                    <span class="text-[8px] sm:text-[9px] font-semibold text-emerald-400/90 bg-emerald-500/10 border border-emerald-500/20 px-1 sm:px-1.5 py-0.5 rounded whitespace-nowrap shrink-0 flex items-center gap-0.5"><i class="ph-bold ph-lightning text-[9px]"></i> Entrega<span class="hidden sm:inline"> Imediata</span></span>
                                 </div>
                             </div>
                             <div class="flex items-center justify-between pt-2 border-t border-white/5">
                                 <div>
-                                    <p class="text-[9px] text-cyan-400/80 font-bold uppercase tracking-wider">POR APENAS</p>
-                                    <p class="text-base font-black text-cyan-400">R$ 39,90</p>
+                                    <p class="text-[8px] sm:text-[9px] text-cyan-400/80 font-bold uppercase tracking-wider">POR APENAS</p>
+                                    <p class="text-sm sm:text-base font-black text-cyan-400">R$ 39,90</p>
                                 </div>
-                                <span class="bg-primary/20 text-primary p-2 rounded-xl text-sm"><i class="ph-bold ph-shopping-cart-simple"></i></span>
+                                <span class="bg-primary/20 text-primary p-1.5 sm:p-2 rounded-xl text-xs sm:text-sm"><i class="ph-bold ph-shopping-cart-simple"></i></span>
                             </div>
                         </div>
 
                         <!-- Card 8: Office 365 12m -->
-                        <div class="glass-card rounded-2xl p-3.5 card-interactive flex flex-col justify-between" onclick="openGameModalById('prod-office-365-12m')" data-category="Novidade" data-name="Office 365 12m">
+                        <div class="glass-card rounded-2xl p-2.5 sm:p-3.5 card-interactive flex flex-col justify-between" onclick="openGameModalById('prod-office-365-12m')" data-category="Novidade" data-name="Office 365 12m">
                             <div>
-                                <div class="relative rounded-xl overflow-hidden mb-3 aspect-[4/3] bg-[#070b14] flex items-center justify-center p-2 border border-white/5 shadow-inner">
-                                    <span class="absolute top-2 left-2 bg-cyan-600/90 text-white text-[10px] font-black px-2 py-0.5 rounded shadow">Novidade</span>
-                                    <span class="absolute top-2 right-2 bg-emerald-500 text-black text-[10px] font-black px-1.5 py-0.5 rounded shadow">-88%</span>
+                                <div class="relative rounded-xl overflow-hidden mb-2.5 sm:mb-3 aspect-[4/3] bg-[#070b14] flex items-center justify-center p-2 border border-white/5 shadow-inner">
+                                    <span class="absolute top-2 left-2 bg-cyan-600/90 text-white text-[9px] sm:text-[10px] font-black px-1.5 sm:px-2 py-0.5 rounded shadow max-w-[60%] truncate">Novidade</span>
+                                    <span class="absolute top-2 right-2 bg-emerald-500 text-black text-[9px] sm:text-[10px] font-black px-1.5 py-0.5 rounded shadow">-88%</span>
                                     <img src="products/office-365-12m.png" class="max-h-full max-w-full object-contain">
                                 </div>
-                                <h3 class="font-extrabold text-sm text-white mb-1 truncate">Office 365 12m</h3>
+                                <h3 class="font-extrabold text-xs sm:text-sm text-white mb-1 truncate">Office 365 12m</h3>
                                 <div class="flex items-center justify-between gap-1 mb-2 min-h-[18px]">
-                                    <span class="line-through text-gray-500 text-[10px] whitespace-nowrap">De R$ 509,90</span>
-                                    <span class="text-[9px] font-semibold text-emerald-400/90 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded whitespace-nowrap shrink-0 flex items-center gap-1"><i class="ph-bold ph-lightning"></i> Entrega Imediata</span>
+                                    <span class="line-through text-gray-500 text-[9px] sm:text-[10px] whitespace-nowrap">De R$ 509,90</span>
+                                    <span class="text-[8px] sm:text-[9px] font-semibold text-emerald-400/90 bg-emerald-500/10 border border-emerald-500/20 px-1 sm:px-1.5 py-0.5 rounded whitespace-nowrap shrink-0 flex items-center gap-0.5"><i class="ph-bold ph-lightning text-[9px]"></i> Entrega<span class="hidden sm:inline"> Imediata</span></span>
                                 </div>
                             </div>
                             <div class="flex items-center justify-between pt-2 border-t border-white/5">
                                 <div>
-                                    <p class="text-[9px] text-cyan-400/80 font-bold uppercase tracking-wider">POR APENAS</p>
-                                    <p class="text-base font-black text-cyan-400">R$ 59,90</p>
+                                    <p class="text-[8px] sm:text-[9px] text-cyan-400/80 font-bold uppercase tracking-wider">POR APENAS</p>
+                                    <p class="text-sm sm:text-base font-black text-cyan-400">R$ 59,90</p>
                                 </div>
-                                <span class="bg-primary/20 text-primary p-2 rounded-xl text-sm"><i class="ph-bold ph-shopping-cart-simple"></i></span>
+                                <span class="bg-primary/20 text-primary p-1.5 sm:p-2 rounded-xl text-xs sm:text-sm"><i class="ph-bold ph-shopping-cart-simple"></i></span>
                             </div>
                         </div>
                     </div>
@@ -842,8 +890,26 @@
 
     <!-- ================= SIDEBAR DIREITA (ABAS: CHAT E FEEDBACKS) ================= -->
     <aside id="right-sidebar" class="w-80 glass flex flex-col border-l border-white/5 relative z-30 shrink-0">
+        <!-- Cabeçalho Exclusivo Mobile do Chat -->
+        <div class="md:hidden flex items-center justify-between p-3.5 bg-[#081226] border-b border-cyan-500/30 shrink-0">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-cyan-500/15 text-cyan-400 flex items-center justify-center border border-cyan-500/30">
+                    <i class="ph-fill ph-chats-circle text-lg"></i>
+                </div>
+                <div>
+                    <h3 class="text-xs font-black font-orbitron text-white leading-tight">Chat Cybertron</h3>
+                    <span class="text-[10px] text-emerald-400 font-bold flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Comunidade Online
+                    </span>
+                </div>
+            </div>
+            <button onclick="closeMobileChat()" class="px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-red-500/30 border border-white/20 text-white text-xs font-bold transition flex items-center gap-1 shadow-md">
+                <i class="ph-bold ph-x text-sm"></i> Fechar
+            </button>
+        </div>
+
         <!-- Alternador de Abas -->
-        <div class="p-4 border-b border-white/5 bg-black/25">
+        <div class="p-3 sm:p-4 border-b border-white/5 bg-black/25 shrink-0">
             <div class="flex bg-[#09070f]/70 p-1 rounded-xl border border-white/10 backdrop-blur-sm">
                 <button id="tab-chat" onclick="switchRightTab('chat')" class="flex-1 bg-primary/25 text-primary border border-primary/40 py-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-[0_0_12px_rgba(0,195,255,0.2)]">
                     <i class="ph-fill ph-chats-circle"></i> Chat ao Vivo
@@ -856,7 +922,7 @@
         
         <!-- ABA CHAT AO VIVO -->
         <div id="panel-chat" class="flex-1 flex flex-col overflow-hidden bg-transparent">
-            <div class="px-4 py-2.5 bg-black/30 border-b border-white/5 flex items-center justify-between text-xs text-gray-300 font-bold backdrop-blur-sm">
+            <div class="px-4 py-2.5 bg-black/30 border-b border-white/5 flex items-center justify-between text-xs text-gray-300 font-bold backdrop-blur-sm shrink-0">
                 <span class="flex items-center gap-2">
                     <i class="ph-fill ph-chats-circle text-primary text-base"></i>
                     <span>Chat da Comunidade</span>
@@ -896,12 +962,12 @@
                 </div>
             </div>
             
-            <div class="p-3 border-t border-white/5 bg-black/35 backdrop-blur-md flex gap-2 items-center">
-                <img id="chat-input-avatar" src="avatars/avatar1.jpg" class="w-8 h-8 rounded-lg border border-cyan-400/50 bg-surface shrink-0 cursor-pointer object-cover shadow-[0_0_8px_rgba(0,195,255,0.3)]" onclick="openAvatarSelector()" title="Trocar Avatar">
+            <div id="chat-input-container" class="p-3 border-t border-white/10 bg-[#081226]/95 backdrop-blur-md flex gap-2 items-center shrink-0">
+                <img id="chat-input-avatar" src="avatars/avatar1.jpg" class="w-9 h-9 rounded-xl border border-cyan-400/50 bg-surface shrink-0 cursor-pointer object-cover shadow-[0_0_8px_rgba(0,195,255,0.3)] active:scale-95 transition" onclick="openAvatarSelector()" title="Trocar Avatar">
                 <div class="relative w-full">
-                    <input type="text" id="chat-input" class="w-full bg-black/40 border border-white/10 rounded-xl py-2 pl-3 pr-10 focus:outline-none focus:border-primary text-white text-xs transition backdrop-blur-sm" placeholder="Tire sua dúvida no chat...">
-                    <button onclick="sendUserMessage()" class="absolute right-1.5 top-1.5 text-primary hover:text-white transition p-1 rounded-lg hover:bg-primary/20">
-                        <i class="ph-fill ph-paper-plane-right text-base"></i>
+                    <input type="text" id="chat-input" class="w-full bg-black/60 border border-white/20 rounded-xl py-2.5 pl-3.5 pr-11 focus:outline-none focus:border-cyan-400 text-white text-sm transition backdrop-blur-sm shadow-inner" placeholder="Tire sua dúvida no chat..." autocomplete="off">
+                    <button type="button" onclick="sendUserMessage()" class="absolute right-1.5 top-1.5 text-primary hover:text-white transition p-2 rounded-lg hover:bg-primary/20 active:scale-90 flex items-center justify-center">
+                        <i class="ph-fill ph-paper-plane-right text-base text-cyan-400"></i>
                     </button>
                 </div>
             </div>
@@ -952,19 +1018,19 @@
     
 
     <!-- ================= MODAL DE PRODUTO & CHECKOUT INFINITYPAY ================= -->
-    <div id="product-modal" class="hidden fixed inset-0 z-[100] bg-black/85 backdrop-blur-md flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
-        <div class="bg-[#120e1e] w-full max-w-4xl rounded-3xl border border-white/10 overflow-hidden shadow-2xl relative flex flex-col md:flex-row transform transition-all duration-300 scale-95" id="product-modal-card">
+    <div id="product-modal" class="hidden fixed inset-0 z-[100] bg-black/85 backdrop-blur-md flex items-center justify-center p-2.5 sm:p-4 opacity-0 transition-opacity duration-300">
+        <div class="bg-[#120e1e] w-full max-w-4xl rounded-2xl sm:rounded-3xl border border-white/10 overflow-hidden shadow-2xl relative flex flex-col md:flex-row max-h-[92dvh] overflow-y-auto md:overflow-visible transform transition-all duration-300 scale-95" id="product-modal-card">
             
             <!-- Botão Fechar -->
-            <button onclick="closeModal()" class="absolute top-4 right-4 z-20 w-8 h-8 bg-black/60 rounded-full flex items-center justify-center text-gray-300 hover:text-white hover:bg-red-500/80 transition">
-                <i class="ph-bold ph-x"></i>
+            <button onclick="closeModal()" class="absolute top-3 right-3 sm:top-4 sm:right-4 z-30 w-8 h-8 sm:w-9 sm:h-9 bg-black/75 border border-white/20 rounded-full flex items-center justify-center text-gray-200 hover:text-white hover:bg-red-500/80 active:scale-95 transition shadow-lg">
+                <i class="ph-bold ph-x text-sm sm:text-base"></i>
             </button>
             
             <!-- Coluna Esquerda: Preview da Imagem Reduzida em 40% + Especificações do Produto -->
-            <div class="w-full md:w-1/2 p-5 md:p-6 flex flex-col justify-between bg-[#0a0715]/95 border-b md:border-b-0 md:border-r border-white/10 max-h-[90vh] overflow-y-auto">
+            <div class="w-full md:w-1/2 p-4 sm:p-6 flex flex-col justify-between bg-[#0a0715]/95 border-b md:border-b-0 md:border-r border-white/10 md:max-h-[85vh] md:overflow-y-auto shrink-0">
                 <div class="flex flex-col items-center w-full">
                     <!-- Foto reduzida em 40% (aprox 60% do tamanho anterior, proporcional e centralizada) -->
-                    <div class="relative w-40 h-40 sm:w-44 sm:h-44 rounded-2xl overflow-hidden border border-cyan-500/40 shadow-[0_0_25px_rgba(0,195,255,0.22)] bg-black/60 mb-4 shrink-0 group">
+                    <div class="relative w-36 h-36 sm:w-44 sm:h-44 rounded-2xl overflow-hidden border border-cyan-500/40 shadow-[0_0_25px_rgba(0,195,255,0.22)] bg-black/60 mb-3 sm:mb-4 shrink-0 group">
                         <img id="modal-img" src="" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none"></div>
                         <span id="modal-cat-tag" class="absolute top-2 left-2 text-[9px] font-black uppercase tracking-wider bg-black/85 text-cyan-400 px-2 py-0.5 rounded border border-cyan-500/30">
@@ -973,7 +1039,7 @@
                     </div>
 
                     <!-- Informações do Produto / O Que Vem Incluso cadastradas pelo Administrador -->
-                    <div class="w-full bg-[#120e22]/90 border border-cyan-500/20 rounded-2xl p-4 shadow-lg">
+                    <div class="w-full bg-[#120e22]/90 border border-cyan-500/20 rounded-2xl p-3 sm:p-4 shadow-lg">
                         <div class="flex items-center gap-2 pb-2 mb-2.5 border-b border-white/10">
                             <div class="w-6 h-6 rounded-lg bg-cyan-500/15 text-cyan-400 flex items-center justify-center text-xs shrink-0">
                                 <i class="ph-fill ph-list-checks text-sm"></i>
@@ -988,14 +1054,14 @@
                     </div>
                 </div>
 
-                <div class="mt-4 p-3 rounded-xl bg-black/50 border border-white/10 text-xs w-full">
+                <div class="mt-3 sm:mt-4 p-2.5 sm:p-3 rounded-xl bg-black/50 border border-white/10 text-xs w-full">
                     <p class="text-emerald-400 font-bold flex items-center gap-1.5"><i class="ph-fill ph-check-circle"></i> Licença Vitalícia Oficial</p>
                     <p class="text-gray-300 text-[11px] mt-0.5">Ativação permanente vinculada à sua conta pessoal.</p>
                 </div>
             </div>
 
             <!-- Formulário & Detalhes do Checkout -->
-            <div class="w-full md:w-1/2 p-6 md:p-8 flex flex-col justify-between max-h-[90vh] overflow-y-auto">
+            <div class="w-full md:w-1/2 p-4 sm:p-6 md:p-8 flex flex-col justify-between md:max-h-[85vh] md:overflow-y-auto">
                 <div>
                     <div class="flex items-center gap-2 mb-1">
                         <span id="modal-delivery-badge" class="text-[10px] font-bold text-primary uppercase tracking-wider bg-primary/10 border border-primary/30 px-2 py-0.5 rounded inline-flex items-center gap-1 font-mono">
@@ -1070,8 +1136,8 @@
                     </div>
 
                     <!-- BOTÃO PRINCIPAL DE PAGAMENTO -->
-                    <button id="buy-btn-infinity" onclick="processInfinityCheckout()" class="w-full bg-gradient-to-r from-primary to-secondary text-white py-4 rounded-2xl font-black text-base btn-glow transition flex justify-center items-center gap-2 cursor-pointer font-orbitron">
-                        <i class="ph-bold ph-shield-check text-xl"></i> PAGAR COM INFINITYPAY
+                    <button id="buy-btn-infinity" onclick="processInfinityCheckout()" class="w-full bg-gradient-to-r from-primary to-secondary text-white py-3.5 sm:py-4 rounded-2xl font-black text-sm sm:text-base btn-glow transition flex justify-center items-center gap-2 cursor-pointer font-orbitron active:scale-95 shadow-lg shadow-cyan-500/20">
+                        <i class="ph-bold ph-shield-check text-lg sm:text-xl"></i> PAGAR COM INFINITYPAY
                     </button>
                     
                     <div class="mt-4 flex items-center justify-center gap-4 text-[11px] text-gray-400">
@@ -2296,29 +2362,29 @@
                 const imgSrc = item.img || 'products/google-ai-pro-18m.png';
 
                 container.innerHTML += `
-                    <div class="glass-card rounded-2xl p-3.5 card-interactive flex flex-col justify-between" onclick="openGameModalById('${item.id}')" data-category="${filterCat}" data-name="${safeName}">
+                    <div class="glass-card rounded-2xl p-2.5 sm:p-3.5 card-interactive flex flex-col justify-between" onclick="openGameModalById('${item.id}')" data-category="${filterCat}" data-name="${safeName}">
                         <div>
-                            <div class="relative rounded-xl overflow-hidden mb-3 aspect-[4/3] bg-[#070b14] flex items-center justify-center p-2 border border-white/5 shadow-inner">
-                                <span class="absolute top-2 left-2 bg-cyan-600/90 text-white text-[10px] font-black px-2 py-0.5 rounded shadow">
+                            <div class="relative rounded-xl overflow-hidden mb-2.5 sm:mb-3 aspect-[4/3] bg-[#070b14] flex items-center justify-center p-2 border border-white/5 shadow-inner">
+                                <span class="absolute top-2 left-2 bg-cyan-600/90 text-white text-[9px] sm:text-[10px] font-black px-1.5 sm:px-2 py-0.5 rounded shadow max-w-[60%] truncate">
                                     ${safeCategory}
                                 </span>
-                                ${discountPercent > 0 ? `<span class="absolute top-2 right-2 bg-emerald-500 text-black text-[10px] font-black px-1.5 py-0.5 rounded shadow">-${discountPercent}%</span>` : ''}
+                                ${discountPercent > 0 ? `<span class="absolute top-2 right-2 bg-emerald-500 text-black text-[9px] sm:text-[10px] font-black px-1.5 py-0.5 rounded shadow">-${discountPercent}%</span>` : ''}
                                 <img src="${imgSrc}" class="max-h-full max-w-full object-contain" onerror="this.src='products/google-ai-pro-18m.png'">
                             </div>
-                            <h3 class="font-extrabold text-sm text-white mb-1 truncate">${safeName}</h3>
+                            <h3 class="font-extrabold text-xs sm:text-sm text-white mb-1 truncate">${safeName}</h3>
                             <div class="flex items-center justify-between gap-1 mb-2 min-h-[18px]">
-                                ${oldPriceText ? `<span class="line-through text-gray-500 text-[10px] whitespace-nowrap">${oldPriceText}</span>` : '<span></span>'}
+                                ${oldPriceText ? `<span class="line-through text-gray-500 text-[9px] sm:text-[10px] whitespace-nowrap">${oldPriceText}</span>` : '<span></span>'}
                                 ${Array.isArray(item.keys) && item.keys.length > 0 
-                                    ? `<span class="text-[9px] font-semibold text-emerald-400/90 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded whitespace-nowrap shrink-0 flex items-center gap-1"><i class="ph-bold ph-lightning"></i> Entrega Imediata</span>`
+                                    ? `<span class="text-[8px] sm:text-[9px] font-semibold text-emerald-400/90 bg-emerald-500/10 border border-emerald-500/20 px-1 sm:px-1.5 py-0.5 rounded whitespace-nowrap shrink-0 flex items-center gap-0.5"><i class="ph-bold ph-lightning text-[9px]"></i> Entrega<span class="hidden sm:inline"> Imediata</span></span>`
                                     : `<span></span>`}
                             </div>
                         </div>
                         <div class="flex items-center justify-between pt-2 border-t border-white/5">
                             <div>
-                                <p class="text-[9px] text-cyan-400/80 font-bold uppercase tracking-wider">POR APENAS</p>
-                                <p class="text-base font-black text-cyan-400">R$ ${(item.price || 0).toFixed(2).replace('.', ',')}</p>
+                                <p class="text-[8px] sm:text-[9px] text-cyan-400/80 font-bold uppercase tracking-wider">POR APENAS</p>
+                                <p class="text-sm sm:text-base font-black text-cyan-400">R$ ${(item.price || 0).toFixed(2).replace('.', ',')}</p>
                             </div>
-                            <span class="bg-primary/20 text-primary p-2 rounded-xl text-sm"><i class="ph-bold ph-shopping-cart-simple"></i></span>
+                            <span class="bg-primary/20 text-primary p-1.5 sm:p-2 rounded-xl text-xs sm:text-sm"><i class="ph-bold ph-shopping-cart-simple"></i></span>
                         </div>
                     </div>
                 `;
@@ -3282,37 +3348,53 @@
             }, chosenDelay);
         }
 
-        document.getElementById('chat-input').addEventListener("keypress", e => { 
-            if (e.key === "Enter") { 
-                e.preventDefault(); 
-                sendUserMessage(); 
-            } 
-        });
+        const chatInputEl = document.getElementById('chat-input');
+        if (chatInputEl) {
+            chatInputEl.addEventListener("keydown", e => { 
+                if (e.key === "Enter") { 
+                    e.preventDefault(); 
+                    sendUserMessage(); 
+                } 
+            });
+            chatInputEl.addEventListener("focus", () => {
+                setTimeout(() => {
+                    const chatBox = document.getElementById('chat-box');
+                    if (chatBox) chatBox.scrollTop = chatBox.scrollHeight;
+                    chatInputEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }, 250);
+            });
+        }
         
-        // Funções para Controle do Chat no Mobile (Sem usar hidden para nunca afetar o Desktop)
+        // Funções para Controle do Chat no Mobile
         function toggleMobileChat() {
             const rightSidebar = document.getElementById('right-sidebar');
+            const bottomNav = document.getElementById('mobile-bottom-nav');
             if (rightSidebar) {
                 if (rightSidebar.classList.contains('mobile-open')) {
                     closeMobileChat();
                 } else {
                     rightSidebar.classList.add('mobile-open');
-                    if (!document.getElementById('mobile-chat-close-btn')) {
-                        const closeBtn = document.createElement('button');
-                        closeBtn.id = 'mobile-chat-close-btn';
-                        closeBtn.className = 'md:hidden absolute top-3 right-4 z-50 py-1.5 px-3 rounded-xl bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 font-bold text-xs flex items-center gap-1 shadow-lg cursor-pointer';
-                        closeBtn.innerHTML = '<i class="ph-bold ph-x text-base"></i> Fechar';
-                        closeBtn.onclick = closeMobileChat;
-                        rightSidebar.prepend(closeBtn);
+                    document.body.classList.add('chat-opened');
+                    if (bottomNav) bottomNav.style.display = 'none';
+                    const chatBox = document.getElementById('chat-box');
+                    if (chatBox) {
+                        setTimeout(() => { chatBox.scrollTop = chatBox.scrollHeight; }, 100);
                     }
+                    setTimeout(() => {
+                        const input = document.getElementById('chat-input');
+                        if (input) input.focus();
+                    }, 350);
                 }
             }
         }
 
         function closeMobileChat() {
             const rightSidebar = document.getElementById('right-sidebar');
+            const bottomNav = document.getElementById('mobile-bottom-nav');
             if (rightSidebar) {
                 rightSidebar.classList.remove('mobile-open');
+                document.body.classList.remove('chat-opened');
+                if (bottomNav) bottomNav.style.display = '';
             }
         }
 
@@ -3609,7 +3691,7 @@
         })();
     </script>
     <!-- BARRA INFERIOR MOBILE FIXA -->
-    <nav class="md:hidden glass border-t border-white/10 fixed bottom-0 left-0 right-0 z-50 px-3 py-2 flex items-center justify-around bg-[#040914]/95 backdrop-blur-lg">
+    <nav id="mobile-bottom-nav" class="md:hidden glass border-t border-white/10 fixed bottom-0 left-0 right-0 z-50 px-3 py-2 flex items-center justify-around bg-[#040914]/95 backdrop-blur-lg" style="padding-bottom: max(8px, env(safe-area-inset-bottom));">
         <button onclick="switchPage('store'); closeMobileChat();" class="flex flex-col items-center gap-1 text-primary text-[10px] font-bold">
             <i class="ph-fill ph-storefront text-lg"></i>
             <span>Loja</span>
