@@ -349,10 +349,12 @@
     <div id="hero-video-bg-container" class="fixed inset-0 w-full h-full pointer-events-none overflow-hidden z-0 transition-opacity duration-500 ease-out">
         <video id="hero-robot-video" 
                class="absolute inset-0 w-full h-full object-cover object-center pointer-events-none" 
+               autoplay
                muted 
                playsinline 
                webkit-playsinline 
                preload="auto" 
+               loop
                disablepictureinpicture 
                disableremoteplayback>
             <source src="hero_scroll_robot.mp4" type="video/mp4">
@@ -532,8 +534,8 @@
                     <div id="hero-sticky-frame" class="sticky top-0 w-full h-[calc(100vh-140px)] flex flex-col justify-end items-center pointer-events-none py-6">
 
                         <!-- Indicador Discreto de Scroll no rodapé da tela -->
-                        <div class="pointer-events-auto flex items-center gap-2 px-5 py-2.5 rounded-full bg-black/60 backdrop-blur-md border border-cyan-500/30 text-cyan-300 text-xs font-mono shadow-[0_4px_25px_rgba(0,195,255,0.25)]">
-                            <i class="ph-bold ph-mouse-simple text-base animate-bounce text-cyan-400"></i>
+                        <div id="hero-scroll-indicator" onclick="advanceHeroScroll()" class="pointer-events-auto cursor-pointer flex items-center gap-2 px-5 py-2.5 rounded-full bg-black/60 backdrop-blur-md border border-cyan-500/30 hover:border-cyan-400 text-cyan-300 text-xs font-mono shadow-[0_4px_25px_rgba(0,195,255,0.25)] hover:bg-cyan-500/10 transition active:scale-95">
+                            <i class="ph-bold ph-caret-double-down text-base animate-bounce text-cyan-400"></i>
                             <span class="tracking-wider">Role para baixo para avançar</span>
                         </div>
                     </div>
@@ -3484,10 +3486,24 @@
             setTimeout(addSidebarPurchase, nextDelay);
         }
 
-        // ================= CONTROLE DO VÍDEO DO ROBÔ VIA SCROLL DO MOUSE =================
+        // ================= CONTROLE DO VÍDEO DO ROBÔ NO DESKTOP E MOBILE =================
         let heroVideoTargetTime = 0;
         let heroVideoCurrentTime = 0;
         let heroVideoRafId = null;
+
+        function advanceHeroScroll() {
+            const container = document.getElementById('main-scroll-container') || window;
+            const target = window.innerWidth < 768 ? 260 : 750;
+            if (container.scrollTo) {
+                container.scrollTo({ top: target, behavior: 'smooth' });
+            } else {
+                container.scrollTop = target;
+            }
+            const video = document.getElementById('hero-robot-video');
+            if (video && video.paused) {
+                video.play().catch(() => {});
+            }
+        }
 
         function initHeroVideoScrollScrub() {
             const video = document.getElementById('hero-robot-video');
@@ -3499,17 +3515,62 @@
             const progText = document.getElementById('hero-video-progress-text');
             if (!video || !track || !container) return;
 
-            // Vídeo estritamente mudo, sem controles e pausado para controle via scroll
+            // Garantir que o vídeo esteja estritamente mudo e com suporte total a inline/autoplay no iOS/Android
             video.muted = true;
+            video.defaultMuted = true;
             video.playsInline = true;
-            try { video.pause(); } catch(e) {}
+            video.autoplay = true;
+            video.loop = true;
+            video.setAttribute('playsinline', '');
+            video.setAttribute('webkit-playsinline', '');
+
+            function checkIsMobile() {
+                return window.innerWidth < 768 || ('ontouchstart' in window && window.innerWidth < 1024);
+            }
+
+            function playMobileVideoSafe() {
+                if (video && video.paused) {
+                    const p = video.play();
+                    if (p !== undefined) {
+                        p.catch(() => {});
+                    }
+                }
+            }
+
+            // No celular: inicia imediatamente e garante que nunca fique travado
+            if (checkIsMobile()) {
+                playMobileVideoSafe();
+            }
 
             function onVideoScroll() {
+                const isMobile = checkIsMobile();
                 const trackRect = track.getBoundingClientRect();
                 const containerRect = container.getBoundingClientRect();
 
                 // Posição do topo do trilho em relação ao container visível
                 const offset = containerRect.top - trackRect.top;
+                const scrollTop = container.scrollTop || window.scrollY || 0;
+
+                // ===== COMPORTAMENTO NO CELULAR / MOBILE =====
+                if (isMobile) {
+                    // Garante que o vídeo está reproduzindo fluidamente sem travar no início
+                    playMobileVideoSafe();
+
+                    // Fade suave do robô no fundo ao rolar para o catálogo de produtos
+                    if (bgContainer) {
+                        const scrollDist = Math.max(scrollTop, offset);
+                        if (scrollDist > 80) {
+                            const beyond = scrollDist - 80;
+                            const fade = Math.max(0.18, 1 - (beyond / 260));
+                            bgContainer.style.opacity = fade.toFixed(2);
+                        } else {
+                            bgContainer.style.opacity = '1';
+                        }
+                    }
+                    return;
+                }
+
+                // ===== COMPORTAMENTO NO DESKTOP (SCRUBBING VIA SCROLL DO MOUSE) =====
                 const frameH = frame ? frame.offsetHeight : window.innerHeight;
                 const maxScrollable = track.offsetHeight - frameH;
 
@@ -3536,9 +3597,9 @@
                 }
             }
 
-            // Loop de renderização com interpolação contínua (Lerp) a 60fps
+            // Loop de renderização contínua a 60fps (Lerp) exclusivo para Desktop
             function renderVideoFrame() {
-                if (video.readyState >= 1) { // metadados carregados
+                if (!checkIsMobile() && video.readyState >= 1) { // metadados carregados
                     const diff = heroVideoTargetTime - heroVideoCurrentTime;
                     if (Math.abs(diff) > 0.008) {
                         heroVideoCurrentTime += diff * 0.35;
@@ -3551,16 +3612,37 @@
                 heroVideoRafId = requestAnimationFrame(renderVideoFrame);
             }
 
+            // Eventos de rolagem
             container.addEventListener('scroll', onVideoScroll, { passive: true });
             window.addEventListener('scroll', onVideoScroll, { passive: true });
             window.addEventListener('resize', onVideoScroll, { passive: true });
+            container.addEventListener('touchmove', onVideoScroll, { passive: true });
+            window.addEventListener('touchmove', onVideoScroll, { passive: true });
+
+            // Desbloqueio e reprodução garantida em qualquer interação tátil no celular
+            const touchWakeVideo = () => {
+                if (checkIsMobile()) {
+                    playMobileVideoSafe();
+                }
+            };
+            window.addEventListener('touchstart', touchWakeVideo, { passive: true });
+            window.addEventListener('touchend', touchWakeVideo, { passive: true });
+            window.addEventListener('pointerdown', touchWakeVideo, { passive: true });
+            document.addEventListener('visibilitychange', () => {
+                if (!document.hidden && checkIsMobile()) {
+                    playMobileVideoSafe();
+                }
+            });
 
             if (!heroVideoRafId) {
                 heroVideoRafId = requestAnimationFrame(renderVideoFrame);
             }
 
             video.addEventListener('loadedmetadata', onVideoScroll);
-            video.addEventListener('canplay', onVideoScroll);
+            video.addEventListener('canplay', () => {
+                if (checkIsMobile()) playMobileVideoSafe();
+                onVideoScroll();
+            });
             onVideoScroll();
         }
 

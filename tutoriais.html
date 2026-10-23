@@ -34,6 +34,10 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@500;600;700;800;900&family=Rajdhani:wght@500;600;700&family=Outfit:wght@400;600;700&display=swap');
         * { box-sizing: border-box; }
+        html, body {
+            max-width: 100vw;
+            overflow-x: hidden;
+        }
         body { 
             background-color: #040914; 
             color: #f3f4f6; 
@@ -64,71 +68,81 @@
         }
     </style>
 </head>
-<body class="relative flex flex-col min-h-screen">
+<body class="relative flex flex-col min-h-screen overflow-x-hidden">
     <div class="glow-ambient glow-cyan"></div>
     <div class="glow-ambient glow-blue"></div>
 
-    <!-- HEADER / NAVEGAÇÃO SUPERIOR -->
-    <header class="glass sticky top-0 z-40 px-6 py-4 border-b border-white/10 flex justify-between items-center">
-        <div class="flex items-center gap-3">
-            <a href="index.html" class="flex items-center gap-3 group">
-                <div class="relative w-11 h-11 rounded-xl overflow-hidden shrink-0 shadow-lg shadow-cyan-500/30 group-hover:scale-105 transition border border-cyan-400/40 bg-black/40">
-                    <img src="logo.png" alt="Cybertron Logo" class="w-full h-full object-cover">
-                </div>
-                <div>
-                    <span class="font-orbitron font-black text-sm tracking-wide text-white block leading-tight">CYBERTRON</span>
-                    <span class="block text-[8px] tracking-[0.1em] text-cyan-400 font-bold uppercase whitespace-nowrap">PERFORMANCE MARKETING • TUTORIAIS</span>
-                </div>
-            </a>
-        </div>
+    <!-- HEADER / NAVEGAÇÃO SUPERIOR (RESPONSIVO PARA CELULAR E DESKTOP) -->
+    <header class="glass sticky top-0 z-40 border-b border-white/10 px-3.5 sm:px-6 py-2.5 sm:py-3.5">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-2.5 sm:gap-4">
+            
+            <!-- Linha 1: Marca & Botão Loja no Mobile -->
+            <div class="flex items-center justify-between w-full md:w-auto">
+                <a href="index.html" class="flex items-center gap-2.5 sm:gap-3 group">
+                    <div class="relative w-9 h-9 sm:w-11 sm:h-11 rounded-xl overflow-hidden shrink-0 shadow-lg shadow-cyan-500/30 group-hover:scale-105 transition border border-cyan-400/40 bg-black/40">
+                        <img src="logo.png" alt="Cybertron Logo" class="w-full h-full object-cover">
+                    </div>
+                    <div>
+                        <span class="font-orbitron font-black text-xs sm:text-sm tracking-wide text-white block leading-tight">CYBERTRON</span>
+                        <span class="block text-[7px] sm:text-[8px] tracking-[0.08em] sm:tracking-[0.1em] text-cyan-400 font-bold uppercase whitespace-nowrap">PERFORMANCE MARKETING • TUTORIAIS</span>
+                    </div>
+                </a>
 
-        <div class="flex items-center gap-3">
-            <a href="index.html" class="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white text-xs font-bold transition flex items-center gap-1.5">
-                <i class="ph-bold ph-arrow-left"></i> Voltar à Loja
-            </a>
-            <a href="https://www.instagram.com/cybertron_ads/" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-xl bg-pink-500/10 hover:bg-pink-500/20 text-pink-400 border border-pink-500/30 text-xs font-bold transition flex items-center gap-1.5">
-                <i class="ph-fill ph-instagram-logo text-base"></i> Instagram
-            </a>
-            <a href="https://wa.me/558598243142" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold transition flex items-center gap-1.5">
-                <i class="ph-bold ph-whatsapp-logo text-base"></i> Suporte WhatsApp
-            </a>
+                <!-- Botão Voltar no Mobile (aparece ao lado do logo) -->
+                <a href="index.html" class="md:hidden px-3 py-1.5 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/30 text-cyan-300 text-xs font-bold transition flex items-center gap-1 shrink-0">
+                    <i class="ph-bold ph-arrow-left"></i> Loja
+                </a>
+            </div>
+
+            <!-- Linha 2 (Mobile) / Lado Direito (Desktop): Botões Sociais e Suporte -->
+            <div class="flex items-center gap-2 w-full md:w-auto justify-end">
+                <a href="index.html" class="hidden md:flex px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white text-xs font-bold transition items-center gap-1.5 shrink-0">
+                    <i class="ph-bold ph-arrow-left"></i> Voltar à Loja
+                </a>
+                <a href="https://www.instagram.com/cybertron_ads/" target="_blank" rel="noopener noreferrer" class="flex-1 md:flex-initial px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-pink-500/10 hover:bg-pink-500/20 text-pink-400 border border-pink-500/30 text-xs font-bold transition flex items-center justify-center gap-1.5 shrink-0">
+                    <i class="ph-fill ph-instagram-logo text-base"></i> Instagram
+                </a>
+                <a href="https://wa.me/558598243142" target="_blank" rel="noopener noreferrer" class="flex-1 md:flex-initial px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 border border-emerald-500/30 text-xs font-bold transition flex items-center justify-center gap-1.5 shrink-0">
+                    <i class="ph-bold ph-whatsapp-logo text-base"></i> Suporte WhatsApp
+                </a>
+            </div>
         </div>
     </header>
 
     <!-- CONTEÚDO PRINCIPAL -->
-    <main class="flex-1 p-6 md:p-10 max-w-7xl w-full mx-auto space-y-10 relative z-10">
+    <main class="flex-1 p-3.5 sm:p-6 md:p-10 max-w-7xl w-full mx-auto space-y-8 sm:space-y-10 relative z-10 overflow-x-hidden">
         
         <!-- HERO BANNER -->
-        <div class="text-center max-w-3xl mx-auto space-y-3">
-            <span class="inline-flex items-center gap-1.5 text-xs font-black bg-cyan-500/10 text-accentCyan border border-cyan-500/30 px-3.5 py-1 rounded-full uppercase tracking-widest">
-                <i class="ph-fill ph-play-circle text-sm"></i> Passo a Passo Oficial
+        <div class="text-center max-w-3xl mx-auto space-y-2.5 sm:space-y-3 px-2">
+            <span class="inline-flex items-center gap-1.5 text-[10px] sm:text-xs font-black bg-cyan-500/10 text-accentCyan border border-cyan-500/30 px-3.5 py-1 rounded-full uppercase tracking-widest">
+                <i class="ph-fill ph-play-circle text-xs sm:text-sm"></i> Passo a Passo Oficial
             </span>
-            <h1 class="text-3xl md:text-5xl font-black text-white tracking-tight">
+            <h1 class="text-2xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-tight">
                 Como Resgatar & Ativar Sua Chave
             </h1>
-            <p class="text-sm md:text-base text-gray-400 leading-relaxed">
+            <p class="text-xs sm:text-sm md:text-base text-gray-400 leading-relaxed max-w-2xl mx-auto">
                 Assista aos tutoriais completos abaixo preparados pela nossa equipe para ativar seu jogo na Steam, Epic Games, Rockstar ou Xbox sem complicação.
             </p>
         </div>
 
         <!-- GRADE DE VÍDEOS DE TUTORIAIS CADASTRADOS -->
-        <div id="tutorials-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div id="tutorials-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
             <!-- Injetado dinamicamente via JavaScript -->
         </div>
 
         <!-- SEÇÃO DE SUPORTE DIRETO -->
-        <div class="glass-card p-8 rounded-3xl border border-white/10 flex flex-col md:flex-row items-center justify-between gap-6">
-            <div class="flex items-center gap-4">
-                <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-3xl shrink-0 border border-emerald-500/20">
+        <div class="glass-card p-5 sm:p-8 rounded-3xl border border-white/10 flex flex-col md:flex-row items-center justify-between gap-5 sm:gap-6">
+            <div class="flex items-center gap-3.5 sm:gap-4 w-full md:w-auto">
+                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-2xl sm:text-3xl shrink-0 border border-emerald-500/20">
                     <i class="ph-fill ph-headset"></i>
                 </div>
                 <div>
-                    <h3 class="text-lg font-black text-white">Teve qualquer dificuldade na ativação?</h3>
-                    <p class="text-xs text-gray-400">Nossa equipe está disponível no WhatsApp para te ajudar passo a passo na chamada ou chat.</p>
+                    <h3 class="text-base sm:text-lg font-black text-white leading-snug">Teve qualquer dificuldade na ativação?</h3>
+                    <p class="text-xs text-gray-400 leading-relaxed">Nossa equipe está disponível no WhatsApp para te ajudar passo a passo na chamada ou chat.</p>
                 </div>
             </div>
-            <a href="https://wa.me/558598243142" target="_blank" rel="noopener noreferrer" class="bg-gradient-to-r from-emerald-500 to-green-600 hover:opacity-90 text-white px-6 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-wider transition flex items-center gap-2 shadow-lg shadow-emerald-500/20 shrink-0">
-                <i class="ph-bold ph-whatsapp-logo text-lg"></i> Chamar no WhatsApp (55 85 9824-3142)
+            <a href="https://wa.me/558598243142" target="_blank" rel="noopener noreferrer" class="w-full md:w-auto bg-gradient-to-r from-emerald-500 to-green-600 hover:opacity-90 text-white px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl font-bold text-xs uppercase tracking-wider transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 shrink-0">
+                <i class="ph-bold ph-whatsapp-logo text-base sm:text-lg"></i> Chamar no WhatsApp (55 85 9824-3142)
             </a>
         </div>
     </main>
@@ -137,6 +151,48 @@
     <footer class="p-6 border-t border-white/5 text-center text-xs text-cyan-400/60 font-orbitron tracking-widest relative z-10">
         <p>CYBERTRON PERFORMANCE MARKETING • Central de Tutoriais e Ativação Instantânea</p>
     </footer>
+
+    <!-- MODAL DE VISUALIZAÇÃO COMPLETA DO VÍDEO (LIGHTBOX EM ALTA DEFINIÇÃO) -->
+    <div id="modal-video-lightbox" class="hidden fixed inset-0 z-50 bg-black/95 backdrop-blur-xl flex flex-col items-center justify-center p-2 sm:p-6 transition-all duration-300">
+        <div class="relative w-full max-w-5xl max-h-[94vh] flex flex-col glass-card rounded-3xl border border-cyan-500/30 overflow-hidden shadow-[0_0_80px_rgba(0,195,255,0.25)]">
+            
+            <!-- Header do Modal -->
+            <div class="p-3.5 sm:p-4 px-4 sm:px-6 border-b border-white/10 flex items-center justify-between bg-[#081226]/90 shrink-0">
+                <div class="flex items-center gap-2 sm:gap-3 min-w-0 pr-2">
+                    <span id="lightbox-platform" class="text-[10px] font-bold px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 uppercase shrink-0">
+                        Geral
+                    </span>
+                    <h3 id="lightbox-title" class="font-bold text-white text-xs sm:text-base truncate">
+                        Tutorial de Ativação
+                    </h3>
+                </div>
+                <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                    <button onclick="toggleVideoNativeFullscreen()" class="p-2 rounded-xl bg-white/5 hover:bg-white/15 text-gray-300 hover:text-white transition flex items-center gap-1 text-xs" title="Alternar Tela Cheia">
+                        <i class="ph-bold ph-corners-out text-base"></i>
+                        <span class="hidden md:inline text-[11px] font-semibold">Tela Cheia</span>
+                    </button>
+                    <button onclick="closeVideoPlayerModal()" class="p-2 rounded-xl bg-white/10 hover:bg-red-500/30 text-white transition flex items-center justify-center" title="Fechar (ESC)">
+                        <i class="ph-bold ph-x text-lg"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Área Central do Player de Vídeo (Garante visualização inteira sem cortes) -->
+            <div id="lightbox-player-container" class="relative w-full flex-1 min-h-[260px] sm:min-h-[440px] max-h-[75vh] bg-black flex items-center justify-center overflow-hidden">
+                <!-- Injetado dinamicamente via JS: <video> ou <iframe> com object-contain -->
+            </div>
+
+            <!-- Rodapé do Modal com Informações e Suporte -->
+            <div class="p-3.5 sm:p-4 px-4 sm:px-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 bg-[#081226]/80 text-xs shrink-0">
+                <p id="lightbox-desc" class="text-gray-300 text-xs leading-relaxed max-w-2xl line-clamp-2 sm:line-clamp-none">
+                    Assista ao tutorial para resgatar sua chave passo a passo sem erros.
+                </p>
+                <a href="https://wa.me/558598243142" target="_blank" rel="noopener noreferrer" class="shrink-0 w-full sm:w-auto px-4 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30 font-bold transition flex items-center justify-center gap-1.5 shadow-md">
+                    <i class="ph-bold ph-whatsapp-logo text-base"></i> Dúvidas? Suporte no WhatsApp
+                </a>
+            </div>
+        </div>
+    </div>
 
     <script>
         const STORE_KEY = 'gplay_store_database';
@@ -236,14 +292,19 @@
             return url;
         }
 
+        // Cache dos vídeos carregados para reprodução instantânea no modal de visualização inteira
+        const loadedVideosCache = {};
+
         async function renderVideos() {
             const container = document.getElementById('tutorials-grid');
             if (!container) return;
             const videos = getVideos();
             container.innerHTML = '';
 
-            for (const v of videos) {
-                const isLocalVideo = v.videoType === 'file' || (v.videoUrl && (v.videoUrl.startsWith('indexeddb://') || v.videoUrl.startsWith('data:video') || v.videoUrl.endsWith('.mp4') || v.videoUrl.endsWith('.webm')));
+            for (let i = 0; i < videos.length; i++) {
+                const v = videos[i];
+                const videoId = v.id || ('tut_idx_' + i);
+                const isLocalVideo = v.videoType === 'file' || (v.videoUrl && (v.videoUrl.startsWith('indexeddb://') || v.videoUrl.startsWith('data:video') || v.videoUrl.endsWith('.mp4') || v.videoUrl.endsWith('.webm') || v.videoUrl.endsWith('.mov')));
                 const embedUrl = formatEmbedUrl(v.videoUrl);
 
                 let videoSource = v.videoUrl;
@@ -259,11 +320,35 @@
                     }
                 }
 
+                // Salva no cache para alimentar o modal lightbox
+                loadedVideosCache[videoId] = {
+                    ...v,
+                    id: videoId,
+                    videoSource,
+                    isLocalVideo,
+                    embedUrl
+                };
+
                 let videoMarkup = '';
                 if (isLocalVideo) {
-                    videoMarkup = `<video controls playsinline class="w-full h-full object-cover bg-black" src="${videoSource}"></video>`;
+                    // USO CRUCIAL DE object-contain: Nunca corta o vídeo, exibindo 100% do arquivo original
+                    videoMarkup = `
+                        <div class="relative w-full h-full flex items-center justify-center bg-black group/vid">
+                            <video controls playsinline preload="metadata" class="w-full h-full object-contain bg-black" src="${videoSource}"></video>
+                            <button onclick="event.stopPropagation(); openVideoPlayerModal('${videoId}')" class="absolute top-2.5 right-2.5 z-20 px-2.5 py-1 rounded-lg bg-black/80 hover:bg-cyan-500 text-white hover:text-black border border-white/20 hover:border-cyan-400 text-[11px] font-bold transition flex items-center gap-1 shadow-md backdrop-blur-md" title="Expandir Vídeo Inteiro">
+                                <i class="ph-bold ph-arrows-out-simple"></i> Ver Inteiro
+                            </button>
+                        </div>
+                    `;
                 } else if (embedUrl.includes('youtube.com/embed/')) {
-                    videoMarkup = `<iframe src="${embedUrl}" class="w-full h-full border-0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+                    videoMarkup = `
+                        <div class="relative w-full h-full bg-black group/vid">
+                            <iframe src="${embedUrl}" class="w-full h-full border-0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            <button onclick="event.stopPropagation(); openVideoPlayerModal('${videoId}')" class="absolute top-2.5 right-2.5 z-20 px-2.5 py-1 rounded-lg bg-black/80 hover:bg-cyan-500 text-white hover:text-black border border-white/20 hover:border-cyan-400 text-[11px] font-bold transition flex items-center gap-1 shadow-md backdrop-blur-md" title="Expandir Vídeo Inteiro">
+                                <i class="ph-bold ph-arrows-out-simple"></i> Ver Inteiro
+                            </button>
+                        </div>
+                    `;
                 } else {
                     // Link de TikTok, Instagram ou plataforma externa
                     videoMarkup = `
@@ -278,9 +363,10 @@
                 }
 
                 container.innerHTML += `
-                    <div class="glass-card rounded-3xl overflow-hidden border border-white/5 flex flex-col justify-between group hover:border-cyan-500/40 transition duration-300">
+                    <div class="glass-card rounded-3xl overflow-hidden border border-white/5 flex flex-col justify-between group hover:border-cyan-500/40 transition duration-300 shadow-lg">
                         <div>
-                            <div class="relative w-full aspect-video bg-black/80">
+                            <!-- Container em preto puro com object-contain preservando qualquer proporção (horizontal ou vertical) -->
+                            <div class="relative w-full aspect-video bg-black flex items-center justify-center overflow-hidden border-b border-white/5">
                                 ${videoMarkup}
                             </div>
                             <div class="p-5">
@@ -288,22 +374,105 @@
                                     <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 uppercase">
                                         ${v.platform || "Geral"}
                                     </span>
-                                    <span class="text-xs text-gray-500 font-mono">${v.duration || "Vídeo Guia"}</span>
+                                    <span class="text-xs text-gray-400 font-mono">${v.duration || "Vídeo Guia"}</span>
                                 </div>
                                 <h3 class="font-bold text-white text-base leading-snug mb-2 group-hover:text-cyan-400 transition">${v.title}</h3>
                                 <p class="text-xs text-gray-400 leading-relaxed">${v.description || "Assista ao passo a passo para resgatar sua licença sem erro."}</p>
                             </div>
                         </div>
 
-                        <div class="p-5 pt-0">
-                            <a href="https://wa.me/558598243142" target="_blank" class="w-full py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white text-xs font-bold transition flex items-center justify-center gap-2 border border-white/10">
-                                <i class="ph-bold ph-question"></i> Dúvida neste vídeo? Chamar Suporte
+                        <div class="p-5 pt-0 space-y-2">
+                            <!-- Botão de destaque para abrir o vídeo por inteiro em tela grande -->
+                            <button onclick="openVideoPlayerModal('${videoId}')" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-cyan-500/20 to-blue-500/20 hover:from-cyan-500/30 hover:to-blue-500/30 text-cyan-300 border border-cyan-500/30 text-xs font-bold transition flex items-center justify-center gap-2 shadow-sm">
+                                <i class="ph-bold ph-arrows-out-simple text-sm"></i> Visualizar Vídeo Completo
+                            </button>
+                            <a href="https://wa.me/558598243142" target="_blank" class="w-full py-2 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white text-xs font-semibold transition flex items-center justify-center gap-2 border border-white/5">
+                                <i class="ph-bold ph-question"></i> Dúvida neste vídeo? Suporte
                             </a>
                         </div>
                     </div>
                 `;
             }
         }
+
+        // ================= CONTROLE DO MODAL LIGHTBOX DE VÍDEO POR INTEIRO =================
+        function openVideoPlayerModal(videoId) {
+            const videoData = loadedVideosCache[videoId];
+            if (!videoData) return;
+
+            const modal = document.getElementById('modal-video-lightbox');
+            const playerContainer = document.getElementById('lightbox-player-container');
+            const titleEl = document.getElementById('lightbox-title');
+            const platformEl = document.getElementById('lightbox-platform');
+            const descEl = document.getElementById('lightbox-desc');
+
+            if (titleEl) titleEl.innerText = videoData.title || 'Tutorial de Ativação';
+            if (platformEl) platformEl.innerText = videoData.platform || 'Geral';
+            if (descEl) descEl.innerText = videoData.description || 'Assista ao tutorial completo para resgatar seu produto passo a passo.';
+
+            if (videoData.isLocalVideo) {
+                // object-contain garante exibição integral sem corte, mesmo para vídeos gravados na vertical em celular
+                playerContainer.innerHTML = `
+                    <video id="lightbox-active-video" controls autoplay playsinline class="w-full h-full max-h-[75vh] object-contain bg-black shadow-2xl" src="${videoData.videoSource}">
+                        Seu navegador não suporta este formato de vídeo.
+                    </video>
+                `;
+            } else if (videoData.embedUrl && videoData.embedUrl.includes('youtube.com/embed/')) {
+                const autoEmbed = videoData.embedUrl.includes('?') ? `${videoData.embedUrl}&autoplay=1` : `${videoData.embedUrl}?autoplay=1`;
+                playerContainer.innerHTML = `
+                    <iframe id="lightbox-active-iframe" src="${autoEmbed}" class="w-full h-full aspect-video max-h-[75vh] border-0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                `;
+            } else {
+                playerContainer.innerHTML = `
+                    <div class="p-8 text-center flex flex-col items-center justify-center">
+                        <i class="ph-fill ph-video text-5xl text-cyan-400 mb-3"></i>
+                        <p class="text-sm text-white font-bold mb-4">Este tutorial está hospedado em plataforma externa (${videoData.platform || 'Online'}).</p>
+                        <a href="${videoData.videoUrl}" target="_blank" rel="noopener noreferrer" class="px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-bold text-xs uppercase tracking-wider transition flex items-center gap-2">
+                            <i class="ph-bold ph-arrow-square-out text-base"></i> Abrir Vídeo no ${videoData.platform || 'Link Oficial'}
+                        </a>
+                    </div>
+                `;
+            }
+
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeVideoPlayerModal() {
+            const modal = document.getElementById('modal-video-lightbox');
+            const playerContainer = document.getElementById('lightbox-player-container');
+            if (playerContainer) {
+                const vid = playerContainer.querySelector('video');
+                if (vid) {
+                    try { vid.pause(); } catch(e) {}
+                }
+                playerContainer.innerHTML = '';
+            }
+            if (modal) modal.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        function toggleVideoNativeFullscreen() {
+            const playerContainer = document.getElementById('lightbox-player-container');
+            if (!playerContainer) return;
+            const vid = playerContainer.querySelector('video') || playerContainer.querySelector('iframe');
+            const target = vid || playerContainer;
+            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                if (target.requestFullscreen) target.requestFullscreen();
+                else if (target.webkitRequestFullscreen) target.webkitRequestFullscreen();
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+                else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+            }
+        }
+
+        // Fechar com tecla ESC ou clique fora
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeVideoPlayerModal();
+        });
+        document.getElementById('modal-video-lightbox')?.addEventListener('click', (e) => {
+            if (e.target.id === 'modal-video-lightbox') closeVideoPlayerModal();
+        });
 
         renderVideos();
     </script>
