@@ -1455,8 +1455,8 @@
                     title: "Como Ativar sua Licença de Inteligência Artificial",
                     platform: "Inteligência Artificial",
                     duration: "2:15 min",
-                    videoType: "url",
-                    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                    videoType: "file",
+                    videoUrl: "videos/tutorial_ativacao_ia.mp4",
                     description: "Guia completo de primeiro acesso à sua chave e configurações recomendadas."
                 },
                 {
@@ -1464,8 +1464,8 @@
                     title: "Ativação Rápida de Streaming e Perfil",
                     platform: "Streaming",
                     duration: "1:40 min",
-                    videoType: "url",
-                    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                    videoType: "file",
+                    videoUrl: "videos/tutorial_ativacao_streaming.mp4",
                     description: "Como conectar seu dispositivo com segurança e salvar seus dados."
                 }
             ],
@@ -1517,7 +1517,20 @@
 
                 if (!parsed.gateway) { parsed.gateway = defaultDatabase.gateway; changed = true; }
                 if (!parsed.officialLinks) { parsed.officialLinks = defaultDatabase.officialLinks; changed = true; }
-                if (!parsed.tutorials) { parsed.tutorials = defaultDatabase.tutorials; changed = true; }
+                if (!parsed.tutorials || !Array.isArray(parsed.tutorials) || parsed.tutorials.length === 0) {
+                    parsed.tutorials = defaultDatabase.tutorials;
+                    changed = true;
+                } else {
+                    parsed.tutorials.forEach((tut, idx) => {
+                        if (tut.videoUrl && tut.videoUrl.includes('dQw4w9WgXcQ')) {
+                            tut.videoType = 'file';
+                            tut.videoUrl = (idx === 0 || (tut.title && tut.title.toLowerCase().includes('ia')))
+                                ? 'videos/tutorial_ativacao_ia.mp4'
+                                : 'videos/tutorial_ativacao_streaming.mp4';
+                            changed = true;
+                        }
+                    });
+                }
                 // NOTA: feedbacks agora são gerenciados pelo IndexedDB — NÃO repomos mocks no banco principal
                 if (!parsed.feedbacks) { parsed.feedbacks = []; }
                 if (!parsed.ordersHistory) { 

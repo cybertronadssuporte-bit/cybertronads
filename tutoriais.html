@@ -211,8 +211,8 @@
                 title: "Como Ativar sua Licença de Inteligência Artificial",
                 platform: "Inteligência Artificial",
                 duration: "2:15 min",
-                videoType: "url",
-                videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                videoType: "file",
+                videoUrl: "videos/tutorial_ativacao_ia.mp4",
                 description: "Guia completo de primeiro acesso à sua chave e configurações recomendadas."
             },
             {
@@ -220,8 +220,8 @@
                 title: "Ativação Rápida de Streaming e Perfil",
                 platform: "Streaming",
                 duration: "1:40 min",
-                videoType: "url",
-                videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                videoType: "file",
+                videoUrl: "videos/tutorial_ativacao_streaming.mp4",
                 description: "Como conectar seu dispositivo com segurança e salvar seus dados."
             }
         ];
@@ -328,6 +328,20 @@
                 if (raw) {
                     const db = JSON.parse(raw);
                     if (db.tutorials && Array.isArray(db.tutorials) && db.tutorials.length > 0) {
+                        let changed = false;
+                        db.tutorials.forEach((tut, idx) => {
+                            // Limpa links antigos de teste do YouTube
+                            if (tut.videoUrl && tut.videoUrl.includes('dQw4w9WgXcQ')) {
+                                tut.videoType = 'file';
+                                tut.videoUrl = (idx === 0 || (tut.title && tut.title.toLowerCase().includes('ia'))) 
+                                    ? 'videos/tutorial_ativacao_ia.mp4' 
+                                    : 'videos/tutorial_ativacao_streaming.mp4';
+                                changed = true;
+                            }
+                        });
+                        if (changed) {
+                            try { localStorage.setItem(STORE_KEY, JSON.stringify(db)); } catch(e) {}
+                        }
                         return db.tutorials;
                     }
                 }
@@ -376,10 +390,18 @@
             for (let i = 0; i < videos.length; i++) {
                 const v = videos[i];
                 const videoId = v.id || ('tut_idx_' + i);
-                const isLocalVideo = v.videoType === 'file' || (v.videoUrl && (v.videoUrl.startsWith('indexeddb://') || v.videoUrl.startsWith('data:video') || v.videoUrl.endsWith('.mp4') || v.videoUrl.endsWith('.webm') || v.videoUrl.endsWith('.mov')));
-                const embedUrl = formatEmbedUrl(v.videoUrl);
+                
+                // Converte links antigos de teste para os vídeos reais
+                if (v.videoUrl && v.videoUrl.includes('dQw4w9WgXcQ')) {
+                    v.videoType = 'file';
+                    v.videoUrl = (i === 0 || (v.title && v.title.toLowerCase().includes('ia'))) 
+                        ? 'videos/tutorial_ativacao_ia.mp4' 
+                        : 'videos/tutorial_ativacao_streaming.mp4';
+                }
 
+                let isLocalVideo = v.videoType === 'file' || (v.videoUrl && (v.videoUrl.startsWith('indexeddb://') || v.videoUrl.startsWith('data:video') || v.videoUrl.endsWith('.mp4') || v.videoUrl.endsWith('.webm') || v.videoUrl.endsWith('.mov')));
                 let videoSource = v.videoUrl;
+
                 if (v.videoUrl && v.videoUrl.startsWith('indexeddb://')) {
                     const id = v.videoUrl.replace('indexeddb://', '');
                     const storedData = await getVideoFromIndexedDB(id);
@@ -389,8 +411,16 @@
                         } else {
                             videoSource = storedData;
                         }
+                    } else {
+                        // Fallback seguro caso o cliente acesse pelo celular sem os Blobs locais
+                        videoSource = (i === 0 || (v.title && v.title.toLowerCase().includes('ia'))) 
+                            ? 'videos/tutorial_ativacao_ia.mp4' 
+                            : 'videos/tutorial_ativacao_streaming.mp4';
                     }
+                    isLocalVideo = true;
                 }
+
+                const embedUrl = formatEmbedUrl(videoSource);
 
                 // Salva no cache para alimentar o modal lightbox
                 loadedVideosCache[videoId] = {
