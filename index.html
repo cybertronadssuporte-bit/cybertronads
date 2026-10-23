@@ -820,9 +820,14 @@
                         </h2>
                         <p class="text-sm text-gray-400">Guia passo a passo de como resgatar sua chave em cada plataforma</p>
                     </div>
-                    <button onclick="switchPage('store')" class="text-xs text-primary font-bold hover:underline flex items-center gap-1">
-                        <i class="ph-bold ph-arrow-left"></i> Voltar para a Loja
-                    </button>
+                    <div class="flex items-center gap-2.5">
+                        <a href="tutoriais.html" target="_blank" class="px-3.5 py-1.5 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 text-xs font-bold transition flex items-center gap-1.5">
+                            <i class="ph-bold ph-video"></i> Central de Vídeos
+                        </a>
+                        <button onclick="switchPage('store')" class="text-xs text-primary font-bold hover:underline flex items-center gap-1">
+                            <i class="ph-bold ph-arrow-left"></i> Loja
+                        </button>
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -3486,9 +3491,9 @@
 
         // ================= CONTROLE DO VÍDEO DO ROBÔ VIA SCROLL (DESKTOP & MOBILE) =================
         let heroVideoTargetTime = 0;
-        let heroVideoCurrentTime = 0;
         let heroVideoRafId = null;
-        let heroVideoDecoderReady = false;
+        let heroVideoIsSeeking = false;
+        let heroVideoSeekTimeout = null;
 
         function advanceHeroScroll() {
             const container = document.getElementById('main-scroll-container') || window;
@@ -3510,41 +3515,75 @@
             const progText = document.getElementById('hero-video-progress-text');
             if (!video || !track || !container) return;
 
-            // Configuração original: estritamente mudo, pausado no início (só avança no scroll)
+            // Configuração original: mudo, inline, sem controles automáticos (só avança/retrocede no scroll)
             video.muted = true;
             video.defaultMuted = true;
             video.playsInline = true;
             video.setAttribute('playsinline', '');
             video.setAttribute('webkit-playsinline', '');
             try { video.pause(); } catch(e) {}
+            try { video.load(); } catch(e) {}
 
-            // Ativação do pipeline gráfico de decodificação no mobile para permitir seek de frames
-            function prepareMobileVideoDecoder() {
-                if (heroVideoDecoderReady) return;
+            let videoActivated = false;
+            function activateVideoAudioDecoder() {
+                if (videoActivated) return;
+                videoActivated = true;
                 const p = video.play();
                 if (p !== undefined) {
                     p.then(() => {
                         video.pause();
-                        heroVideoDecoderReady = true;
                     }).catch(() => {});
                 }
             }
 
+            function applyVideoSeek(time) {
+                if (video.readyState < 1) return;
+                const dur = (video.duration && !isNaN(video.duration) && video.duration > 0) ? video.duration : 8.0;
+                const clamped = Math.max(0, Math.min(dur, time));
+
+                // Se a diferença for insignificante, não gasta seek
+                if (Math.abs(video.currentTime - clamped) < 0.02) return;
+
+                heroVideoIsSeeking = true;
+                clearTimeout(heroVideoSeekTimeout);
+                // Proteção para o hardware mobile nunca travar: solta o lock após 80ms
+                heroVideoSeekTimeout = setTimeout(() => {
+                    heroVideoIsSeeking = false;
+                }, 80);
+
+                if ('fastSeek' in video) {
+                    try { video.fastSeek(clamped); return; } catch(e) {}
+                }
+                try { video.currentTime = clamped; } catch(e) {}
+            }
+
+            // Quando o frame termina de ser decodificado pelo hardware, verifica se o usuário continuou rolando
+            video.addEventListener('seeked', () => {
+                heroVideoIsSeeking = false;
+                clearTimeout(heroVideoSeekTimeout);
+                if (Math.abs(video.currentTime - heroVideoTargetTime) > 0.03) {
+                    applyVideoSeek(heroVideoTargetTime);
+                }
+            });
+
+            video.addEventListener('seeking', () => {
+                heroVideoIsSeeking = true;
+            });
+
             function onVideoScroll() {
-                prepareMobileVideoDecoder();
+                activateVideoAudioDecoder();
 
-                const trackRect = track.getBoundingClientRect();
-                const containerRect = container.getBoundingClientRect();
-
-                // Posição do topo do trilho em relação ao container visível
-                const offset = containerRect.top - trackRect.top;
+                const scrollTop = container.scrollTop;
+                const trackOffset = track.offsetTop || 0;
                 const frameH = frame ? frame.offsetHeight : window.innerHeight;
-                const maxScrollable = track.offsetHeight - frameH;
+                const maxScrollable = Math.max(1, track.offsetHeight - frameH);
 
-                if (maxScrollable <= 0) return;
-
-                let progress = offset / maxScrollable;
-                progress = Math.max(0, Math.min(1, progress));
+                // Cálculo robusto do progresso baseado no container de rolagem real
+                const dist = scrollTop - trackOffset;
+                let progress = 0;
+                if (dist > 0) {
+                    progress = Math.max(0, Math.min(1, dist / maxScrollable));
+                }
 
                 const duration = (video.duration && !isNaN(video.duration) && video.duration > 0) ? video.duration : 8.0;
                 heroVideoTargetTime = progress * duration;
@@ -3554,31 +3593,25 @@
 
                 // Fade suave do robô no fundo ao rolar para o catálogo de produtos
                 if (bgContainer) {
-                    if (offset > maxScrollable) {
-                        const beyond = offset - maxScrollable;
+                    if (dist > maxScrollable) {
+                        const beyond = dist - maxScrollable;
                         const fade = Math.max(0.18, 1 - (beyond / 350));
                         bgContainer.style.opacity = fade.toFixed(2);
                     } else {
                         bgContainer.style.opacity = '1';
                     }
                 }
+
+                if (!heroVideoIsSeeking) {
+                    applyVideoSeek(heroVideoTargetTime);
+                }
             }
 
-            // Loop de renderização contínua com interpolação suave (Lerp)
-            // Compatível com mobile e desktop sem travar o decoder de hardware
+            // Loop de sincronização para garantir fluidez durante touch scroll no celular
             function renderVideoFrame() {
-                if (video.readyState >= 1) { // metadados carregados
-                    const diff = heroVideoTargetTime - heroVideoCurrentTime;
-                    if (Math.abs(diff) > 0.006) {
-                        heroVideoCurrentTime += diff * 0.35;
-                        if (!video.seeking) {
-                            try { video.currentTime = heroVideoCurrentTime; } catch(e) {}
-                        }
-                    } else if (Math.abs(video.currentTime - heroVideoTargetTime) > 0.02) {
-                        heroVideoCurrentTime = heroVideoTargetTime;
-                        if (!video.seeking) {
-                            try { video.currentTime = heroVideoTargetTime; } catch(e) {}
-                        }
+                if (video.readyState >= 1 && !heroVideoIsSeeking) {
+                    if (Math.abs(video.currentTime - heroVideoTargetTime) > 0.03) {
+                        applyVideoSeek(heroVideoTargetTime);
                     }
                 }
                 heroVideoRafId = requestAnimationFrame(renderVideoFrame);
@@ -3589,8 +3622,8 @@
             container.addEventListener('touchmove', onVideoScroll, { passive: true });
             window.addEventListener('scroll', onVideoScroll, { passive: true });
             window.addEventListener('touchmove', onVideoScroll, { passive: true });
-            window.addEventListener('touchstart', prepareMobileVideoDecoder, { passive: true });
-            window.addEventListener('pointerdown', prepareMobileVideoDecoder, { passive: true });
+            window.addEventListener('touchstart', activateVideoAudioDecoder, { passive: true });
+            window.addEventListener('pointerdown', activateVideoAudioDecoder, { passive: true });
             window.addEventListener('resize', onVideoScroll, { passive: true });
 
             if (!heroVideoRafId) {
@@ -3598,10 +3631,7 @@
             }
 
             video.addEventListener('loadedmetadata', onVideoScroll);
-            video.addEventListener('canplay', () => {
-                prepareMobileVideoDecoder();
-                onVideoScroll();
-            });
+            video.addEventListener('canplay', onVideoScroll);
             onVideoScroll();
         }
 

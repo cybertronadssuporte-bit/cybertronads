@@ -114,14 +114,19 @@
         
         <!-- HERO BANNER -->
         <div class="text-center max-w-3xl mx-auto space-y-2.5 sm:space-y-3 px-2">
-            <span class="inline-flex items-center gap-1.5 text-[10px] sm:text-xs font-black bg-cyan-500/10 text-accentCyan border border-cyan-500/30 px-3.5 py-1 rounded-full uppercase tracking-widest">
-                <i class="ph-fill ph-play-circle text-xs sm:text-sm"></i> Passo a Passo Oficial
-            </span>
+            <div class="flex items-center justify-center gap-2 flex-wrap">
+                <span class="inline-flex items-center gap-1.5 text-[10px] sm:text-xs font-black bg-cyan-500/10 text-accentCyan border border-cyan-500/30 px-3.5 py-1 rounded-full uppercase tracking-widest">
+                    <i class="ph-fill ph-play-circle text-xs sm:text-sm"></i> Passo a Passo Oficial
+                </span>
+                <button onclick="refreshTutorialsList()" class="inline-flex items-center gap-1.5 text-[10px] sm:text-xs font-bold bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white border border-white/10 px-3 py-1 rounded-full transition active:scale-95 cursor-pointer shadow-sm">
+                    <i id="refresh-icon" class="ph-bold ph-arrows-clockwise text-cyan-400"></i> <span>Recarregar Vídeos</span>
+                </button>
+            </div>
             <h1 class="text-2xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-tight">
                 Como Resgatar & Ativar Sua Chave
             </h1>
             <p class="text-xs sm:text-sm md:text-base text-gray-400 leading-relaxed max-w-2xl mx-auto">
-                Assista aos tutoriais completos abaixo preparados pela nossa equipe para ativar seu jogo na Steam, Epic Games, Rockstar ou Xbox sem complicação.
+                Assista aos tutoriais completos abaixo preparados pela nossa equipe para ativar seu produto digital, licença ou aplicativo sem complicação.
             </p>
         </div>
 
@@ -194,39 +199,94 @@
         </div>
     </div>
 
+    <!-- TOAST NOTIFICAÇÃO FLUTUANTE -->
+    <div id="tut-toast" class="fixed top-5 right-5 z-[200] px-4 py-3 rounded-2xl border shadow-2xl text-xs font-bold flex items-center gap-2 transition-all duration-300 transform -translate-y-10 opacity-0 pointer-events-none"></div>
+
     <script>
         const STORE_KEY = 'gplay_store_database';
 
         const defaultVideos = [
             {
-                id: "v1",
-                title: "Como Ativar Chaves e Licenças na Steam (Passo a Passo)",
-                platform: "Steam",
-                duration: "2:45",
-                videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-                description: "Aprenda a resgatar seu código na Steam, verificar na biblioteca e iniciar o download instantaneamente."
+                id: "tut_1",
+                title: "Como Ativar sua Licença de Inteligência Artificial",
+                platform: "Inteligência Artificial",
+                duration: "2:15 min",
+                videoType: "url",
+                videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                description: "Guia completo de primeiro acesso à sua chave e configurações recomendadas."
             },
             {
-                id: "v2",
-                title: "Tutorial de Resgate na Epic Games Store",
-                platform: "Epic Games",
-                duration: "3:10",
-                videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-                description: "Veja como acessar o launcher da Epic Games, clicar em Resgatar Código e vincular à sua conta vitalícia."
-            },
-            {
-                id: "v3",
-                title: "Ativação no Rockstar Games Launcher (GTA VI / GTA V)",
-                platform: "Rockstar Games",
-                duration: "4:05",
-                videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-                description: "Tutorial completo de resgate de chave de ativação Rockstar com download em alta velocidade."
+                id: "tut_2",
+                title: "Ativação Rápida de Streaming e Perfil",
+                platform: "Streaming",
+                duration: "1:40 min",
+                videoType: "url",
+                videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                description: "Como conectar seu dispositivo com segurança e salvar seus dados."
             }
         ];
 
         const IDB_NAME = 'CybertronMediaDB';
         const IDB_VERSION = 1;
         const IDB_STORE = 'tutorials_videos';
+
+        function showTutToast(msg, isSuccess = true) {
+            const toast = document.getElementById('tut-toast');
+            if (!toast) return;
+            toast.className = `fixed top-5 right-5 z-[200] px-4 py-3 rounded-2xl border shadow-2xl text-xs font-bold flex items-center gap-2 transition-all duration-300 pointer-events-auto ${
+                isSuccess 
+                ? 'bg-[#081b2e] border-cyan-500/50 text-cyan-200 shadow-[0_0_30px_rgba(0,195,255,0.25)]' 
+                : 'bg-[#2a0e14] border-red-500/50 text-red-200'
+            }`;
+            toast.innerHTML = `<i class="ph-fill ${isSuccess ? 'ph-check-circle text-cyan-400' : 'ph-warning-circle text-red-400'} text-base"></i> <span>${msg}</span>`;
+            toast.style.transform = 'translateY(0)';
+            toast.style.opacity = '1';
+
+            setTimeout(() => {
+                toast.style.transform = 'translateY(-20px)';
+                toast.style.opacity = '0';
+                setTimeout(() => { toast.classList.add('pointer-events-none'); }, 300);
+            }, 3500);
+        }
+
+        // Processa sincronização de tutoriais enviados pelo admin via URL
+        function checkUrlSyncPayload() {
+            try {
+                let payload = null;
+                const hash = window.location.hash;
+                if (hash && hash.includes('sync=')) {
+                    payload = hash.split('sync=')[1]?.split('&')[0];
+                } else {
+                    const params = new URLSearchParams(window.location.search);
+                    payload = params.get('sync');
+                }
+
+                if (payload) {
+                    const jsonStr = decodeURIComponent(escape(atob(payload)));
+                    const tutorialsData = JSON.parse(jsonStr);
+                    if (Array.isArray(tutorialsData) && tutorialsData.length > 0) {
+                        let currentDb = {};
+                        try {
+                            const raw = localStorage.getItem(STORE_KEY);
+                            if (raw) currentDb = JSON.parse(raw);
+                        } catch(e) {}
+                        currentDb.tutorials = tutorialsData;
+                        localStorage.setItem(STORE_KEY, JSON.stringify(currentDb));
+                        localStorage.setItem('gplay_store_ts', Date.now().toString());
+                        setTimeout(() => {
+                            showTutToast("✅ Vídeos tutoriais sincronizados e atualizados no celular com sucesso!");
+                        }, 500);
+                        try {
+                            history.replaceState(null, '', window.location.pathname);
+                        } catch(e) {}
+                        return true;
+                    }
+                }
+            } catch(e) {
+                console.warn('Sync payload falhou:', e);
+            }
+            return false;
+        }
 
         function openMediaDB() {
             return new Promise((resolve) => {
@@ -267,12 +327,24 @@
                 const raw = localStorage.getItem(STORE_KEY);
                 if (raw) {
                     const db = JSON.parse(raw);
-                    if (db.tutorials && db.tutorials.length > 0) return db.tutorials;
+                    if (db.tutorials && Array.isArray(db.tutorials) && db.tutorials.length > 0) {
+                        return db.tutorials;
+                    }
                 }
             } catch (e) {
                 console.warn(e);
             }
             return defaultVideos;
+        }
+
+        async function refreshTutorialsList() {
+            const icon = document.getElementById('refresh-icon');
+            if (icon) icon.classList.add('animate-spin');
+            await renderVideos();
+            setTimeout(() => {
+                if (icon) icon.classList.remove('animate-spin');
+                showTutToast("Lista de tutoriais atualizada!");
+            }, 350);
         }
 
         function formatEmbedUrl(url) {
@@ -474,6 +546,19 @@
             if (e.target.id === 'modal-video-lightbox') closeVideoPlayerModal();
         });
 
+        // Sincronização em tempo real entre abas e recarga ao focar
+        window.addEventListener('storage', (e) => {
+            if (e.key === STORE_KEY || e.key === 'gplay_store_ts' || e.key === 'gplay_tutorials_ts') {
+                renderVideos();
+            }
+        });
+        window.addEventListener('focus', () => { renderVideos(); });
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) renderVideos();
+        });
+
+        // Verifica sincronização recebida pela URL e renderiza os vídeos
+        checkUrlSyncPayload();
         renderVideos();
     </script>
 </body>

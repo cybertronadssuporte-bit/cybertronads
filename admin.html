@@ -317,9 +317,14 @@
                         </h3>
                         <p class="text-xs text-gray-400 mt-0.5">Estes vídeos aparecerão automaticamente para os clientes na central de tutoriais (tutoriais.html).</p>
                     </div>
-                    <button onclick="openCreateTutorialModal()" class="bg-cyan-600 hover:bg-cyan-500 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-lg shadow-cyan-600/20">
-                        <i class="ph-bold ph-plus-circle text-base"></i> Adicionar Novo Vídeo Tutorial
-                    </button>
+                    <div class="flex items-center gap-2.5 flex-wrap">
+                        <button onclick="openSyncTutorialsModal()" class="bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-lg shadow-emerald-500/10 cursor-pointer active:scale-95">
+                            <i class="ph-bold ph-device-mobile-camera text-base text-emerald-400"></i> Sincronizar com o Celular
+                        </button>
+                        <button onclick="openCreateTutorialModal()" class="bg-cyan-600 hover:bg-cyan-500 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-lg shadow-cyan-600/20 cursor-pointer active:scale-95">
+                            <i class="ph-bold ph-plus-circle text-base"></i> Adicionar Novo Vídeo Tutorial
+                        </button>
+                    </div>
                 </div>
 
                 <div id="tutorials-list" class="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -906,6 +911,64 @@
                     <button type="submit" class="px-5 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold">Salvar Vídeo</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- MODAL: SINCRONIZAR TUTORIAIS COM O CELULAR -->
+    <div id="modal-sync-tutorials" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass-card w-full max-w-lg rounded-3xl p-6 border border-emerald-500/30 max-h-[90vh] overflow-y-auto relative shadow-[0_0_50px_rgba(16,185,129,0.2)]">
+            <div class="flex justify-between items-center mb-4 pb-2 border-b border-white/10">
+                <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <h3 class="text-base font-black text-white">Sincronizar Tutoriais com o Celular</h3>
+                </div>
+                <button onclick="closeSyncTutorialsModal()" class="text-gray-400 hover:text-white transition"><i class="ph-bold ph-x text-lg"></i></button>
+            </div>
+
+            <div class="space-y-4">
+                <p class="text-xs text-gray-300 leading-relaxed">
+                    Como o site é hospedado em nuvem estática, use qualquer uma das opções abaixo para que o seu celular receba imediatamente todos os novos vídeos que você cadastrou aqui no painel:
+                </p>
+
+                <!-- Opção 1: Enviar direto para o WhatsApp -->
+                <div class="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/25 flex items-center justify-between gap-3">
+                    <div class="min-w-0">
+                        <h4 class="text-xs font-bold text-emerald-300 flex items-center gap-1.5 mb-0.5">
+                            <i class="ph-bold ph-whatsapp-logo text-base"></i> Método Recomendado (1 Toque)
+                        </h4>
+                        <p class="text-[11px] text-gray-400">Envie o link para o seu próprio WhatsApp e abra no celular.</p>
+                    </div>
+                    <button onclick="sendSyncTutorialsWhatsApp()" class="shrink-0 px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-xs transition flex items-center gap-1.5 shadow-md active:scale-95 cursor-pointer">
+                        <i class="ph-bold ph-paper-plane-tilt"></i> Enviar
+                    </button>
+                </div>
+
+                <!-- Opção 2: QR Code para escanear com a câmera do celular -->
+                <div class="p-4 rounded-2xl bg-black/60 border border-white/10 text-center flex flex-col items-center">
+                    <p class="text-[11px] font-bold text-gray-300 mb-2.5 flex items-center gap-1.5">
+                        <i class="ph-bold ph-qr-code text-cyan-400"></i> Ou aponte a câmera do seu celular para este QR Code:
+                    </p>
+                    <div class="p-2 bg-white rounded-2xl shadow-lg mb-2">
+                        <img id="sync-qrcode-img" src="" alt="QR Code de Sincronização" class="w-40 h-40 object-contain">
+                    </div>
+                    <span class="text-[10px] text-gray-500">Ao abrir a câmera, ele lê o código e atualiza a lista no celular na hora.</span>
+                </div>
+
+                <!-- Opção 3: Copiar Link de Sincronização -->
+                <div>
+                    <label class="text-[11px] font-bold text-gray-400 block mb-1">Link Direto de Sincronização:</label>
+                    <div class="flex items-center gap-2">
+                        <input type="text" id="sync-tutorials-link-input" readonly class="flex-1 bg-black/60 border border-white/10 rounded-xl p-2.5 text-xs text-cyan-300 focus:outline-none select-all font-mono truncate">
+                        <button onclick="copySyncTutorialsLink()" class="px-3.5 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs transition flex items-center gap-1 shrink-0 active:scale-95 cursor-pointer">
+                            <i class="ph-bold ph-copy"></i> Copiar
+                        </button>
+                    </div>
+                </div>
+
+                <div class="pt-2 flex justify-end">
+                    <button type="button" onclick="closeSyncTutorialsModal()" class="px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition">Concluir</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -2504,9 +2567,10 @@
                 });
 
                 saveDB(db);
+                try { localStorage.setItem('gplay_tutorials_ts', Date.now().toString()); } catch(e) {}
                 closeTutorialModal();
                 renderTutorials(db);
-                showAlert("✅ Novo vídeo tutorial publicado e pronto na central de tutoriais!");
+                showAlert("✅ Vídeo salvo! Use o botão 'Sincronizar com o Celular' para carregar no celular.");
             } catch(err) {
                 console.error("Erro ao salvar tutorial:", err);
                 alert("Falha ao salvar o vídeo tutorial: " + (err.message || "Tente novamente."));
@@ -2516,6 +2580,67 @@
                     submitBtn.innerText = originalBtnText;
                 }
             }
+        }
+
+        // ================= SINCRONIZAÇÃO DE TUTORIAIS COM O CELULAR =================
+        function generateTutorialsSyncUrl() {
+            const db = getDB();
+            const tutorials = (db.tutorials && Array.isArray(db.tutorials)) ? db.tutorials : [];
+            const jsonStr = JSON.stringify(tutorials);
+            const b64 = btoa(unescape(encodeURIComponent(jsonStr)));
+            
+            // Monta a URL completa apontando para tutoriais.html no mesmo domínio
+            const origin = window.location.origin;
+            let pathname = window.location.pathname;
+            if (pathname.endsWith('admin.html')) {
+                pathname = pathname.replace('admin.html', 'tutoriais.html');
+            } else if (pathname.endsWith('/')) {
+                pathname = pathname + 'tutoriais.html';
+            } else {
+                pathname = pathname + '/tutoriais.html';
+            }
+            return `${origin}${pathname}#sync=${b64}`;
+        }
+
+        function openSyncTutorialsModal() {
+            const url = generateTutorialsSyncUrl();
+            const input = document.getElementById('sync-tutorials-link-input');
+            if (input) input.value = url;
+
+            const qrImg = document.getElementById('sync-qrcode-img');
+            if (qrImg) {
+                qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(url)}`;
+            }
+
+            document.getElementById('modal-sync-tutorials')?.classList.remove('hidden');
+        }
+
+        function closeSyncTutorialsModal() {
+            document.getElementById('modal-sync-tutorials')?.classList.add('hidden');
+        }
+
+        function copySyncTutorialsLink() {
+            const input = document.getElementById('sync-tutorials-link-input');
+            if (!input) return;
+            input.select();
+            input.setSelectionRange(0, 99999);
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(input.value).then(() => {
+                    showAlert("✅ Link de sincronização copiado! Abra no navegador do celular.");
+                }).catch(() => {
+                    document.execCommand('copy');
+                    showAlert("✅ Link copiado com sucesso!");
+                });
+            } else {
+                document.execCommand('copy');
+                showAlert("✅ Link copiado com sucesso!");
+            }
+        }
+
+        function sendSyncTutorialsWhatsApp() {
+            const url = generateTutorialsSyncUrl();
+            const msg = encodeURIComponent(`*CYBERTRON ADS - ATUALIZAÇÃO DE TUTORIAIS*\n\nAbra este link no seu celular para atualizar os vídeos de suporte na hora:\n\n${url}`);
+            window.open(`https://wa.me/?text=${msg}`, '_blank');
         }
 
         async function deleteTutorial(index) {
