@@ -349,12 +349,10 @@
     <div id="hero-video-bg-container" class="fixed inset-0 w-full h-full pointer-events-none overflow-hidden z-0 transition-opacity duration-500 ease-out">
         <video id="hero-robot-video" 
                class="absolute inset-0 w-full h-full object-cover object-center pointer-events-none" 
-               autoplay
                muted 
                playsinline 
                webkit-playsinline 
                preload="auto" 
-               loop
                disablepictureinpicture 
                disableremoteplayback>
             <source src="hero_scroll_robot.mp4" type="video/mp4">
@@ -3486,22 +3484,19 @@
             setTimeout(addSidebarPurchase, nextDelay);
         }
 
-        // ================= CONTROLE DO VÍDEO DO ROBÔ NO DESKTOP E MOBILE =================
+        // ================= CONTROLE DO VÍDEO DO ROBÔ VIA SCROLL (DESKTOP & MOBILE) =================
         let heroVideoTargetTime = 0;
         let heroVideoCurrentTime = 0;
         let heroVideoRafId = null;
+        let heroVideoDecoderReady = false;
 
         function advanceHeroScroll() {
             const container = document.getElementById('main-scroll-container') || window;
-            const target = window.innerWidth < 768 ? 260 : 750;
+            const target = window.innerWidth < 768 ? 320 : 750;
             if (container.scrollTo) {
                 container.scrollTo({ top: target, behavior: 'smooth' });
             } else {
                 container.scrollTop = target;
-            }
-            const video = document.getElementById('hero-robot-video');
-            if (video && video.paused) {
-                video.play().catch(() => {});
             }
         }
 
@@ -3515,62 +3510,34 @@
             const progText = document.getElementById('hero-video-progress-text');
             if (!video || !track || !container) return;
 
-            // Garantir que o vídeo esteja estritamente mudo e com suporte total a inline/autoplay no iOS/Android
+            // Configuração original: estritamente mudo, pausado no início (só avança no scroll)
             video.muted = true;
             video.defaultMuted = true;
             video.playsInline = true;
-            video.autoplay = true;
-            video.loop = true;
             video.setAttribute('playsinline', '');
             video.setAttribute('webkit-playsinline', '');
+            try { video.pause(); } catch(e) {}
 
-            function checkIsMobile() {
-                return window.innerWidth < 768 || ('ontouchstart' in window && window.innerWidth < 1024);
-            }
-
-            function playMobileVideoSafe() {
-                if (video && video.paused) {
-                    const p = video.play();
-                    if (p !== undefined) {
-                        p.catch(() => {});
-                    }
+            // Ativação do pipeline gráfico de decodificação no mobile para permitir seek de frames
+            function prepareMobileVideoDecoder() {
+                if (heroVideoDecoderReady) return;
+                const p = video.play();
+                if (p !== undefined) {
+                    p.then(() => {
+                        video.pause();
+                        heroVideoDecoderReady = true;
+                    }).catch(() => {});
                 }
             }
 
-            // No celular: inicia imediatamente e garante que nunca fique travado
-            if (checkIsMobile()) {
-                playMobileVideoSafe();
-            }
-
             function onVideoScroll() {
-                const isMobile = checkIsMobile();
+                prepareMobileVideoDecoder();
+
                 const trackRect = track.getBoundingClientRect();
                 const containerRect = container.getBoundingClientRect();
 
                 // Posição do topo do trilho em relação ao container visível
                 const offset = containerRect.top - trackRect.top;
-                const scrollTop = container.scrollTop || window.scrollY || 0;
-
-                // ===== COMPORTAMENTO NO CELULAR / MOBILE =====
-                if (isMobile) {
-                    // Garante que o vídeo está reproduzindo fluidamente sem travar no início
-                    playMobileVideoSafe();
-
-                    // Fade suave do robô no fundo ao rolar para o catálogo de produtos
-                    if (bgContainer) {
-                        const scrollDist = Math.max(scrollTop, offset);
-                        if (scrollDist > 80) {
-                            const beyond = scrollDist - 80;
-                            const fade = Math.max(0.18, 1 - (beyond / 260));
-                            bgContainer.style.opacity = fade.toFixed(2);
-                        } else {
-                            bgContainer.style.opacity = '1';
-                        }
-                    }
-                    return;
-                }
-
-                // ===== COMPORTAMENTO NO DESKTOP (SCRUBBING VIA SCROLL DO MOUSE) =====
                 const frameH = frame ? frame.offsetHeight : window.innerHeight;
                 const maxScrollable = track.offsetHeight - frameH;
 
@@ -3597,42 +3564,34 @@
                 }
             }
 
-            // Loop de renderização contínua a 60fps (Lerp) exclusivo para Desktop
+            // Loop de renderização contínua com interpolação suave (Lerp)
+            // Compatível com mobile e desktop sem travar o decoder de hardware
             function renderVideoFrame() {
-                if (!checkIsMobile() && video.readyState >= 1) { // metadados carregados
+                if (video.readyState >= 1) { // metadados carregados
                     const diff = heroVideoTargetTime - heroVideoCurrentTime;
-                    if (Math.abs(diff) > 0.008) {
+                    if (Math.abs(diff) > 0.006) {
                         heroVideoCurrentTime += diff * 0.35;
-                        video.currentTime = heroVideoCurrentTime;
-                    } else if (heroVideoCurrentTime !== heroVideoTargetTime) {
+                        if (!video.seeking) {
+                            try { video.currentTime = heroVideoCurrentTime; } catch(e) {}
+                        }
+                    } else if (Math.abs(video.currentTime - heroVideoTargetTime) > 0.02) {
                         heroVideoCurrentTime = heroVideoTargetTime;
-                        video.currentTime = heroVideoTargetTime;
+                        if (!video.seeking) {
+                            try { video.currentTime = heroVideoTargetTime; } catch(e) {}
+                        }
                     }
                 }
                 heroVideoRafId = requestAnimationFrame(renderVideoFrame);
             }
 
-            // Eventos de rolagem
+            // Ouvintes de rolagem e toque no container e na janela
             container.addEventListener('scroll', onVideoScroll, { passive: true });
-            window.addEventListener('scroll', onVideoScroll, { passive: true });
-            window.addEventListener('resize', onVideoScroll, { passive: true });
             container.addEventListener('touchmove', onVideoScroll, { passive: true });
+            window.addEventListener('scroll', onVideoScroll, { passive: true });
             window.addEventListener('touchmove', onVideoScroll, { passive: true });
-
-            // Desbloqueio e reprodução garantida em qualquer interação tátil no celular
-            const touchWakeVideo = () => {
-                if (checkIsMobile()) {
-                    playMobileVideoSafe();
-                }
-            };
-            window.addEventListener('touchstart', touchWakeVideo, { passive: true });
-            window.addEventListener('touchend', touchWakeVideo, { passive: true });
-            window.addEventListener('pointerdown', touchWakeVideo, { passive: true });
-            document.addEventListener('visibilitychange', () => {
-                if (!document.hidden && checkIsMobile()) {
-                    playMobileVideoSafe();
-                }
-            });
+            window.addEventListener('touchstart', prepareMobileVideoDecoder, { passive: true });
+            window.addEventListener('pointerdown', prepareMobileVideoDecoder, { passive: true });
+            window.addEventListener('resize', onVideoScroll, { passive: true });
 
             if (!heroVideoRafId) {
                 heroVideoRafId = requestAnimationFrame(renderVideoFrame);
@@ -3640,7 +3599,7 @@
 
             video.addEventListener('loadedmetadata', onVideoScroll);
             video.addEventListener('canplay', () => {
-                if (checkIsMobile()) playMobileVideoSafe();
+                prepareMobileVideoDecoder();
                 onVideoScroll();
             });
             onVideoScroll();
